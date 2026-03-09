@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { ExtensionProgram, Activity } from '../types'
-import { getExtensionPrograms, getActivities, getActivityStats, createExtensionProgram, deleteExtensionProgram } from '../services/extensionService'
+import { ExtensionProgram } from '../types'
+import { getExtensionPrograms, getActivityStats, createExtensionProgram, deleteExtensionProgram } from '../services/extensionService'
 import { useAuth } from '../context/AuthContext'
 import { useApp } from '../context/AppContext'
 import '../styles/layout.css'
@@ -26,16 +26,19 @@ export function Dashboard() {
       const data = await getExtensionPrograms()
       setPrograms(data)
       
-      // Calculate overall stats
       let totalActivities = 0
       let totalBeneficiaries = 0
       let totalCost = 0
 
       for (const program of data) {
-        const activities = await getActivities(program.id)
-        totalActivities += activities.length
-        totalBeneficiaries += activities.reduce((sum, a) => sum + a.beneficiaries.total, 0)
-        totalCost += activities.reduce((sum, a) => sum + a.totalCost, 0)
+        try {
+          const programStats = await getActivityStats(program.id)
+          totalActivities += programStats.totalActivities
+          totalBeneficiaries += programStats.totalBeneficiaries.total
+          totalCost += programStats.totalCost
+        } catch (e) {
+          // Handle error silently for now
+        }
       }
 
       setStats({
@@ -45,7 +48,6 @@ export function Dashboard() {
         totalCost,
       })
     } catch (error) {
-      setNotification({ type: 'error', text: 'Failed to load programs' })
       console.error('Error loading programs:', error)
     } finally {
       setLoading(false)
@@ -60,7 +62,7 @@ export function Dashboard() {
     }
 
     try {
-      const programId = await createExtensionProgram({
+      await createExtensionProgram({
         title: newProgram.title,
         description: newProgram.description || '',
         startYear: newProgram.startYear,
@@ -80,20 +82,6 @@ export function Dashboard() {
     }
   }
 
-  const handleDeleteProgram = async (programId: string) => {
-    if (!window.confirm('Are you sure you want to delete this program?')) return
-
-    try {
-      await deleteExtensionProgram(programId)
-      setNotification({ type: 'success', text: 'Program deleted successfully' })
-      loadPrograms()
-      setSelectedProgram(null)
-    } catch (error) {
-      setNotification({ type: 'error', text: 'Failed to delete program' })
-      console.error('Error deleting program:', error)
-    }
-  }
-
   const handleSelectProgram = async (program: ExtensionProgram) => {
     setSelectedProgram(program)
     try {
@@ -105,240 +93,411 @@ export function Dashboard() {
   }
 
   if (loading) {
-    return <div className="dashboard-container"><p>Loading programs...</p></div>
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <div style={{ fontSize: '1rem', color: '#128DA1' }}>Loading dashboard...</div>
+      </div>
+    )
   }
 
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-content">
-        {/* Header */}
-        <div className="dashboard-header">
-          <div>
-            <h2>Dashboard</h2>
-            <p className="text-gray-600">Welcome back! Manage your extension programs and activities.</p>
-          </div>
-          <button
-            onClick={() => setShowProgramForm(!showProgramForm)}
-            className="btn-primary"
-            style={{ background: '#128DA1', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: '600' }}
-          >
-            {showProgramForm ? 'Cancel' : '+ New Program'}
-          </button>
-        </div>
+    <div style={{ padding: '2rem', background: '#f8fafb', minHeight: '100vh' }}>
+      {/* Page Header */}
+      <div style={{ marginBottom: '2rem', borderBottom: '2px solid #128DA1', paddingBottom: '1.5rem' }}>
+        <h1 style={{ color: '#00332B', fontSize: '2.5rem', fontWeight: '700', margin: '0 0 0.5rem 0' }}>
+          Dashboard
+        </h1>
+        <p style={{ color: '#666', fontSize: '1rem', margin: 0 }}>
+          Monitor and manage extension programs and activities
+        </p>
+      </div>
 
-        {/* Create Program Form */}
-        {showProgramForm && (
-          <div className="form-panel" style={{ background: '#f8f9fa', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', border: '1px solid #e0e0e0' }}>
-            <h3>Create New Program</h3>
-            <form onSubmit={handleCreateProgram} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <input
-                type="text"
-                placeholder="Program Title"
-                value={newProgram.title}
-                onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value })}
-                style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '6px' }}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Description"
-                value={newProgram.description}
-                onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value })}
-                style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '6px' }}
-              />
-              <input
-                type="number"
-                placeholder="Start Year"
-                value={newProgram.startYear}
-                onChange={(e) => setNewProgram({ ...newProgram, startYear: parseInt(e.target.value) })}
-                style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '6px' }}
-              />
-              <input
-                type="number"
-                placeholder="End Year"
-                value={newProgram.endYear}
-                onChange={(e) => setNewProgram({ ...newProgram, endYear: parseInt(e.target.value) })}
-                style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '6px' }}
-              />
-              <button
-                type="submit"
-                style={{ gridColumn: '1 / -1', padding: '0.75rem', background: '#128DA1', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
-              >
-                Create Program
-              </button>
-            </form>
+      {/* Statistics Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+        <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #e0e0e0', borderLeft: '4px solid #128DA1' }}>
+          <div style={{ fontSize: '0.85rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.75rem' }}>
+            Total Programs
           </div>
-        )}
-
-        {/* Statistics Cards */}
-        <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-          <div className="stat-card" style={{ background: 'white', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem' }}>Total Programs</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#128DA1' }}>{stats.totalPrograms}</div>
+          <div style={{ fontSize: '3rem', fontWeight: '700', color: '#128DA1', lineHeight: '1' }}>
+            {stats.totalPrograms}
           </div>
-          <div className="stat-card" style={{ background: 'white', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem' }}>Total Activities</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#128DA1' }}>{stats.totalActivities}</div>
-          </div>
-          <div className="stat-card" style={{ background: 'white', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem' }}>Total Beneficiaries</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#128DA1' }}>{stats.totalBeneficiaries.toLocaleString()}</div>
-          </div>
-          <div className="stat-card" style={{ background: 'white', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem' }}>Total Cost</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#128DA1' }}>${stats.totalCost.toLocaleString()}</div>
+          <div style={{ fontSize: '0.85rem', color: '#999', marginTop: '0.5rem' }}>
+            Active programs
           </div>
         </div>
 
-        {/* Programs Section */}
-        <div style={{ display: 'grid', gridTemplateColumns: selectedProgram ? '1fr 1fr' : '1fr', gap: '2rem' }}>
-          {/* Programs List */}
-          <div>
-            <h3 style={{ marginBottom: '1rem', color: '#00332B', fontSize: '1.25rem', fontWeight: '600' }}>Extension Programs</h3>
-            {programs.length === 0 ? (
-              <div style={{ background: '#f8f9fa', padding: '2rem', borderRadius: '8px', textAlign: 'center', color: '#666' }}>
-                No programs yet. Click "New Program" to get started.
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {programs.map((program) => (
-                  <div
-                    key={program.id}
-                    onClick={() => handleSelectProgram(program)}
-                    style={{
-                      background: selectedProgram?.id === program.id ? '#e0f2f1' : 'white',
-                      padding: '1.25rem',
-                      borderRadius: '8px',
-                      border: selectedProgram?.id === program.id ? '2px solid #128DA1' : '1px solid #e0e0e0',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseOver={(e) => !selectedProgram && (e.currentTarget.style.borderColor = '#128DA1')}
-                    onMouseOut={(e) => !selectedProgram && (e.currentTarget.style.borderColor = '#e0e0e0')}
-                  >
-                    <div style={{ fontWeight: '600', color: '#00332B', marginBottom: '0.5rem' }}>{program.title}</div>
-                    <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.5rem' }}>{program.description}</div>
-                    <div style={{ fontSize: '0.85rem', color: '#999' }}>
-                      {program.startYear} - {program.endYear}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+        <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #e0e0e0', borderLeft: '4px solid #128DA1' }}>
+          <div style={{ fontSize: '0.85rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.75rem' }}>
+            Total Activities
+          </div>
+          <div style={{ fontSize: '3rem', fontWeight: '700', color: '#128DA1', lineHeight: '1' }}>
+            {stats.totalActivities}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: '#999', marginTop: '0.5rem' }}>
+            Tracked activities
+          </div>
+        </div>
+
+        <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #e0e0e0', borderLeft: '4px solid #128DA1' }}>
+          <div style={{ fontSize: '0.85rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.75rem' }}>
+            Total Beneficiaries
+          </div>
+          <div style={{ fontSize: '3rem', fontWeight: '700', color: '#128DA1', lineHeight: '1' }}>
+            {stats.totalBeneficiaries.toLocaleString()}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: '#999', marginTop: '0.5rem' }}>
+            People reached
+          </div>
+        </div>
+
+        <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #e0e0e0', borderLeft: '4px solid #FF4E69' }}>
+          <div style={{ fontSize: '0.85rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.75rem' }}>
+            Total Investment
+          </div>
+          <div style={{ fontSize: '3rem', fontWeight: '700', color: '#FF4E69', lineHeight: '1' }}>
+            ${stats.totalCost.toLocaleString()}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: '#999', marginTop: '0.5rem' }}>
+            Total cost
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div style={{ display: 'grid', gridTemplateColumns: selectedProgram ? '1fr 1fr' : '1fr', gap: '2rem' }}>
+        {/* Left Column - Programs */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ color: '#00332B', fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>
+              Extension Programs
+            </h2>
+            <button
+              onClick={() => setShowProgramForm(!showProgramForm)}
+              style={{
+                background: showProgramForm ? '#e0f2f1' : '#128DA1',
+                color: showProgramForm ? '#128DA1' : 'white',
+                border: 'none',
+                padding: '0.75rem 1.25rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              {showProgramForm ? '✕ Cancel' : '+ New Program'}
+            </button>
           </div>
 
-          {/* Program Details */}
-          {selectedProgram && programStats && (
-            <div style={{ background: 'white', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
-              <h3 style={{ marginBottom: '1rem', color: '#00332B', fontSize: '1.25rem', fontWeight: '600' }}>
-                {selectedProgram.title}
+          {/* Create Program Form */}
+          {showProgramForm && (
+            <form
+              onSubmit={handleCreateProgram}
+              style={{
+                background: 'white',
+                padding: '1.75rem',
+                borderRadius: '12px',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                marginBottom: '2rem',
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              <h3 style={{ color: '#00332B', marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: '600' }}>
+                Create New Program
               </h3>
-
-              {/* Program Stats */}
-              <div style={{ marginBottom: '1.5rem' }}>
-                <h4 style={{ color: '#128DA1', marginBottom: '1rem', fontWeight: '600' }}>Statistics</h4>
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                <input
+                  type="text"
+                  placeholder="Program Title"
+                  value={newProgram.title}
+                  onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value })}
+                  style={{
+                    padding: '0.75rem 1rem',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    fontSize: '0.95rem',
+                    fontFamily: 'inherit',
+                  }}
+                  required
+                />
+                <textarea
+                  placeholder="Description (optional)"
+                  value={newProgram.description}
+                  onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value })}
+                  style={{
+                    padding: '0.75rem 1rem',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    fontSize: '0.95rem',
+                    fontFamily: 'inherit',
+                    minHeight: '80px',
+                    resize: 'vertical',
+                  }}
+                />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div style={{ background: '#f8f9fa', padding: '1rem', borderRadius: '6px' }}>
-                    <div style={{ fontSize: '0.85rem', color: '#666' }}>Activities</div>
-                    <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#128DA1' }}>
-                      {programStats.totalActivities}
-                    </div>
-                  </div>
-                  <div style={{ background: '#f8f9fa', padding: '1rem', borderRadius: '6px' }}>
-                    <div style={{ fontSize: '0.85rem', color: '#666' }}>Beneficiaries</div>
-                    <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#128DA1' }}>
-                      {programStats.totalBeneficiaries.total}
-                    </div>
-                  </div>
-                  <div style={{ background: '#f8f9fa', padding: '1rem', borderRadius: '6px' }}>
-                    <div style={{ fontSize: '0.85rem', color: '#666' }}>SDG Count</div>
-                    <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#128DA1' }}>
-                      {programStats.sdgsInvolved.length}
-                    </div>
-                  </div>
-                  <div style={{ background: '#f8f9fa', padding: '1rem', borderRadius: '6px' }}>
-                    <div style={{ fontSize: '0.85rem', color: '#666' }}>Total Cost</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#128DA1' }}>
-                      ${programStats.totalCost.toLocaleString()}
-                    </div>
-                  </div>
+                  <input
+                    type="number"
+                    placeholder="Start Year"
+                    value={newProgram.startYear}
+                    onChange={(e) => setNewProgram({ ...newProgram, startYear: parseInt(e.target.value) })}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      border: '1px solid #ddd',
+                      borderRadius: '6px',
+                      fontSize: '0.95rem',
+                      fontFamily: 'inherit',
+                    }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="End Year"
+                    value={newProgram.endYear}
+                    onChange={(e) => setNewProgram({ ...newProgram, endYear: parseInt(e.target.value) })}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      border: '1px solid #ddd',
+                      borderRadius: '6px',
+                      fontSize: '0.95rem',
+                      fontFamily: 'inherit',
+                    }}
+                  />
                 </div>
-              </div>
-
-              {/* SDGs Involved */}
-              {programStats.sdgsInvolved.length > 0 && (
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <h4 style={{ color: '#128DA1', marginBottom: '0.75rem', fontWeight: '600' }}>SDGs Involved</h4>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    {programStats.sdgsInvolved.map((sdg) => (
-                      <span
-                        key={sdg}
-                        style={{
-                          background: '#128DA1',
-                          color: 'white',
-                          padding: '0.5rem 0.75rem',
-                          borderRadius: '4px',
-                          fontSize: '0.85rem',
-                          fontWeight: '600',
-                        }}
-                      >
-                        SDG {sdg}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Activity Status Breakdown */}
-              {Object.keys(programStats.statuses).length > 0 && (
-                <div>
-                  <h4 style={{ color: '#128DA1', marginBottom: '0.75rem', fontWeight: '600' }}>Activity Status</h4>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                    {Object.entries(programStats.statuses).map(([status, count]: any) => (
-                      <div key={status} style={{ fontSize: '0.9rem', color: '#666' }}>
-                        <span style={{ textTransform: 'capitalize' }}>{status}</span>: <strong>{count}</strong>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
                 <button
-                  onClick={() => window.location.hash = '#/data'}
+                  type="submit"
                   style={{
                     padding: '0.75rem 1.25rem',
                     background: '#128DA1',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '6px',
+                    borderRadius: '8px',
                     cursor: 'pointer',
                     fontWeight: '600',
-                    flex: 1,
+                    fontSize: '0.95rem',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.background = '#0e7a8a'
+                  }}
+                  onMouseOut={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.background = '#128DA1'
                   }}
                 >
-                  Manage Activities
-                </button>
-                <button
-                  onClick={() => handleDeleteProgram(selectedProgram.id)}
-                  style={{
-                    padding: '0.75rem 1.25rem',
-                    background: '#FF4E69',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                    flex: 1,
-                  }}
-                >
-                  Delete Program
+                  Create Program
                 </button>
               </div>
+            </form>
+          )}
+
+          {/* Programs List */}
+          {programs.length === 0 ? (
+            <div
+              style={{
+                background: 'white',
+                padding: '3rem 2rem',
+                borderRadius: '12px',
+                textAlign: 'center',
+                color: '#999',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📋</div>
+              <p>No programs yet. Click "New Program" to get started.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {programs.map((program) => (
+                <div
+                  key={program.id}
+                  onClick={() => handleSelectProgram(program)}
+                  style={{
+                    background: selectedProgram?.id === program.id ? '#e0f2f1' : 'white',
+                    padding: '1.5rem',
+                    borderRadius: '10px',
+                    border: selectedProgram?.id === program.id ? '2px solid #128DA1' : '1px solid #e0e0e0',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: selectedProgram?.id === program.id ? '0 4px 16px rgba(18,141,161,0.15)' : '0 2px 8px rgba(0,0,0,0.08)',
+                  }}
+                  onMouseOver={(e) => {
+                    if (selectedProgram?.id !== program.id) {
+                      (e.currentTarget as HTMLElement).style.borderColor = '#128DA1'
+                      (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(18,141,161,0.1)'
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (selectedProgram?.id !== program.id) {
+                      (e.currentTarget as HTMLElement).style.borderColor = '#e0e0e0'
+                      (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'
+                    }
+                  }}
+                >
+                  <div style={{ fontWeight: '700', color: '#00332B', marginBottom: '0.5rem', fontSize: '1.05rem' }}>
+                    {program.title}
+                  </div>
+                  {program.description && (
+                    <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.75rem' }}>
+                      {program.description}
+                    </div>
+                  )}
+                  <div style={{ fontSize: '0.85rem', color: '#999', display: 'flex', gap: '1rem' }}>
+                    <span>📅 {program.startYear} - {program.endYear}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
+
+        {/* Right Column - Program Details */}
+        {selectedProgram && programStats && (
+          <div
+            style={{
+              background: 'white',
+              padding: '2rem',
+              borderRadius: '12px',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+              border: '1px solid #e0e0e0',
+              height: 'fit-content',
+              position: 'sticky',
+              top: '2rem',
+            }}
+          >
+            <h3
+              style={{
+                color: '#00332B',
+                fontSize: '1.4rem',
+                fontWeight: '700',
+                marginBottom: '1.5rem',
+                paddingBottom: '1rem',
+                borderBottom: '2px solid #128DA1',
+              }}
+            >
+              {selectedProgram.title}
+            </h3>
+
+            {/* Program Stats Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+              <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '8px', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', color: '#999', fontWeight: '600', marginBottom: '0.5rem' }}>
+                  ACTIVITIES
+                </div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#128DA1' }}>
+                  {programStats.totalActivities}
+                </div>
+              </div>
+              <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '8px', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', color: '#999', fontWeight: '600', marginBottom: '0.5rem' }}>
+                  BENEFICIARIES
+                </div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#128DA1' }}>
+                  {programStats.totalBeneficiaries.total}
+                </div>
+              </div>
+              <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '8px', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', color: '#999', fontWeight: '600', marginBottom: '0.5rem' }}>
+                  SDGs
+                </div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#128DA1' }}>
+                  {programStats.sdgsInvolved.length}
+                </div>
+              </div>
+              <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '8px', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.8rem', color: '#999', fontWeight: '600', marginBottom: '0.5rem' }}>
+                  COST
+                </div>
+                <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#FF4E69' }}>
+                  ${(programStats.totalCost / 1000).toFixed(1)}k
+                </div>
+              </div>
+            </div>
+
+            {/* SDGs */}
+            {programStats.sdgsInvolved.length > 0 && (
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h4 style={{ color: '#00332B', marginBottom: '0.75rem', fontSize: '0.95rem', fontWeight: '600' }}>
+                  SDGs Involved
+                </h4>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {programStats.sdgsInvolved.map((sdg) => (
+                    <span
+                      key={sdg}
+                      style={{
+                        background: '#128DA1',
+                        color: 'white',
+                        padding: '0.4rem 0.8rem',
+                        borderRadius: '20px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                      }}
+                    >
+                      SDG {sdg}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              <a
+                href="#/data"
+                style={{
+                  display: 'block',
+                  padding: '0.75rem 1rem',
+                  background: '#128DA1',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  textAlign: 'center',
+                  textDecoration: 'none',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseOver={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#0e7a8a'
+                }}
+                onMouseOut={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#128DA1'
+                }}
+              >
+                Manage Activities
+              </a>
+              <button
+                onClick={() => {
+                  if (window.confirm('Delete this program?')) {
+                    deleteExtensionProgram(selectedProgram.id).then(() => {
+                      loadPrograms()
+                      setSelectedProgram(null)
+                      setNotification({ type: 'success', text: 'Program deleted' })
+                    })
+                  }
+                }}
+                style={{
+                  padding: '0.75rem 1rem',
+                  background: '#FF4E69',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseOver={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = '0.9'
+                }}
+                onMouseOut={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = '1'
+                }}
+              >
+                Delete Program
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
