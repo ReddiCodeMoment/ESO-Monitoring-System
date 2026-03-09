@@ -10,3 +10,138 @@ export interface BaseRecord {
   lastModified: string
   archived: boolean
 }
+
+// ===== ESO MONITORING SYSTEM TYPES =====
+
+export interface Beneficiaries {
+  male: number
+  female: number
+  total: number
+}
+
+export interface Activity {
+  id: string
+  title: string
+  location: string
+  startDate: string // ISO format YYYY-MM-DD
+  endDate: string // ISO format YYYY-MM-DD
+  extensionAgenda: string
+  duration: string // e.g., "8 hours", "2 days", "3 months"
+  
+  // SDG selection
+  sdgInvolved: string[] // Array of SDG numbers (1-17)
+  
+  // Organization details
+  implementingCollege: string
+  programsInvolved: string[] // Multiple programs
+  facultyExtensionists: string[] // Array of faculty names
+  
+  // Partnership
+  partnerAgency: string
+  typeOfPartner: string // e.g., "Government", "Private", "NGO", "Community Organization"
+  supportProvided: string
+  
+  // Financials
+  totalCost: number
+  sourceOfFund: string // e.g., "Internal", "External Grant", "Budget Allocation"
+  
+  // Participants
+  typeOfParticipant: string[] // e.g., ["Students", "Faculty", "Community"]
+  beneficiaries: Beneficiaries
+  
+  // Metadata
+  createdAt: string
+  updatedAt: string
+  createdBy: string
+  status: 'draft' | 'submitted' | 'approved' | 'completed'
+}
+
+export interface ExtensionProgram {
+  id: string
+  title: string
+  description?: string
+  startYear: number
+  endYear: number
+  activities: Activity[]
+  
+  // Metadata
+  createdAt: string
+  updatedAt: string
+  createdBy: string
+  archived: boolean
+}
+
+export interface ActivityFormData {
+  title: string
+  location: string
+  startDate: string
+  endDate: string
+  extensionAgenda: string
+  duration: string
+  sdgInvolved: string[]
+  implementingCollege: string
+  programsInvolved: string[]
+  facultyExtensionists: string[]
+  partnerAgency: string
+  typeOfPartner: string
+  supportProvided: string
+  totalCost: string
+  sourceOfFund: string
+  typeOfParticipant: string[]
+  beneficiaries: {
+    male: string
+    female: string
+    total: string
+  }
+}
+
+// SDG Constants
+export const SDG_LIST = [
+  { id: '1', name: 'No Poverty' },
+  { id: '2', name: 'Zero Hunger' },
+  { id: '3', name: 'Good Health and Well-being' },
+  { id: '4', name: 'Quality Education' },
+  { id: '5', name: 'Gender Equality' },
+  { id: '6', name: 'Clean Water and Sanitation' },
+  { id: '7', name: 'Affordable and Clean Energy' },
+  { id: '8', name: 'Decent Work and Economic Growth' },
+  { id: '9', name: 'Industry, Innovation and Infrastructure' },
+  { id: '10', name: 'Reduced Inequalities' },
+  { id: '11', name: 'Sustainable Cities and Communities' },
+  { id: '12', name: 'Responsible Consumption and Production' },
+  { id: '13', name: 'Climate Action' },
+  { id: '14', name: 'Life Below Water' },
+  { id: '15', name: 'Life on Land' },
+  { id: '16', name: 'Peace, Justice and Strong Institutions' },
+  { id: '17', name: 'Partnerships for the Goals' },
+]
+
+export const PARTNER_TYPES = [
+  'Government Agency',
+  'Private Business',
+  'Non-Governmental Organization',
+  'Community Organization',
+  'Educational Institution',
+  'Healthcare Institution',
+  'International Organization',
+  'Other',
+]
+
+export const PARTICIPANT_TYPES = [
+  'Students',
+  'Faculty Members',
+  'Staff',
+  'Community Members',
+  'Government Officials',
+  'Business Partners',
+  'Other',
+]
+
+export const FUND_SOURCES = [
+  'University Internal Budget',
+  'External Grant',
+  'Government Allocation',
+  'Private Sponsorship',
+  'Partner Organization',
+  'Other',
+]
