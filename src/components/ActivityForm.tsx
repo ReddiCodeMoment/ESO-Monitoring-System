@@ -117,16 +117,6 @@ export function ActivityForm({
     }))
   }
 
-  const handleArrayInputChange = (
-    field: 'facultyExtensionists',
-    value: string
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value.split(';').map((item) => item.trim()),
-    }))
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)

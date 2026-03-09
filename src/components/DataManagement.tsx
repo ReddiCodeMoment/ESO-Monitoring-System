@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ExtensionProgram, Activity } from '../types'
-import { getExtensionPrograms, getActivities, createActivity, updateActivity } from '../services/extensionService'
+import { getExtensionPrograms, createActivity, updateActivity } from '../services/extensionService'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 import { ActivityForm } from './ActivityForm'
@@ -13,7 +13,6 @@ export function DataManagement() {
   const [selectedProgram, setSelectedProgram] = useState<ExtensionProgram | null>(null)
   const [view, setView] = useState<'list' | 'form'>('list')
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
-  const [activities, setActivities] = useState<Activity[]>([])
 
   useEffect(() => {
     loadPrograms()
@@ -21,7 +20,7 @@ export function DataManagement() {
 
   useEffect(() => {
     if (selectedProgram) {
-      loadActivities(selectedProgram.id)
+      loadActivities()
     }
   }, [selectedProgram])
 
@@ -38,10 +37,9 @@ export function DataManagement() {
     }
   }
 
-  const loadActivities = async (programId: string) => {
+  const loadActivities = async () => {
     try {
-      const data = await getActivities(programId)
-      setActivities(data)
+      // Activities are loaded directly from ActivityList component
     } catch (error) {
       setNotification({ type: 'error', text: 'Failed to load activities' })
       console.error('Error:', error)
@@ -108,7 +106,7 @@ export function DataManagement() {
         setNotification({ type: 'success', text: 'Activity created successfully!' })
       }
 
-      loadActivities(selectedProgram.id)
+      loadActivities()
       setView('list')
       setEditingActivity(null)
     } catch (error) {
@@ -179,7 +177,7 @@ export function DataManagement() {
               setEditingActivity(activity)
               setView('form')
             }}
-            onRefresh={() => loadActivities(selectedProgram.id)}
+            onRefresh={() => loadActivities()}
           />
         </div>
       ) : (
@@ -202,7 +200,6 @@ export function DataManagement() {
           </button>
 
           <ActivityForm
-            programId={selectedProgram.id}
             initialData={editingActivity || undefined}
             onSubmit={handleSubmitActivity}
             onCancel={() => {

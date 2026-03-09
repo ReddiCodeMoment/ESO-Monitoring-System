@@ -38,16 +38,14 @@ export function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              disabled={loading}
             />
           </div>
 
           <button 
             type="submit" 
-            disabled={loading}
             className="login-button"
           >
-            {loading ? 'Logging in...' : 'Sign In'}
+            Sign In
           </button>
         </form>
 

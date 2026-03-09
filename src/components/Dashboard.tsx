@@ -309,15 +309,15 @@ export function Dashboard() {
                     transition: 'all 0.3s ease',
                     boxShadow: selectedProgram?.id === program.id ? '0 4px 16px rgba(18,141,161,0.15)' : '0 2px 8px rgba(0,0,0,0.08)',
                   }}
-                  onMouseOver={(e) => {
+                  onMouseOver={(e: React.MouseEvent<HTMLDivElement>) => {
                     if (selectedProgram?.id !== program.id) {
-                      (e.currentTarget as HTMLElement).style.borderColor = '#128DA1'
+                      (e.currentTarget as HTMLElement).style.borderColor = '#128DA1';
                       (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(18,141,161,0.1)'
                     }
                   }}
-                  onMouseOut={(e) => {
+                  onMouseOut={(e: React.MouseEvent<HTMLDivElement>) => {
                     if (selectedProgram?.id !== program.id) {
-                      (e.currentTarget as HTMLElement).style.borderColor = '#e0e0e0'
+                      (e.currentTarget as HTMLElement).style.borderColor = '#e0e0e0';
                       (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'
                     }
                   }}
@@ -409,7 +409,7 @@ export function Dashboard() {
                   SDGs Involved
                 </h4>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  {programStats.sdgsInvolved.map((sdg) => (
+                  {programStats.sdgsInvolved.map((sdg: string) => (
                     <span
                       key={sdg}
                       style={{
