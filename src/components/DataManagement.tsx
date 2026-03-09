@@ -11,7 +11,6 @@ export function DataManagement() {
   const { user } = useAuth()
   const [programs, setPrograms] = useState<ExtensionProgram[]>([])
   const [selectedProgram, setSelectedProgram] = useState<ExtensionProgram | null>(null)
-  const [activities, setActivities] = useState<Activity[]>([])
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState<'list' | 'form'>('list')
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null)

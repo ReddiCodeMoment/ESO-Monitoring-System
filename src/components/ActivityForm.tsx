@@ -9,14 +9,12 @@ import {
 } from '../types'
 
 interface ActivityFormProps {
-  programId: string
   initialData?: Activity
   onSubmit: (data: ActivityFormData) => Promise<void>
   onCancel: () => void
 }
 
 export function ActivityForm({
-  programId,
   initialData,
   onSubmit,
   onCancel,

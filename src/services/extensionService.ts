@@ -9,7 +9,6 @@ import {
   query,
   where,
   Timestamp,
-  WriteBatch,
   writeBatch,
 } from 'firebase/firestore'
 import { db } from '../firebase.config' // Make sure this exists

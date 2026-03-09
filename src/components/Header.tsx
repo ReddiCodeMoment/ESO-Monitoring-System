@@ -2,7 +2,7 @@ import { useAuth } from '../context/AuthContext'
 import '../styles/header.css'
 
 export function Header() {
-  const { logout, userEmail } = useAuth()
+  const { logout, user } = useAuth()
 
   return (
     <header className="header">
@@ -11,7 +11,7 @@ export function Header() {
           <h1>ESO Monitoring System</h1>
         </div>
         <div className="header-user">
-          <span>{userEmail}</span>
+          <span>{user?.email}</span>
           <button onClick={logout} className="header-logout-btn">
             Logout
           </button>
