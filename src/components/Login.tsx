@@ -6,19 +6,15 @@ export function Login() {
   const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
     try {
       await login(email)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed. Please try again.')
       console.error('Login failed:', err)
-    } finally {
-      setLoading(false)
     }
   }
 

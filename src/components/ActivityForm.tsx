@@ -43,7 +43,6 @@ export function ActivityForm({
     },
   })
 
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -131,7 +130,6 @@ export function ActivityForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    setLoading(true)
 
     try {
       // Validation
@@ -147,8 +145,6 @@ export function ActivityForm({
       await onSubmit(formData)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -523,10 +519,9 @@ export function ActivityForm({
         </button>
         <button
           type="submit"
-          disabled={loading}
-          className="px-6 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition disabled:opacity-50"
+          className="px-6 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition"
         >
-          {loading ? 'Saving...' : 'Save Activity'}
+          Save Activity
         </button>
       </div>
     </form>

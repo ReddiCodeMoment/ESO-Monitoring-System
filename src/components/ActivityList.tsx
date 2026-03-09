@@ -10,7 +10,6 @@ interface ActivityListProps {
 
 export function ActivityList({ programId, onEdit, onRefresh }: ActivityListProps) {
   const [activities, setActivities] = useState<Activity[]>([])
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<'date' | 'cost' | 'beneficiaries'>('date')
 
@@ -20,14 +19,11 @@ export function ActivityList({ programId, onEdit, onRefresh }: ActivityListProps
 
   const loadActivities = async () => {
     try {
-      setLoading(true)
       setError(null)
       const data = await getActivities(programId)
       setActivities(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load activities')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -57,10 +53,6 @@ export function ActivityList({ programId, onEdit, onRefresh }: ActivityListProps
       default:
         return sorted.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
     }
-  }
-
-  if (loading) {
-    return <div className="text-center py-8">Loading activities...</div>
   }
 
   if (error) {

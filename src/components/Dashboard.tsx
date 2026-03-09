@@ -9,7 +9,6 @@ export function Dashboard() {
   const { user } = useAuth()
   const { setNotification } = useApp()
   const [programs, setPrograms] = useState<ExtensionProgram[]>([])
-  const [loading, setLoading] = useState(true)
   const [showProgramForm, setShowProgramForm] = useState(false)
   const [newProgram, setNewProgram] = useState({ title: '', description: '', startYear: new Date().getFullYear(), endYear: new Date().getFullYear() })
   const [stats, setStats] = useState({ totalPrograms: 0, totalActivities: 0, totalBeneficiaries: 0, totalCost: 0 })
@@ -22,7 +21,6 @@ export function Dashboard() {
 
   const loadPrograms = async () => {
     try {
-      setLoading(true)
       const data = await getExtensionPrograms()
       setPrograms(data)
       
@@ -49,8 +47,6 @@ export function Dashboard() {
       })
     } catch (error) {
       console.error('Error loading programs:', error)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -92,13 +88,7 @@ export function Dashboard() {
     }
   }
 
-  if (loading) {
-    return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
-        <div style={{ fontSize: '1rem', color: '#128DA1' }}>Loading dashboard...</div>
-      </div>
-    )
-  }
+
 
   return (
     <div style={{ padding: '2rem', background: '#f8fafb', minHeight: '100vh' }}>

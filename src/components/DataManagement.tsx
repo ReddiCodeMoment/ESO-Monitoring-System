@@ -11,9 +11,9 @@ export function DataManagement() {
   const { user } = useAuth()
   const [programs, setPrograms] = useState<ExtensionProgram[]>([])
   const [selectedProgram, setSelectedProgram] = useState<ExtensionProgram | null>(null)
-  const [loading, setLoading] = useState(true)
   const [view, setView] = useState<'list' | 'form'>('list')
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
+  const [activities, setActivities] = useState<Activity[]>([])
 
   useEffect(() => {
     loadPrograms()
@@ -27,7 +27,6 @@ export function DataManagement() {
 
   const loadPrograms = async () => {
     try {
-      setLoading(true)
       const data = await getExtensionPrograms()
       setPrograms(data)
       if (data.length > 0) {
@@ -36,8 +35,6 @@ export function DataManagement() {
     } catch (error) {
       setNotification({ type: 'error', text: 'Failed to load programs' })
       console.error('Error:', error)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -118,10 +115,6 @@ export function DataManagement() {
       setNotification({ type: 'error', text: 'Failed to save activity' })
       console.error('Error:', error)
     }
-  }
-
-  if (loading) {
-    return <div className="data-container" style={{ padding: '2rem' }}>Loading...</div>
   }
 
   if (!selectedProgram) {
