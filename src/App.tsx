@@ -5,6 +5,7 @@ import { Header } from './components/Header'
 import { Sidebar } from './components/Sidebar'
 import { Login } from './components/Login'
 import { Dashboard } from './components/Dashboard'
+import { DataManagement } from './components/DataManagement'
 import './styles/layout.css'
 import './styles/header.css'
 
@@ -28,8 +29,8 @@ function AuthenticatedApp() {
         <Sidebar activeTab={activeTab} onTabChange={(tab: any) => setActiveTab(tab)} />
         <div className="app-content">
           {activeTab === 'dashboard' && <Dashboard />}
-          {activeTab === 'data' && <div className="content-section"><h2>Data Management</h2><p>Add your data management content here</p></div>}
-          {activeTab === 'settings' && <div className="content-section"><h2>Settings</h2><p>Add your settings content here</p></div>}
+          {activeTab === 'data' && <DataManagement />}
+          {activeTab === 'settings' && <div className="content-section"><h2>Settings</h2><p>Settings coming soon...</p></div>}
         </div>
       </main>
     </div>
