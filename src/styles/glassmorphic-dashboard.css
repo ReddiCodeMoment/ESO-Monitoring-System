@@ -1,0 +1,744 @@
+/* ============================================
+   Glassmorphic Dashboard Theme
+   Institutional Design System
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ===== Color Palette ===== */
+:root {
+  --glass-bg-primary: rgba(255, 255, 255, 0.1);
+  --glass-bg-secondary: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-blur: 20px;
+  --glass-border-radius: 16px;
+  --forest-green: #2D5A27;
+  --forest-green-hover: #1f3d1a;
+  --forest-green-light: #3d7a36;
+  --crimson-primary: #CF0E28;
+  --crimson-dark: #8f1024;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-light: #9ca3af;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+}
+
+:root.dark-mode {
+  --glass-bg-primary: rgba(255, 255, 255, 0.08);
+  --glass-bg-secondary: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-light: #94a3b8;
+}
+
+/* ===== Background & Container ===== */
+.submissions-layout-wrapper {
+  min-height: calc(100vh - 80px);
+  position: relative;
+  background-color: #0f0f1e;
+  overflow: auto;
+}
+
+.submissions-layout-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(135deg, rgba(207, 14, 40, 0.7) 0%, rgba(162, 10, 30, 0.7) 100%),
+    url('/images/bsubackgroundlogin.png');
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  filter: blur(8px);
+  z-index: -2;
+  pointer-events: none;
+}
+
+.submissions-layout-wrapper::after {
+  content: '';
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(207, 14, 40, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ===== Main Layout Container ===== */
+.submissions-layout {
+  position: relative;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  background: rgba(15, 15, 30, 0.3);
+}
+
+/* ===== Statistics Grid - Glass Tiles ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 0;
+}
+
+.stat-card {
+  background: var(--glass-bg-primary);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-border-radius);
+  padding: 1.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stat-card:hover {
+  background: var(--glass-bg-secondary);
+  backdrop-filter: blur(calc(var(--glass-blur) + 5px));
+  border-color: rgba(45, 90, 39, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 
+    0 12px 40px rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.stat-card-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-card-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.stat-card-unit {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+/* ===== Dashboard Section ===== */
+.dashboard-container {
+  position: relative;
+  z-index: 10;
+  padding: 2rem;
+}
+
+.dashboard-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-grid-2x2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.dashboard-item {
+  background: var(--glass-bg-primary);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-border-radius);
+  padding: 1.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.dashboard-item:hover {
+  background: var(--glass-bg-secondary);
+  border-color: rgba(45, 90, 39, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 
+    0 12px 40px rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ===== Glass Table ===== */
+.table-section {
+  position: relative;
+  z-index: 10;
+  background: var(--glass-bg-primary);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-border-radius);
+  padding: 1.75rem;
+  margin-top: 2rem;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.submissions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.submissions-table thead {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.submissions-table th {
+  padding: 1rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.submissions-table td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.submissions-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.submissions-table tbody tr:hover {
+  background: rgba(45, 90, 39, 0.1);
+}
+
+.submissions-table tbody tr.active {
+  background: rgba(45, 90, 39, 0.15);
+  border-left: 3px solid var(--forest-green);
+}
+
+/* ===== Status Badge ===== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.status-badge.complete {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success-color);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-badge.incomplete {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--error-color);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-badge.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning-color);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* ===== Repository Grid ===== */
+.repository-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.repository-item {
+  background: var(--glass-bg-primary);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-border-radius);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.repository-item:hover {
+  background: var(--glass-bg-secondary);
+  border-color: rgba(45, 90, 39, 0.4);
+  transform: translateY(-6px);
+  box-shadow: 
+    0 12px 40px rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.repository-item-header {
+  margin-bottom: 1.25rem;
+}
+
+.repository-item-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+
+.repository-item-header p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.repository-files {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.doc-link {
+  display: inline-block;
+  color: var(--forest-green);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  padding: 0.5rem 0;
+}
+
+.doc-link:hover {
+  color: var(--forest-green-hover);
+  text-decoration: underline;
+}
+
+/* ===== Form Fields - Grouped with Dividers ===== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.form-group:last-child {
+  border-bottom: none;
+}
+
+.form-group-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-light);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(45, 90, 39, 0.6);
+  box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, var(--forest-green) 0%, var(--forest-green-light) 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(45, 90, 39, 0.3);
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(45, 90, 39, 0.4);
+  background: linear-gradient(135deg, var(--forest-green-hover) 0%, var(--forest-green) 100%);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(45, 90, 39, 0.3);
+}
+
+/* ===== Modal with Glassmorphism ===== */
+.modal-glass {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-glass-content {
+  background: var(--glass-bg-primary);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-border-radius);
+  padding: 2rem;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Filter Sidebar - Glass Style ===== */
+.filters-sidebar {
+  background: var(--glass-bg-primary);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-border-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-select {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.filter-select:hover {
+  border-color: rgba(45, 90, 39, 0.3);
+}
+
+.filter-select:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(45, 90, 39, 0.6);
+  box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1);
+}
+
+/* ===== Empty State ===== */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.empty-state__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state__subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .submissions-layout-wrapper {
+    padding: 1rem;
+  }
+
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .stat-card-value {
+    font-size: 2rem;
+  }
+
+  .dashboard-grid-2x2 {
+    grid-template-columns: 1fr;
+  }
+
+  .table-section {
+    overflow-x: auto;
+  }
+
+  .submissions-table {
+    font-size: 0.85rem;
+  }
+
+  .submissions-table th,
+  .submissions-table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .repository-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Dark Mode Adjustments ===== */
+:root.dark-mode .stat-card {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+:root.dark-mode .stat-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+:root.dark-mode .form-input,
+:root.dark-mode .form-textarea,
+:root.dark-mode .form-select {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+:root.dark-mode .form-input:focus,
+:root.dark-mode .form-textarea:focus,
+:root.dark-mode .form-select:focus {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Tailwind Form Elements Override ===== */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+textarea,
+select {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+.fixed.inset-0.bg-black {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.bg-white.dark\:bg-gray-800 {
+  background: var(--glass-bg-primary) !important;
+  backdrop-filter: blur(var(--glass-blur)) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.border-gray-300.dark\:border-gray-600 {
+  border-color: var(--glass-border) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.focus\:ring-primary-500:focus {
+  border-color: rgba(45, 90, 39, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1) !important;
+  outline: none !important;
+}
+
+input[class*="px-3"][class*="py-2"],
+textarea[class*="px-3"][class*="py-2"] {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--glass-border) !important;
+  color: var(--text-primary) !important;
+}
+
+input[class*="px-3"][class*="py-2"]:focus,
+textarea[class*="px-3"][class*="py-2"]:focus {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(45, 90, 39, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1) !important;
+}
+
+/* Primary button styling */
+button.bg-primary-600,
+button.bg-\[\#2D5A27\] {
+  background: linear-gradient(135deg, var(--forest-green) 0%, var(--forest-green-light) 100%) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(45, 90, 39, 0.3) !important;
+}
+
+button.bg-primary-600:hover,
+button.bg-\[\#2D5A27\]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(45, 90, 39, 0.4) !important;
+  background: linear-gradient(135deg, var(--forest-green-hover) 0%, var(--forest-green) 100%) !important;
+}
+
+button:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* Section headers */
+h3.text-lg.font-semibold,
+h2.text-xl.font-bold {
+  color: var(--text-primary) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* Text styling */
+.text-sm.font-medium,
+.text-gray-700.dark\:text-gray-300 {
+  color: var(--text-primary) !important;
+}
+
+label {
+  color: var(--text-primary) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+/* Ensure text contrast in both light and dark modes */
+.text-gray-900.dark\:text-white {
+  color: var(--text-primary) !important;
+}
+
+.text-gray-500,
+.text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+/* Grid styling for form layout */
+.grid.grid-cols-2 {
+  gap: 1rem !important;
+}
+
+/* Space between form sections */
+.space-y-4 > * {
+  margin-bottom: 1rem !important;
+}
+
+.space-y-6 > * {
+  margin-bottom: 1.5rem !important;
+}
+
+/* Sticky headers */
+.sticky.top-0 {
+  background: var(--glass-bg-primary) !important;
+  backdrop-filter: blur(var(--glass-blur)) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+}
+
+/* Scrollable content */
+.max-h-\[90vh\] {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+}

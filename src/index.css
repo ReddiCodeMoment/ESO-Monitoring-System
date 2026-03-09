@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-primary: #CF0E28;
+  --color-primary-dark: #a01729;
+  --color-success: #4caf50;
+  --color-danger: #CF0E28;
+  --color-warning: #ff9800;
+  --color-info: #2196f3;
+  --color-bg: #F8F8FF;
+  --color-bg-alt: #F8F8F7;
+  --color-text: #333333;
+  --color-text-light: #666666;
+  --color-border: #e0e0e0;
+}
+
+:root.dark-mode {
+  --color-success: #10b981;
+  --color-danger: #fecaca;
+  --color-warning: #fbbf24;
+  --color-info: #60a5fa;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Utility classes for colored text */
+.text-success {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.text-danger {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.text-warning {
+  color: var(--color-warning);
+  font-weight: 600;
+}
+
+.text-info {
+  color: var(--color-info);
+  font-weight: 600;
+}

@@ -1,0 +1,312 @@
+/* ============================================
+   TSERVE Header Styling
+   ============================================ */
+
+.banner {
+  background-color: var(--color-danger);
+  background-image: url('/images/Banner2.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: none;
+  border-bottom: 1px solid rgba(254, 202, 202, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  overflow: visible;
+}
+
+.banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(207, 14, 40, 0.7) 0%, rgba(160, 11, 32, 0.8) 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+.banner-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 0 0 auto;
+}
+
+.banner-left h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: white;
+}
+
+.banner-nav {
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.92rem;
+  transition: color 0.2s ease;
+  position: relative;
+  padding-bottom: 0.4rem;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: white;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(248, 250, 252, 0.9);
+  border-radius: 2px;
+}
+
+.banner-utilities {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.utilities-dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  min-width: 220px;
+  background: var(--color-bg-alt);
+  color: #333;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+  z-index: 50;
+  display: none;
+}
+
+.dropdown-menu.active {
+  display: block;
+}
+
+.dropdown-item {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  font-size: 0.9rem;
+  color: #1f2937;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-item:hover {
+  background: #e5e7eb;
+}
+
+.dropdown-separator {
+  margin: 0.5rem 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+}
+
+.utility-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.55rem 0.95rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.utility-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.utility-btn:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.dark-mode-btn:hover {
+  /* Use a much subtler hover so the white icon stays visible in dark mode */
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.dark-mode-btn svg {
+  stroke: white;
+}
+
+/* Dark mode dropdown adjustments */
+:root.dark-mode .dropdown-item {
+  color: #f8fafc;
+}
+
+:root.dark-mode .dropdown-item:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+:root.dark-mode .dropdown-menu {
+  background: #03101a;
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+}
+
+:root.dark-mode .dropdown-separator {
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .banner {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .banner-nav {
+    margin: 0;
+    gap: 1.5rem;
+  }
+
+  .banner-utilities {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .banner {
+    padding: 0.75rem 1rem;
+  }
+
+  .banner-left h1 {
+    font-size: 1.5rem;
+  }
+
+  .banner-nav {
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .utility-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .banner-nav {
+    margin: 0 1rem;
+  }
+}
+
+/* ===== User Profile Menu ===== */
+.user-profile-menu {
+  position: relative;
+}
+
+.profile-circle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.profile-circle-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}
+
+.profile-circle-btn:active {
+  transform: scale(0.98);
+}
+
+.user-profile-menu .dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  min-width: 220px;
+}
+
+.dropdown-item-text {
+  display: block;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.logout-item {
+  color: #CF0E28 !important;
+}
+
+.logout-item:hover {
+  background: rgba(207, 14, 40, 0.1) !important;
+}
