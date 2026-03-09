@@ -10,13 +10,16 @@ export default {
     extend: {
       colors: {
         white: '#F8F8F7',
-          primary: {
-            50: '#fff5f5',
-            100: '#ffe0e0',
-            500: '#CF0E28',
-            600: '#a50b20',
-            700: '#780817',
+        primary: {
+          50: '#e0f2f1',
+          100: '#b2dfdb',
+          500: '#128DA1',
+          600: '#0e7a8a',
+          700: '#0a627a',
         },
+        secondary: '#FF4E69',
+        heading: '#00332B',
+        background: '#D9E3DA',
         success: '#4caf50',
         danger: '#f44336',
         warning: '#ff9800',

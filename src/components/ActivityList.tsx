@@ -121,7 +121,7 @@ export function ActivityList({ programId, onEdit, onRefresh }: ActivityListProps
                   {new Date(activity.endDate).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
+                  <span className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-semibold">
                     {activity.beneficiaries.total}
                   </span>
                 </td>
@@ -134,7 +134,7 @@ export function ActivityList({ programId, onEdit, onRefresh }: ActivityListProps
                       activity.status === 'completed'
                         ? 'bg-green-100 text-green-800'
                         : activity.status === 'approved'
-                        ? 'bg-blue-100 text-blue-800'
+                        ? 'bg-teal-100 text-teal-800'
                         : activity.status === 'submitted'
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-gray-100 text-gray-800'
@@ -146,7 +146,7 @@ export function ActivityList({ programId, onEdit, onRefresh }: ActivityListProps
                 <td className="px-6 py-4 text-center">
                   <button
                     onClick={() => onEdit(activity)}
-                    className="text-blue-600 hover:text-blue-800 mr-4 text-sm font-medium"
+                    className="text-teal-600 hover:text-teal-800 mr-4 text-sm font-medium"
                   >
                     Edit
                   </button>
