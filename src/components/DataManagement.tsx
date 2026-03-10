@@ -207,23 +207,28 @@ export function DataManagement() {
   }
 
   // Return TSX
-  if (view === 'form' && selectedProject) {
-    return (
-      <ActivityForm
-        initialData={editingActivity || undefined}
-        onSubmit={handleSubmitActivity}
-        onCancel={() => {
-          setView('list')
-          setEditingActivity(null)
-        }}
-      />
-    )
-  }
-
   const programProjects = selectedProgram ? projects.get(selectedProgram.id) || [] : []
 
   return (
     <div className="space-y-6" style={{ padding: '2rem' }}>
+      {/* Modal Backdrop and Form */}
+      {view === 'form' && selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+          <div className="my-8 mx-4">
+            <ActivityForm
+              initialData={editingActivity || undefined}
+              onSubmit={handleSubmitActivity}
+              onCancel={() => {
+                setView('list')
+                setEditingActivity(null)
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Area - dimmed when form modal is open */}
+      <div style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
       {/* Quick Action Buttons */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
@@ -574,6 +579,8 @@ export function DataManagement() {
           }}
         />
       )}
+      </div>
+      {/* End of Main Content Area */}
     </div>
   )
 }
