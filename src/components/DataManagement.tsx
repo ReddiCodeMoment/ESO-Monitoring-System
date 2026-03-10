@@ -109,7 +109,7 @@ export function DataManagement() {
 
   const handleCreateProject = async () => {
     if (!selectedProgram || !newProject.title.trim()) {
-      setNotification({ type: 'error', text: 'Project name is required' })
+      setNotification({ type: 'error', text: 'Program and project name are required' })
       return
     }
 
@@ -234,14 +234,12 @@ export function DataManagement() {
           >
             + New Program
           </button>
-          {selectedProgram && (
-            <button
-              onClick={() => setView('createProject')}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-            >
-              + New Project
-            </button>
-          )}
+          <button
+            onClick={() => setView('createProject')}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          >
+            + New Project
+          </button>
           <button
             onClick={() => setView('createActivity')}
             className="px-4 py-2 bg-coral-500 text-white rounded-lg hover:bg-coral-600 transition"
@@ -317,68 +315,97 @@ export function DataManagement() {
         </div>
       )}
 
-      {/* Create Project Form */}
-      {view === 'createProject' && selectedProgram && (
+      {/* Create Project - Select Parent Form */}
+      {view === 'createProject' && (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Create New Project in "{selectedProgram.title}"</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Parent Program for New Project</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Title *</label>
-              <input
-                type="text"
-                value={newProject.title}
-                onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Project title"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
-              <textarea
-                value={newProject.description}
-                onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows={3}
-                placeholder="Project description"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Start Date</label>
-                <input
-                  type="date"
-                  value={newProject.startDate}
-                  onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">End Date</label>
-                <input
-                  type="date"
-                  value={newProject.endDate}
-                  onChange={(e) => setNewProject({ ...newProject, endDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-            <div className="flex gap-2 pt-4">
-              <button
-                onClick={handleCreateProject}
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-              >
-                Create Project
-              </button>
-              <button
-                onClick={() => {
-                  setView('list')
-                  setNewProject({ title: '', description: '', startDate: '', endDate: '' })
+              <label className="block text-sm font-medium text-gray-700">Program *</label>
+              <select
+                value={selectedProgram?.id || ''}
+                onChange={(e) => {
+                  const program = programs.find((p) => p.id === e.target.value)
+                  if (program) {
+                    setSelectedProgram(program)
+                  }
                 }}
-                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                Cancel
-              </button>
+                <option value="">-- Select a Program --</option>
+                {programs.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            {selectedProgram && (
+              <div className="pt-4 border-t border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-4">Project Details</h4>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Title *</label>
+                    <input
+                      type="text"
+                      value={newProject.title}
+                      onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Project title"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea
+                      value={newProject.description}
+                      onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={3}
+                      placeholder="Project description"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                      <input
+                        type="date"
+                        value={newProject.startDate}
+                        onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">End Date</label>
+                      <input
+                        type="date"
+                        value={newProject.endDate}
+                        onChange={(e) => setNewProject({ ...newProject, endDate: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2 pt-4">
+                    <button
+                      onClick={handleCreateProject}
+                      className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                    >
+                      Create Project
+                    </button>
+                    <button
+                      onClick={() => {
+                        setView('list')
+                        setNewProject({ title: '', description: '', startDate: '', endDate: '' })
+                        setSelectedProgram(null)
+                      }}
+                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
