@@ -6,12 +6,13 @@ import {
   updateActivity, 
   createProject, 
   getProjectsByProgramId,
-  createExtensionProgram
+  createExtensionProgram,
+  getActivitiesByProjectId,
+  deleteActivity
 } from '../services/extensionService'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 import { ActivityForm } from './ActivityForm'
-import { ActivityList } from './ActivityList'
 
 export function DataManagement() {
   const { setNotification } = useApp()
@@ -20,6 +21,7 @@ export function DataManagement() {
   // Data states
   const [programs, setPrograms] = useState<ExtensionProgram[]>([])
   const [projects, setProjects] = useState<Map<string, Project[]>>(new Map())
+  const [activities, setActivities] = useState<Map<string, Activity[]>>(new Map())
   
   // Selection states
   const [selectedProgram, setSelectedProgram] = useState<ExtensionProgram | null>(null)
@@ -90,12 +92,25 @@ export function DataManagement() {
     }
   }, [view, programs])
 
-  const toggleProject = (projectId: string) => {
+  const loadActivitiesForProject = async (programId: string, projectId: string) => {
+    const key = `${programId}-${projectId}`
+    if (activities.has(key)) return
+    try {
+      const data = await getActivitiesByProjectId(programId, projectId)
+      setActivities((prev) => new Map(prev).set(key, data))
+    } catch (error) {
+      console.error('Error loading activities:', error)
+    }
+  }
+
+  const toggleProject = (projectId: string, programId: string) => {
     const newExpanded = new Set(expandedProjects)
     if (newExpanded.has(projectId)) {
       newExpanded.delete(projectId)
     } else {
       newExpanded.add(projectId)
+      // Load activities when expanding project
+      loadActivitiesForProject(programId, projectId)
     }
     setExpandedProjects(newExpanded)
   }
@@ -558,7 +573,7 @@ export function DataManagement() {
                             }`}
                             onClick={() => {
                               setSelectedProject(project)
-                              toggleProject(project.id)
+                              toggleProject(project.id, program.id)
                             }}
                           >
                             <div className="flex items-center gap-3 flex-1">
@@ -576,6 +591,65 @@ export function DataManagement() {
                               Project
                             </span>
                           </div>
+
+                          {/* Activities List (shown when project is expanded) */}
+                          {expandedProjects.has(project.id) && (
+                            <div className="bg-white border-t border-gray-100">
+                              {(() => {
+                                const key = `${program.id}-${project.id}`
+                                const projectActivities = activities.get(key) || []
+                                return projectActivities.length === 0 ? (
+                                  <div className="p-3 pl-20 text-gray-400 text-sm italic">No activities yet</div>
+                                ) : (
+                                  projectActivities.map((activity) => (
+                                    <div key={activity.id} className="p-3 pl-20 border-b border-gray-100 last:border-b-0 flex items-center justify-between hover:bg-gray-50 group">
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium text-gray-800 truncate">{activity.title}</p>
+                                        <p className="text-xs text-gray-500">{activity.location}</p>
+                                      </div>
+                                      <div className="flex items-center gap-2 ml-4">
+                                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded whitespace-nowrap">
+                                          Activity
+                                        </span>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation()
+                                            setEditingActivity(activity)
+                                            setView('form')
+                                          }}
+                                          className="text-blue-600 hover:text-blue-800 text-sm px-2 opacity-0 group-hover:opacity-100 transition"
+                                        >
+                                          Edit
+                                        </button>
+                                        <button
+                                          onClick={async (e) => {
+                                            e.stopPropagation()
+                                            if (!window.confirm('Delete this activity?')) return
+                                            try {
+                                              await deleteActivity(program.id, project.id, activity.id)
+                                              const key = `${program.id}-${project.id}`
+                                              setActivities((prev) => {
+                                                const newMap = new Map(prev)
+                                                const acts = newMap.get(key) || []
+                                                newMap.set(key, acts.filter((a) => a.id !== activity.id))
+                                                return newMap
+                                              })
+                                              setNotification({ type: 'success', text: 'Activity deleted successfully' })
+                                            } catch (error) {
+                                              setNotification({ type: 'error', text: 'Failed to delete activity' })
+                                            }
+                                          }}
+                                          className="text-red-600 hover:text-red-800 text-sm px-2 opacity-0 group-hover:opacity-100 transition"
+                                        >
+                                          Delete
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ))
+                                )
+                              })()}
+                            </div>
+                          )}
                         </div>
                       ))
                     )}
@@ -586,18 +660,6 @@ export function DataManagement() {
           </div>
         )}
       </div>
-
-      {/* Activities List */}
-      {selectedProgram && selectedProject && view === 'list' && (
-        <ActivityList
-          programId={selectedProgram.id}
-          projectId={selectedProject.id}
-          onEdit={(activity: Activity) => {
-            setEditingActivity(activity)
-            setView('form')
-          }}
-        />
-      )}
       </div>
       {/* End of Main Content Area */}
     </div>
