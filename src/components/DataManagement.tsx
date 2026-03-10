@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ExtensionProgram, Project, Activity, SDG_LIST } from '../types'
+import { ExtensionProgram, Project, Activity, SDG_LIST, IMPLEMENTING_COLLEGES } from '../types'
 import { 
   getExtensionPrograms, 
   createActivity, 
@@ -40,6 +40,9 @@ export function DataManagement() {
   const [editingProject, setEditingProject] = useState<Project | null>(null)
   const [infoModal, setInfoModal] = useState<{ type: 'program' | 'project' | 'activity', data: any } | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [filterStartDate, setFilterStartDate] = useState('')
+  const [filterEndDate, setFilterEndDate] = useState('')
+  const [filterCollege, setFilterCollege] = useState('')
   
   // Form states
   const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6' })
@@ -305,37 +308,76 @@ export function DataManagement() {
   const searchLower = searchTerm.toLowerCase().trim()
   const matchesSearch = (text: string): boolean => text.toLowerCase().includes(searchLower)
   
-  const filteredPrograms = searchLower === ''
-    ? programs
-    : programs.filter((program) => {
-        const programMatches = matchesSearch(program.title) || matchesSearch(program.description || '')
-        if (programMatches) return true
-        
-        const projectsInProgram = projects.get(program.id) || []
-        const projectMatches = projectsInProgram.some((proj) => {
-          const projMatches = matchesSearch(proj.title) || matchesSearch(proj.description || '')
-          if (projMatches) return true
-          
-          const activitiesInProject = activities.get(proj.id) || []
-          return activitiesInProject.some((act) => matchesSearch(act.title) || matchesSearch(act.location || ''))
-        })
-        
-        return projectMatches
-      })
+  const isWithinDateRange = (startDate: string, endDate: string): boolean => {
+    if (!filterStartDate && !filterEndDate) return true
+    
+    const itemStart = new Date(startDate)
+    const itemEnd = new Date(endDate)
+    const filterStart = filterStartDate ? new Date(filterStartDate) : new Date('1900-01-01')
+    const filterEnd = filterEndDate ? new Date(filterEndDate) : new Date('2099-12-31')
+    
+    // Check if date range overlaps
+    return itemStart <= filterEnd && itemEnd >= filterStart
+  }
   
-  // Auto-expand programs/projects that have search matches
+  const hasMatchingCollege = (college: string): boolean => {
+    if (!filterCollege) return true
+    return college === filterCollege
+  }
+  
+  const filteredPrograms = programs.filter((program) => {
+    // Check search match for program/project names
+    const programMatches = searchLower === '' || matchesSearch(program.title) || matchesSearch(program.description || '')
+    
+    // Check if program is within date range
+    const programDateMatch = isWithinDateRange(program.startDate, program.endDate)
+    
+    if (programMatches && programDateMatch) return true
+    
+    // Check projects and activities
+    const projectsInProgram = projects.get(program.id) || []
+    const projectMatches = projectsInProgram.some((proj) => {
+      const projSearch = searchLower === '' || matchesSearch(proj.title) || matchesSearch(proj.description || '')
+      const projDate = isWithinDateRange(proj.startDate, proj.endDate)
+      
+      if (projSearch && projDate) return true
+      
+      // Check activities
+      const activitiesInProject = activities.get(proj.id) || []
+      return activitiesInProject.some((act) => {
+        const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
+        const actDate = isWithinDateRange(act.startDate, act.endDate)
+        const actCollege = hasMatchingCollege(act.implementingCollege)
+        
+        return actSearch && actDate && actCollege
+      })
+    })
+    
+    return projectMatches
+  })
+  
+  // Auto-expand programs/projects that have matches
   const getAutoExpandedPrograms = (): Set<string> => {
-    if (searchLower === '') return expandedPrograms
+    const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege
+    if (!hasFilters) return expandedPrograms
     
     const expandedIds = new Set<string>()
     filteredPrograms.forEach((program) => {
       const projectsInProgram = projects.get(program.id) || []
       const hasMatchingProjects = projectsInProgram.some((proj) => {
-        const projMatches = matchesSearch(proj.title) || matchesSearch(proj.description || '')
-        if (projMatches) return true
+        const projSearch = searchLower === '' || matchesSearch(proj.title) || matchesSearch(proj.description || '')
+        const projDate = isWithinDateRange(proj.startDate, proj.endDate)
+        
+        if (projSearch && projDate) return true
         
         const activitiesInProject = activities.get(proj.id) || []
-        return activitiesInProject.some((act) => matchesSearch(act.title) || matchesSearch(act.location || ''))
+        return activitiesInProject.some((act) => {
+          const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
+          const actDate = isWithinDateRange(act.startDate, act.endDate)
+          const actCollege = hasMatchingCollege(act.implementingCollege)
+          
+          return actSearch && actDate && actCollege
+        })
       })
       
       if (hasMatchingProjects) {
@@ -346,14 +388,21 @@ export function DataManagement() {
   }
   
   const getAutoExpandedProjects = (): Set<string> => {
-    if (searchLower === '') return expandedProjects
+    const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege
+    if (!hasFilters) return expandedProjects
     
     const expandedIds = new Set<string>()
     filteredPrograms.forEach((program) => {
       const projectsInProgram = projects.get(program.id) || []
       projectsInProgram.forEach((proj) => {
         const activitiesInProject = activities.get(proj.id) || []
-        const hasMatchingActivities = activitiesInProject.some((act) => matchesSearch(act.title) || matchesSearch(act.location || ''))
+        const hasMatchingActivities = activitiesInProject.some((act) => {
+          const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
+          const actDate = isWithinDateRange(act.startDate, act.endDate)
+          const actCollege = hasMatchingCollege(act.implementingCollege)
+          
+          return actSearch && actDate && actCollege
+        })
         if (hasMatchingActivities) {
           expandedIds.add(proj.id)
         }
@@ -362,8 +411,9 @@ export function DataManagement() {
     return expandedIds
   }
   
-  const displayExpandedPrograms = searchLower === '' ? expandedPrograms : getAutoExpandedPrograms()
-  const displayExpandedProjects = searchLower === '' ? expandedProjects : getAutoExpandedProjects()
+  const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege
+  const displayExpandedPrograms = hasFilters ? getAutoExpandedPrograms() : expandedPrograms
+  const displayExpandedProjects = hasFilters ? getAutoExpandedProjects() : expandedProjects
 
   return (
     <div className="space-y-8" style={{ padding: '2rem' }}>
@@ -822,10 +872,68 @@ export function DataManagement() {
           )}
         </div>
 
+        {/* Filters */}
+        <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-end gap-4 flex-wrap">
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Date Range Start</label>
+              <input
+                type="date"
+                value={filterStartDate}
+                onChange={(e) => setFilterStartDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              />
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Date Range End</label>
+              <input
+                type="date"
+                value={filterEndDate}
+                onChange={(e) => setFilterEndDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              />
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Implementing College</label>
+              <select
+                value={filterCollege}
+                onChange={(e) => setFilterCollege(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              >
+                <option value="">-- All Colleges --</option>
+                {IMPLEMENTING_COLLEGES.map((college) => (
+                  <option key={college} value={college}>
+                    {college}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {(filterStartDate || filterEndDate || filterCollege) && (
+              <button
+                onClick={() => {
+                  setFilterStartDate('')
+                  setFilterEndDate('')
+                  setFilterCollege('')
+                }}
+                className="px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition text-sm font-medium"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+          {(filterStartDate || filterEndDate || filterCollege) && (
+            <p className="text-xs text-gray-600 mt-3">
+              ✓ Showing {filteredPrograms.length} program(s) matching your filters
+            </p>
+          )}
+        </div>
+
         {programs.length === 0 ? (
           <p className="text-gray-500">No programs found. Create one to get started.</p>
         ) : filteredPrograms.length === 0 ? (
-          <p className="text-gray-500">No results for "{searchTerm}". Try a different search term.</p>
+          <p className="text-gray-500">
+            No results matching your {hasFilters ? 'filters and search criteria' : 'search'}. Try adjusting your search or filters.
+          </p>
         ) : (
           <div className="space-y-2">
             {filteredPrograms.map((program) => (
