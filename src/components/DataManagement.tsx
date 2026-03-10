@@ -384,24 +384,24 @@ export function DataManagement() {
       {/* Main Content Area - dimmed when form modal is open */}
       <div style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
       {/* Quick Action Buttons */}
-      <div className="bg-white rounded-lg shadow-md p-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
-        <div className="flex gap-2 flex-wrap">
+      <div className="bg-gray-50 rounded-lg shadow-sm p-3 border border-gray-200">
+        <h3 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Quick Actions</h3>
+        <div className="flex gap-1 flex-wrap">
           <button
             onClick={() => setView('createProgram')}
-            className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition"
+            className="px-3 py-1 text-sm bg-teal-500 text-white rounded hover:bg-teal-600 transition"
           >
             + New Program
           </button>
           <button
             onClick={() => setView('createProject')}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition"
           >
             + New Project
           </button>
           <button
             onClick={() => setView('createActivity')}
-            className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition"
+            className="px-3 py-1 text-sm bg-rose-500 text-white rounded hover:bg-rose-600 transition"
           >
             + New Activity
           </button>
