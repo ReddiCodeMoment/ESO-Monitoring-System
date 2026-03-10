@@ -382,7 +382,7 @@ export function DataManagement() {
       )}
 
       {/* Main Content Area - dimmed when form modal is open */}
-      <div style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
+      <div className="space-y-8" style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
       {/* Quick Action Buttons */}
       <div className="bg-gray-50 rounded-lg shadow-sm p-3 border border-gray-200">
         <h3 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Quick Actions</h3>
