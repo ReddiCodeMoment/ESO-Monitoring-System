@@ -10,7 +10,9 @@ import {
   getActivitiesByProjectId,
   deleteActivity,
   deleteExtensionProgram,
-  deleteProject
+  deleteProject,
+  updateExtensionProgram,
+  updateProject
 } from '../services/extensionService'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
@@ -32,8 +34,10 @@ export function DataManagement() {
   // UI states
   const [expandedPrograms, setExpandedPrograms] = useState<Set<string>>(new Set())
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set())
-  const [view, setView] = useState<'list' | 'form' | 'createProgram' | 'createProject' | 'createActivity'>('list')
+  const [view, setView] = useState<'list' | 'form' | 'createProgram' | 'createProject' | 'createActivity' | 'editProgram' | 'editProject'>('list')
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
+  const [editingProgram, setEditingProgram] = useState<ExtensionProgram | null>(null)
+  const [editingProject, setEditingProject] = useState<Project | null>(null)
   const [infoModal, setInfoModal] = useState<{ type: 'program' | 'project' | 'activity', data: any } | null>(null)
   
   // Form states
@@ -172,6 +176,54 @@ export function DataManagement() {
     }
   }
 
+  const handleEditProgram = async () => {
+    if (!editingProgram || !editingProgram.title.trim()) {
+      setNotification({ type: 'error', text: 'Program title is required' })
+      return
+    }
+
+    try {
+      await updateExtensionProgram(editingProgram.id, {
+        title: editingProgram.title,
+        description: editingProgram.description,
+        startDate: editingProgram.startDate,
+        endDate: editingProgram.endDate,
+      })
+      setNotification({ type: 'success', text: 'Program updated successfully!' })
+      setEditingProgram(null)
+      setView('list')
+      loadPrograms()
+    } catch (error) {
+      setNotification({ type: 'error', text: 'Failed to update program' })
+      console.error('Error:', error)
+    }
+  }
+
+  const handleEditProject = async () => {
+    if (!selectedProgram || !editingProject || !editingProject.title.trim()) {
+      setNotification({ type: 'error', text: 'Project name is required' })
+      return
+    }
+
+    try {
+      await updateProject(selectedProgram.id, editingProject.id, {
+        title: editingProject.title,
+        description: editingProject.description,
+        startDate: editingProject.startDate,
+        endDate: editingProject.endDate,
+      })
+      setNotification({ type: 'success', text: 'Project updated successfully!' })
+      setEditingProject(null)
+      setView('list')
+      // Reload projects for this program
+      projects.delete(selectedProgram.id)
+      loadProjectsForProgram(selectedProgram.id)
+    } catch (error) {
+      setNotification({ type: 'error', text: 'Failed to update project' })
+      console.error('Error:', error)
+    }
+  }
+
   const handleSubmitActivity = async (formData: any) => {
     if (!selectedProgram || !selectedProject) return
 
@@ -291,6 +343,72 @@ export function DataManagement() {
         </div>
       </div>
 
+      {/* Edit Program Form */}
+      {(view as any) === 'editProgram' && editingProgram && (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Program</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Title *</label>
+              <input
+                type="text"
+                value={editingProgram.title}
+                onChange={(e) => setEditingProgram({ ...editingProgram, title: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                placeholder="Program title"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <textarea
+                value={editingProgram.description}
+                onChange={(e) => setEditingProgram({ ...editingProgram, description: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                rows={3}
+                placeholder="Program description"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                <input
+                  type="date"
+                  value={editingProgram.startDate}
+                  onChange={(e) => setEditingProgram({ ...editingProgram, startDate: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">End Date</label>
+                <input
+                  type="date"
+                  value={editingProgram.endDate}
+                  onChange={(e) => setEditingProgram({ ...editingProgram, endDate: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 pt-4">
+              <button
+                onClick={handleEditProgram}
+                className="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => {
+                  setView('list')
+                  setEditingProgram(null)
+                }}
+                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Create Program Form */}
       {view === 'createProgram' && (
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -349,6 +467,72 @@ export function DataManagement() {
                   setNewProgram({ title: '', description: '', startDate: '', endDate: '' })
                 }}
                 className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Project Form */}
+      {view === 'editProject' && editingProject && (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Project</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Title *</label>
+              <input
+                type="text"
+                value={editingProject.title}
+                onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Project title"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <textarea
+                value={editingProject.description}
+                onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+                placeholder="Project description"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                <input
+                  type="date"
+                  value={editingProject.startDate}
+                  onChange={(e) => setEditingProject({ ...editingProject, startDate: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">End Date</label>
+                <input
+                  type="date"
+                  value={editingProject.endDate}
+                  onChange={(e) => setEditingProject({ ...editingProject, endDate: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 pt-4">
+              <button
+                onClick={handleEditProject}
+                className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => {
+                  setEditingProject(null)
+                  setView('list')
+                }}
+                className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition"
               >
                 Cancel
               </button>
@@ -570,6 +754,17 @@ export function DataManagement() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
+                        setEditingProgram(program)
+                        setView('editProgram' as any)
+                      }}
+                      className="text-blue-600 hover:text-blue-800 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                      title="Edit program"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
                         const projectCount = (projects.get(program.id) || []).length
                         if (!window.confirm(
                           `Delete program "${program.title}"? This will delete ${projectCount} project(s) and all activities underneath.`
@@ -638,6 +833,17 @@ export function DataManagement() {
                                 title="View project details"
                               >
                                 ?
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setEditingProject(project)
+                                  setView('editProject' as any)
+                                }}
+                                className="text-blue-600 hover:text-blue-800 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                                title="Edit project"
+                              >
+                                ✏️
                               </button>
                               <button
                                 onClick={(e) => {
