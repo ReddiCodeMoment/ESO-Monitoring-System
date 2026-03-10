@@ -4,7 +4,6 @@ import {
   ActivityFormData,
   SDG_LIST,
   PARTNER_TYPES,
-  PARTICIPANT_TYPES,
   FUND_SOURCES,
   EXTENSION_AGENDAS,
   IMPLEMENTING_COLLEGES,
@@ -55,6 +54,7 @@ export function ActivityForm({
   const [customCollege, setCustomCollege] = useState('')
   const [rawProgramsInput, setRawProgramsInput] = useState('')
   const [rawFacultyInput, setRawFacultyInput] = useState('')
+  const [rawTypeOfParticipantInput, setRawTypeOfParticipantInput] = useState('')
 
   useEffect(() => {
     if (initialData) {
@@ -83,6 +83,7 @@ export function ActivityForm({
       })
       setRawProgramsInput(initialData.programsInvolved.join(', '))
       setRawFacultyInput(initialData.facultyExtensionists.join(', '))
+      setRawTypeOfParticipantInput(initialData.typeOfParticipant.join(', '))
     }
   }, [initialData])
 
@@ -115,18 +116,6 @@ export function ActivityForm({
       sdgInvolved: prev.sdgInvolved.includes(sdgId)
         ? prev.sdgInvolved.filter((id) => id !== sdgId)
         : [...prev.sdgInvolved, sdgId],
-    }))
-  }
-
-  const handleMultiSelectToggle = (
-    field: 'programsInvolved' | 'typeOfParticipant',
-    value: string
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter((item) => item !== value)
-        : [...prev[field], value],
     }))
   }
 
@@ -624,21 +613,26 @@ export function ActivityForm({
               <label className="block text-sm font-medium mb-2">
                 Type of Participant
               </label>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {PARTICIPANT_TYPES.map((type) => (
-                  <label key={type} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded">
-                    <input
-                      type="checkbox"
-                      checked={formData.typeOfParticipant.includes(type)}
-                      onChange={() =>
-                        handleMultiSelectToggle('typeOfParticipant', type)
-                      }
-                      className="w-4 h-4"
-                    />
-                    <span className="text-sm">{type}</span>
-                  </label>
-                ))}
-              </div>
+              <textarea
+                placeholder="Enter participant types separated by commas (,)"
+                value={rawTypeOfParticipantInput}
+                onChange={(e) => {
+                  setRawTypeOfParticipantInput(e.target.value)
+                  const participants = e.target.value
+                    .split(',')
+                    .map((p) => p.trim())
+                    .filter((p) => p)
+                  setFormData((prev) => ({
+                    ...prev,
+                    typeOfParticipant: participants,
+                  }))
+                }}
+                rows={3}
+                className="w-full border rounded px-3 py-2"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                e.g., Students, Faculty, Community
+              </p>
             </div>
 
             <div>
