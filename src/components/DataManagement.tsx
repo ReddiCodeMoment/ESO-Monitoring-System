@@ -43,6 +43,7 @@ export function DataManagement() {
   const [filterStartDate, setFilterStartDate] = useState('')
   const [filterEndDate, setFilterEndDate] = useState('')
   const [filterCollege, setFilterCollege] = useState('')
+  const [filterYear, setFilterYear] = useState('')
   
   // Form states
   const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6' })
@@ -320,17 +321,52 @@ export function DataManagement() {
     return itemStart <= filterEnd && itemEnd >= filterStart
   }
   
+  const isWithinYear = (startDate: string, endDate: string): boolean => {
+    if (!filterYear) return true
+    
+    const year = parseInt(filterYear)
+    const itemStart = new Date(startDate)
+    const itemEnd = new Date(endDate)
+    const yearStart = new Date(`${year}-01-01`)
+    const yearEnd = new Date(`${year}-12-31`)
+    
+    // Check if date range overlaps with the selected year
+    return itemStart <= yearEnd && itemEnd >= yearStart
+  }
+  
   const hasMatchingCollege = (college: string): boolean => {
     if (!filterCollege) return true
     return college === filterCollege
+  }
+  
+  // Get all available years from programs
+  const getAvailableYears = (): string[] => {
+    const yearsSet = new Set<string>()
+    programs.forEach((program) => {
+      yearsSet.add(new Date(program.startDate).getFullYear().toString())
+      yearsSet.add(new Date(program.endDate).getFullYear().toString())
+      
+      const projectsInProgram = projects.get(program.id) || []
+      projectsInProgram.forEach((proj) => {
+        yearsSet.add(new Date(proj.startDate).getFullYear().toString())
+        yearsSet.add(new Date(proj.endDate).getFullYear().toString())
+        
+        const activitiesInProject = activities.get(proj.id) || []
+        activitiesInProject.forEach((act) => {
+          yearsSet.add(new Date(act.startDate).getFullYear().toString())
+          yearsSet.add(new Date(act.endDate).getFullYear().toString())
+        })
+      })
+    })
+    return Array.from(yearsSet).sort().reverse()
   }
   
   const filteredPrograms = programs.filter((program) => {
     // Check search match for program/project names
     const programMatches = searchLower === '' || matchesSearch(program.title) || matchesSearch(program.description || '')
     
-    // Check if program is within date range
-    const programDateMatch = isWithinDateRange(program.startDate, program.endDate)
+    // Check if program is within date range and year
+    const programDateMatch = isWithinDateRange(program.startDate, program.endDate) && isWithinYear(program.startDate, program.endDate)
     
     if (programMatches && programDateMatch) return true
     
@@ -338,7 +374,7 @@ export function DataManagement() {
     const projectsInProgram = projects.get(program.id) || []
     const projectMatches = projectsInProgram.some((proj) => {
       const projSearch = searchLower === '' || matchesSearch(proj.title) || matchesSearch(proj.description || '')
-      const projDate = isWithinDateRange(proj.startDate, proj.endDate)
+      const projDate = isWithinDateRange(proj.startDate, proj.endDate) && isWithinYear(proj.startDate, proj.endDate)
       
       if (projSearch && projDate) return true
       
@@ -346,7 +382,7 @@ export function DataManagement() {
       const activitiesInProject = activities.get(proj.id) || []
       return activitiesInProject.some((act) => {
         const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
-        const actDate = isWithinDateRange(act.startDate, act.endDate)
+        const actDate = isWithinDateRange(act.startDate, act.endDate) && isWithinYear(act.startDate, act.endDate)
         const actCollege = hasMatchingCollege(act.implementingCollege)
         
         return actSearch && actDate && actCollege
@@ -358,7 +394,7 @@ export function DataManagement() {
   
   // Auto-expand programs/projects that have matches
   const getAutoExpandedPrograms = (): Set<string> => {
-    const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege
+    const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege || filterYear
     if (!hasFilters) return expandedPrograms
     
     const expandedIds = new Set<string>()
@@ -366,14 +402,14 @@ export function DataManagement() {
       const projectsInProgram = projects.get(program.id) || []
       const hasMatchingProjects = projectsInProgram.some((proj) => {
         const projSearch = searchLower === '' || matchesSearch(proj.title) || matchesSearch(proj.description || '')
-        const projDate = isWithinDateRange(proj.startDate, proj.endDate)
+        const projDate = isWithinDateRange(proj.startDate, proj.endDate) && isWithinYear(proj.startDate, proj.endDate)
         
         if (projSearch && projDate) return true
         
         const activitiesInProject = activities.get(proj.id) || []
         return activitiesInProject.some((act) => {
           const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
-          const actDate = isWithinDateRange(act.startDate, act.endDate)
+          const actDate = isWithinDateRange(act.startDate, act.endDate) && isWithinYear(act.startDate, act.endDate)
           const actCollege = hasMatchingCollege(act.implementingCollege)
           
           return actSearch && actDate && actCollege
@@ -388,7 +424,7 @@ export function DataManagement() {
   }
   
   const getAutoExpandedProjects = (): Set<string> => {
-    const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege
+    const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege || filterYear
     if (!hasFilters) return expandedProjects
     
     const expandedIds = new Set<string>()
@@ -398,7 +434,7 @@ export function DataManagement() {
         const activitiesInProject = activities.get(proj.id) || []
         const hasMatchingActivities = activitiesInProject.some((act) => {
           const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
-          const actDate = isWithinDateRange(act.startDate, act.endDate)
+          const actDate = isWithinDateRange(act.startDate, act.endDate) && isWithinYear(act.startDate, act.endDate)
           const actCollege = hasMatchingCollege(act.implementingCollege)
           
           return actSearch && actDate && actCollege
@@ -411,7 +447,7 @@ export function DataManagement() {
     return expandedIds
   }
   
-  const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege
+  const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege || filterYear
   const displayExpandedPrograms = hasFilters ? getAutoExpandedPrograms() : expandedPrograms
   const displayExpandedProjects = hasFilters ? getAutoExpandedProjects() : expandedProjects
 
@@ -908,12 +944,28 @@ export function DataManagement() {
                 ))}
               </select>
             </div>
-            {(filterStartDate || filterEndDate || filterCollege) && (
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Year</label>
+              <select
+                value={filterYear}
+                onChange={(e) => setFilterYear(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              >
+                <option value="">-- All Years --</option>
+                {getAvailableYears().map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {(filterStartDate || filterEndDate || filterCollege || filterYear) && (
               <button
                 onClick={() => {
                   setFilterStartDate('')
                   setFilterEndDate('')
                   setFilterCollege('')
+                  setFilterYear('')
                 }}
                 className="px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition text-sm font-medium"
               >
@@ -921,7 +973,7 @@ export function DataManagement() {
               </button>
             )}
           </div>
-          {(filterStartDate || filterEndDate || filterCollege) && (
+          {(filterStartDate || filterEndDate || filterCollege || filterYear) && (
             <p className="text-xs text-gray-600 mt-3">
               ✓ Showing {filteredPrograms.length} program(s) matching your filters
             </p>
