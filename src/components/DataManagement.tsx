@@ -242,7 +242,7 @@ export function DataManagement() {
           </button>
           <button
             onClick={() => setView('createActivity')}
-            className="px-4 py-2 bg-coral-500 text-white rounded-lg hover:bg-coral-600 transition"
+            className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition"
           >
             + New Activity
           </button>
@@ -426,7 +426,7 @@ export function DataManagement() {
                     setSelectedProject(null)
                   }
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
               >
                 <option value="">-- Select a Program --</option>
                 {programs.map((p) => (
@@ -446,7 +446,7 @@ export function DataManagement() {
                     const project = programProjects.find((pr) => pr.id === e.target.value)
                     if (project) setSelectedProject(project)
                   }}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
                 >
                   <option value="">-- Select a Project --</option>
                   {programProjects.map((pr) => (
@@ -465,7 +465,7 @@ export function DataManagement() {
                     setEditingActivity(null)
                     setView('form')
                   }}
-                  className="px-6 py-2 bg-coral-500 text-white rounded-lg hover:bg-coral-600 transition"
+                  className="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition"
                 >
                   Continue to Activity Form
                 </button>
