@@ -366,7 +366,7 @@ export function ActivityForm({
           <legend className="text-xl font-semibold mb-4">
             Sustainable Development Goals *
           </legend>
-          <div className="space-y-3 max-h-96 overflow-y-auto">
+          <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto">
             {SDG_LIST.map((sdg) => (
               <label key={sdg.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded">
                 <input
