@@ -488,13 +488,12 @@ export function ActivityForm({
               <label className="block text-sm font-medium mb-2">
                 Programs Involved
               </label>
-              <input
-                type="text"
-                placeholder="Enter programs separated by semicolons (;)"
-                value={formData.programsInvolved.join('; ')}
+              <textarea
+                placeholder="Enter programs separated by commas (,)"
+                value={formData.programsInvolved.join(', ')}
                 onChange={(e) => {
                   const programs = e.target.value
-                    .split(';')
+                    .split(',')
                     .map((p) => p.trim())
                     .filter((p) => p)
                   setFormData((prev) => ({
@@ -502,10 +501,11 @@ export function ActivityForm({
                     programsInvolved: programs,
                   }))
                 }}
+                rows={3}
                 className="w-full border rounded px-3 py-2"
               />
               <p className="text-xs text-gray-500 mt-1">
-                e.g., Program A; Program B; Program C
+                e.g., Program A, Program B, Program C
               </p>
             </div>
 
@@ -513,13 +513,12 @@ export function ActivityForm({
               <label className="block text-sm font-medium mb-2">
                 Faculty Extensionist(s)
               </label>
-              <input
-                type="text"
-                placeholder="Enter faculty names separated by semicolons (;)"
-                value={formData.facultyExtensionists.join('; ')}
+              <textarea
+                placeholder="Enter faculty names separated by commas (,)"
+                value={formData.facultyExtensionists.join(', ')}
                 onChange={(e) => {
                   const faculty = e.target.value
-                    .split(';')
+                    .split(',')
                     .map((f) => f.trim())
                     .filter((f) => f)
                   setFormData((prev) => ({
@@ -527,10 +526,11 @@ export function ActivityForm({
                     facultyExtensionists: faculty,
                   }))
                 }}
+                rows={3}
                 className="w-full border rounded px-3 py-2"
               />
               <p className="text-xs text-gray-500 mt-1">
-                e.g., Dr. Smith; Prof. Johnson; Ms. Brown
+                e.g., Dr. Smith, Prof. Johnson, Ms. Brown
               </p>
             </div>
           </div>

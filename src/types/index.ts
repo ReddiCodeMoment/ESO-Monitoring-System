@@ -132,14 +132,10 @@ export const SDG_LIST = [
 ]
 
 export const PARTNER_TYPES = [
-  'Government Agency',
-  'Private Business',
-  'Non-Governmental Organization',
-  'Community Organization',
-  'Educational Institution',
-  'Healthcare Institution',
-  'International Organization',
-  'Other',
+  'Local',
+  'Regional',
+  'National',
+  'International',
 ]
 
 export const PARTICIPANT_TYPES = [
