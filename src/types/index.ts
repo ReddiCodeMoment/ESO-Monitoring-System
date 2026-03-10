@@ -153,12 +153,10 @@ export const PARTICIPANT_TYPES = [
 ]
 
 export const FUND_SOURCES = [
-  'University Internal Budget',
-  'External Grant',
-  'Government Allocation',
-  'Private Sponsorship',
-  'Partner Organization',
-  'Other',
+  'Institutional, MDS Fund',
+  'Institutional, STF Fund',
+  'External Fund',
+  'Others',
 ]
 
 export const EXTENSION_AGENDAS = [
