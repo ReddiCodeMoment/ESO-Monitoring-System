@@ -676,12 +676,13 @@ export function ActivityForm({
                   </label>
                   <input
                     type="number"
-                    value={formData.beneficiaries.total}
-                    onChange={(e) =>
-                      handleBeneficiariesChange('total', e.target.value)
+                    value={
+                      (parseInt(formData.beneficiaries.male) || 0) +
+                      (parseInt(formData.beneficiaries.female) || 0)
                     }
+                    readOnly
                     min="0"
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 bg-gray-50"
                     required
                   />
                 </div>
