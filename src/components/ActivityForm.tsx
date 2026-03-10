@@ -368,7 +368,12 @@ export function ActivityForm({
           </legend>
           <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto">
             {SDG_LIST.map((sdg) => (
-              <label key={sdg.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded">
+              <label key={sdg.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer border border-gray-100">
+                <div
+                  className="w-4 h-4 rounded flex-shrink-0"
+                  style={{ backgroundColor: sdg.color }}
+                  title={sdg.name}
+                ></div>
                 <input
                   type="checkbox"
                   checked={formData.sdgInvolved.includes(sdg.id)}
