@@ -235,26 +235,19 @@ export function DataManagement() {
             + New Program
           </button>
           {selectedProgram && (
-            <>
-              <button
-                onClick={() => setView('createProject')}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-              >
-                + New Project
-              </button>
-              {selectedProject && (
-                <button
-                  onClick={() => {
-                    setEditingActivity(null)
-                    setView('form')
-                  }}
-                  className="px-4 py-2 bg-coral-500 text-white rounded-lg hover:bg-coral-600 transition"
-                >
-                  + New Activity
-                </button>
-              )}
-            </>
+            <button
+              onClick={() => setView('createProject')}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            >
+              + New Project
+            </button>
           )}
+          <button
+            onClick={() => setView('createActivity')}
+            className="px-4 py-2 bg-coral-500 text-white rounded-lg hover:bg-coral-600 transition"
+          >
+            + New Activity
+          </button>
         </div>
       </div>
 
@@ -380,6 +373,81 @@ export function DataManagement() {
                 onClick={() => {
                   setView('list')
                   setNewProject({ title: '', description: '', startDate: '', endDate: '' })
+                }}
+                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Activity - Select Parent Form */}
+      {view === 'createActivity' && (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Parent for New Activity</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Program *</label>
+              <select
+                value={selectedProgram?.id || ''}
+                onChange={(e) => {
+                  const program = programs.find((p) => p.id === e.target.value)
+                  if (program) {
+                    setSelectedProgram(program)
+                    setSelectedProject(null)
+                  }
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
+              >
+                <option value="">-- Select a Program --</option>
+                {programs.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {selectedProgram && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Project *</label>
+                <select
+                  value={selectedProject?.id || ''}
+                  onChange={(e) => {
+                    const project = programProjects.find((pr) => pr.id === e.target.value)
+                    if (project) setSelectedProject(project)
+                  }}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
+                >
+                  <option value="">-- Select a Project --</option>
+                  {programProjects.map((pr) => (
+                    <option key={pr.id} value={pr.id}>
+                      {pr.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="flex gap-2 pt-4">
+              {selectedProgram && selectedProject && (
+                <button
+                  onClick={() => {
+                    setEditingActivity(null)
+                    setView('form')
+                  }}
+                  className="px-6 py-2 bg-coral-500 text-white rounded-lg hover:bg-coral-600 transition"
+                >
+                  Continue to Activity Form
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  setView('list')
+                  setSelectedProgram(null)
+                  setSelectedProject(null)
                 }}
                 className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
               >
