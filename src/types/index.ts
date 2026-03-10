@@ -75,6 +75,7 @@ export interface ExtensionProgram {
   id: string
   title: string
   description?: string
+  color?: string // Hex color code for visual identification
   startDate: string // ISO format YYYY-MM-DD
   endDate: string // ISO format YYYY-MM-DD
   projects: Project[]

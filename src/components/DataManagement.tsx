@@ -42,7 +42,7 @@ export function DataManagement() {
   const [searchTerm, setSearchTerm] = useState('')
   
   // Form states
-  const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '' })
+  const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6' })
   const [newProject, setNewProject] = useState({ title: '', description: '', startDate: '', endDate: '' })
 
   useEffect(() => {
@@ -136,11 +136,12 @@ export function DataManagement() {
         description: newProgram.description,
         startDate: newProgram.startDate || today,
         endDate: newProgram.endDate || today,
+        color: newProgram.color,
         createdBy: user?.id || 'unknown',
         archived: false,
       })
       setNotification({ type: 'success', text: 'Program created successfully!' })
-      setNewProgram({ title: '', description: '', startDate: '', endDate: '' })
+      setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6' })
       setView('list')
       loadPrograms()
     } catch (error) {
@@ -189,6 +190,7 @@ export function DataManagement() {
         description: editingProgram.description,
         startDate: editingProgram.startDate,
         endDate: editingProgram.endDate,
+        color: editingProgram.color,
       })
       setNotification({ type: 'success', text: 'Program updated successfully!' })
       setEditingProgram(null)
@@ -453,6 +455,18 @@ export function DataManagement() {
                 />
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Program Color</label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="color"
+                  value={editingProgram.color || '#3B82F6'}
+                  onChange={(e) => setEditingProgram({ ...editingProgram, color: e.target.value })}
+                  className="w-16 h-10 border border-gray-300 rounded-lg cursor-pointer"
+                />
+                <span className="text-sm text-gray-600">Select a color for this program</span>
+              </div>
+            </div>
             <div className="flex gap-2 pt-4">
               <button
                 onClick={handleEditProgram}
@@ -519,6 +533,18 @@ export function DataManagement() {
                 />
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Program Color</label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="color"
+                  value={newProgram.color || '#3B82F6'}
+                  onChange={(e) => setNewProgram({ ...newProgram, color: e.target.value })}
+                  className="w-16 h-10 border border-gray-300 rounded-lg cursor-pointer"
+                />
+                <span className="text-sm text-gray-600">Select a color for this program</span>
+              </div>
+            </div>
             <div className="flex gap-2 pt-4">
               <button
                 onClick={handleCreateProgram}
@@ -529,7 +555,7 @@ export function DataManagement() {
               <button
                 onClick={() => {
                   setView('list')
-                  setNewProgram({ title: '', description: '', startDate: '', endDate: '' })
+                  setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6' })
                 }}
                 className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
               >
@@ -803,7 +829,7 @@ export function DataManagement() {
         ) : (
           <div className="space-y-2">
             {filteredPrograms.map((program) => (
-              <div key={program.id} className="border border-gray-200 rounded-lg overflow-hidden">
+              <div key={program.id} className="border border-gray-200 rounded-lg overflow-hidden" style={{ borderLeftWidth: '5px', borderLeftColor: program.color || '#3B82F6' }}>
                 {/* Program Item */}
                 <div
                   className={`p-4 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition group ${
