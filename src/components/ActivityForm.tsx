@@ -6,7 +6,6 @@ import {
   PARTNER_TYPES,
   FUND_SOURCES,
   EXTENSION_AGENDAS,
-  IMPLEMENTING_COLLEGES,
 } from '../types'
 
 interface ActivityFormProps {
@@ -50,8 +49,6 @@ export function ActivityForm({
   const [error, setError] = useState<string | null>(null)
   const [showCustomAgenda, setShowCustomAgenda] = useState(false)
   const [customAgenda, setCustomAgenda] = useState('')
-  const [showCustomCollege, setShowCustomCollege] = useState(false)
-  const [customCollege, setCustomCollege] = useState('')
   const [rawProgramsInput, setRawProgramsInput] = useState('')
   const [rawFacultyInput, setRawFacultyInput] = useState('')
   const [rawTypeOfParticipantInput, setRawTypeOfParticipantInput] = useState('')
@@ -394,68 +391,12 @@ export function ActivityForm({
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">
-                Implementing College
+                Implementing College (Inherited from Program)
               </label>
-              <select
-                name="implementingCollege"
-                value={formData.implementingCollege}
-                onChange={(e) => {
-                  if (e.target.value === 'custom') {
-                    setShowCustomCollege(true)
-                  } else {
-                    setShowCustomCollege(false)
-                    setFormData((prev) => ({
-                      ...prev,
-                      implementingCollege: e.target.value,
-                    }))
-                  }
-                }}
-                className="w-full border rounded px-3 py-2"
-              >
-                <option value="">Select a college...</option>
-                {IMPLEMENTING_COLLEGES.map((college) => (
-                  <option key={college} value={college}>
-                    {college}
-                  </option>
-                ))}
-                <option value="custom">+ Add Custom College</option>
-              </select>
-
-              {showCustomCollege && (
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    placeholder="Enter custom college"
-                    value={customCollege}
-                    onChange={(e) => setCustomCollege(e.target.value)}
-                    onBlur={() => {
-                      if (customCollege.trim()) {
-                        setFormData((prev) => ({
-                          ...prev,
-                          implementingCollege: customCollege,
-                        }))
-                        setCustomCollege('')
-                        setShowCustomCollege(false)
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && customCollege.trim()) {
-                        setFormData((prev) => ({
-                          ...prev,
-                          implementingCollege: customCollege,
-                        }))
-                        setCustomCollege('')
-                        setShowCustomCollege(false)
-                      }
-                    }}
-                    className="w-full border rounded px-3 py-2 bg-yellow-50"
-                    autoFocus
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Type custom college and press Enter or click outside
-                  </p>
-                </div>
-              )}
+              <div className="w-full border rounded px-3 py-2 bg-gray-100 text-gray-700">
+                {formData.implementingCollege || '(Not set at program level)'}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">This is automatically set from the program and cannot be changed here.</p>
             </div>
 
             <div>
