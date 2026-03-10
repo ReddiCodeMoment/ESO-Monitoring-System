@@ -21,11 +21,14 @@ export const createExtensionProgram = async (
 ): Promise<string> => {
   try {
     const docRef = await addDoc(collection(db, 'extensionPrograms'), {
-      ...programData,
-      projects: [],
+      title: programData.title,
+      description: programData.description || '',
+      startDate: programData.startDate,
+      endDate: programData.endDate,
+      createdBy: programData.createdBy,
+      archived: programData.archived,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
-      archived: false,
     })
     return docRef.id
   } catch (error) {
@@ -171,8 +174,12 @@ export const createProject = async (
     const docRef = await addDoc(
       collection(db, 'extensionPrograms', programId, 'projects'),
       {
-        ...projectData,
-        activities: [],
+        title: projectData.title,
+        description: projectData.description || '',
+        startDate: projectData.startDate,
+        endDate: projectData.endDate,
+        createdBy: projectData.createdBy,
+        archived: projectData.archived,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       }
