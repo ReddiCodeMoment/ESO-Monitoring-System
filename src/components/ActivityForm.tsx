@@ -53,6 +53,8 @@ export function ActivityForm({
   const [customAgenda, setCustomAgenda] = useState('')
   const [showCustomCollege, setShowCustomCollege] = useState(false)
   const [customCollege, setCustomCollege] = useState('')
+  const [rawProgramsInput, setRawProgramsInput] = useState('')
+  const [rawFacultyInput, setRawFacultyInput] = useState('')
 
   useEffect(() => {
     if (initialData) {
@@ -79,6 +81,8 @@ export function ActivityForm({
           total: initialData.beneficiaries.total.toString(),
         },
       })
+      setRawProgramsInput(initialData.programsInvolved.join(', '))
+      setRawFacultyInput(initialData.facultyExtensionists.join(', '))
     }
   }, [initialData])
 
@@ -490,8 +494,9 @@ export function ActivityForm({
               </label>
               <textarea
                 placeholder="Enter programs separated by commas (,)"
-                value={formData.programsInvolved.join(', ')}
+                value={rawProgramsInput}
                 onChange={(e) => {
+                  setRawProgramsInput(e.target.value)
                   const programs = e.target.value
                     .split(',')
                     .map((p) => p.trim())
@@ -515,8 +520,9 @@ export function ActivityForm({
               </label>
               <textarea
                 placeholder="Enter faculty names separated by commas (,)"
-                value={formData.facultyExtensionists.join(', ')}
+                value={rawFacultyInput}
                 onChange={(e) => {
+                  setRawFacultyInput(e.target.value)
                   const faculty = e.target.value
                     .split(',')
                     .map((f) => f.trim())
