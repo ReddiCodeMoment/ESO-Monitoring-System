@@ -71,6 +71,25 @@ export function DataManagement() {
     }
   }
 
+  const loadAllProjects = async () => {
+    try {
+      for (const program of programs) {
+        if (!projects.has(program.id)) {
+          const data = await getProjectsByProgramId(program.id)
+          setProjects((prev) => new Map(prev).set(program.id, data))
+        }
+      }
+    } catch (error) {
+      console.error('Error loading all projects:', error)
+    }
+  }
+
+  useEffect(() => {
+    if (view === 'createActivity' && programs.length > 0) {
+      loadAllProjects()
+    }
+  }, [view, programs])
+
   const toggleProject = (projectId: string) => {
     const newExpanded = new Set(expandedProjects)
     if (newExpanded.has(projectId)) {
