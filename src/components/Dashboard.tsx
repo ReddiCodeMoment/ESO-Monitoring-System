@@ -438,7 +438,7 @@ export function Dashboard() {
                   SDGs
                 </div>
                 <div style={{ fontSize: '2rem', fontWeight: '700', color: '#128DA1' }}>
-                  {programStats.sdgsInvolved.length}
+                  {programStats?.sdgsInvolved?.length || 0}
                 </div>
               </div>
               <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '8px', textAlign: 'center' }}>
@@ -452,7 +452,7 @@ export function Dashboard() {
             </div>
 
             {/* SDGs */}
-            {programStats.sdgsInvolved.length > 0 && (
+            {programStats?.sdgsInvolved && programStats.sdgsInvolved.length > 0 && (
               <div style={{ marginBottom: '1.5rem' }}>
                 <h4 style={{ color: '#00332B', marginBottom: '0.75rem', fontSize: '0.95rem', fontWeight: '600' }}>
                   SDGs Involved
