@@ -213,8 +213,8 @@ export function DataManagement() {
     <div className="space-y-6" style={{ padding: '2rem' }}>
       {/* Modal Backdrop and Form */}
       {view === 'form' && selectedProject && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-          <div className="my-8 mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto px-4">
+          <div className="my-8">
             <ActivityForm
               initialData={editingActivity || undefined}
               onSubmit={handleSubmitActivity}
