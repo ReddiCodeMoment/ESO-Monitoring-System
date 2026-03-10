@@ -32,6 +32,7 @@ export function DataManagement() {
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set())
   const [view, setView] = useState<'list' | 'form' | 'createProgram' | 'createProject' | 'createActivity'>('list')
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
+  const [infoModal, setInfoModal] = useState<{ type: 'program' | 'project' | 'activity', data: any } | null>(null)
   
   // Form states
   const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '' })
@@ -553,9 +554,21 @@ export function DataManagement() {
                       {program.description && <p className="text-sm text-gray-500">{program.description}</p>}
                     </div>
                   </div>
-                  <span className="text-xs bg-teal-100 text-teal-700 px-3 py-1 rounded-full whitespace-nowrap ml-4">
-                    Program
-                  </span>
+                  <div className="flex items-center gap-2 ml-4">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setInfoModal({ type: 'program', data: program })
+                      }}
+                      className="text-gray-500 hover:text-gray-700 font-semibold text-lg w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 transition"
+                      title="View program details"
+                    >
+                      ?
+                    </button>
+                    <span className="text-xs bg-teal-100 text-teal-700 px-3 py-1 rounded-full whitespace-nowrap ml-2">
+                      Program
+                    </span>
+                  </div>
                 </div>
 
                 {/* Projects List (shown when program is expanded) */}
@@ -587,9 +600,21 @@ export function DataManagement() {
                                 )}
                               </div>
                             </div>
-                            <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full whitespace-nowrap ml-4">
-                              Project
-                            </span>
+                            <div className="flex items-center gap-2 ml-4">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setInfoModal({ type: 'project', data: project })
+                                }}
+                                className="text-gray-500 hover:text-gray-700 font-semibold text-lg w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 transition"
+                                title="View project details"
+                              >
+                                ?
+                              </button>
+                              <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full whitespace-nowrap ml-2">
+                                Project
+                              </span>
+                            </div>
                           </div>
 
                           {/* Activities List (shown when project is expanded) */}
@@ -611,6 +636,16 @@ export function DataManagement() {
                                         <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded whitespace-nowrap">
                                           Activity
                                         </span>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation()
+                                            setInfoModal({ type: 'activity', data: activity })
+                                          }}
+                                          className="text-gray-500 hover:text-gray-700 font-semibold text-sm w-5 h-5 flex items-center justify-center rounded-full hover:bg-gray-100 transition opacity-0 group-hover:opacity-100"
+                                          title="View activity details"
+                                        >
+                                          ?
+                                        </button>
                                         <button
                                           onClick={(e) => {
                                             e.stopPropagation()
@@ -661,6 +696,156 @@ export function DataManagement() {
         )}
       </div>
       </div>
+
+      {/* Info Modal */}
+      {infoModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto px-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full my-8">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {infoModal.type === 'program' && 'Program Details'}
+                  {infoModal.type === 'project' && 'Project Details'}
+                  {infoModal.type === 'activity' && 'Activity Details'}
+                </h2>
+                <button
+                  onClick={() => setInfoModal(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-3 text-sm">
+                {infoModal.type === 'program' && (
+                  <>
+                    <div>
+                      <p className="text-gray-500 font-medium">Title</p>
+                      <p className="text-gray-900">{infoModal.data.title}</p>
+                    </div>
+                    {infoModal.data.description && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Description</p>
+                        <p className="text-gray-900">{infoModal.data.description}</p>
+                      </div>
+                    )}
+                    {infoModal.data.startDate && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Start Date</p>
+                        <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
+                      </div>
+                    )}
+                    {infoModal.data.endDate && (
+                      <div>
+                        <p className="text-gray-500 font-medium">End Date</p>
+                        <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {infoModal.type === 'project' && (
+                  <>
+                    <div>
+                      <p className="text-gray-500 font-medium">Title</p>
+                      <p className="text-gray-900">{infoModal.data.title}</p>
+                    </div>
+                    {infoModal.data.description && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Description</p>
+                        <p className="text-gray-900">{infoModal.data.description}</p>
+                      </div>
+                    )}
+                    {infoModal.data.startDate && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Start Date</p>
+                        <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
+                      </div>
+                    )}
+                    {infoModal.data.endDate && (
+                      <div>
+                        <p className="text-gray-500 font-medium">End Date</p>
+                        <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {infoModal.type === 'activity' && (
+                  <>
+                    <div>
+                      <p className="text-gray-500 font-medium">Title</p>
+                      <p className="text-gray-900">{infoModal.data.title}</p>
+                    </div>
+                    {infoModal.data.location && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Location</p>
+                        <p className="text-gray-900">{infoModal.data.location}</p>
+                      </div>
+                    )}
+                    {infoModal.data.startDate && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Start Date</p>
+                        <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
+                      </div>
+                    )}
+                    {infoModal.data.endDate && (
+                      <div>
+                        <p className="text-gray-500 font-medium">End Date</p>
+                        <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                      </div>
+                    )}
+                    {infoModal.data.extensionAgenda && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Extension Agenda</p>
+                        <p className="text-gray-900">{infoModal.data.extensionAgenda}</p>
+                      </div>
+                    )}
+                    {infoModal.data.implementingCollege && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Implementing College</p>
+                        <p className="text-gray-900">{infoModal.data.implementingCollege}</p>
+                      </div>
+                    )}
+                    {infoModal.data.sourceOfFund && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Source of Fund</p>
+                        <p className="text-gray-900">{infoModal.data.sourceOfFund}</p>
+                      </div>
+                    )}
+                    {infoModal.data.totalCost > 0 && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Total Cost</p>
+                        <p className="text-gray-900">${infoModal.data.totalCost.toLocaleString()}</p>
+                      </div>
+                    )}
+                    {infoModal.data.partnerAgency && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Partner Agency</p>
+                        <p className="text-gray-900">{infoModal.data.partnerAgency}</p>
+                      </div>
+                    )}
+                    {infoModal.data.beneficiaries?.total > 0 && (
+                      <div>
+                        <p className="text-gray-500 font-medium">Beneficiaries</p>
+                        <p className="text-gray-900">Total: {infoModal.data.beneficiaries.total} (M: {infoModal.data.beneficiaries.male}, F: {infoModal.data.beneficiaries.female})</p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <button
+                onClick={() => setInfoModal(null)}
+                className="w-full mt-6 px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition font-medium"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* End of Main Content Area */}
     </div>
   )
