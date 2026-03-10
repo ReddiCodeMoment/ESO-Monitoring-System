@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Activity } from '../types'
 import { getActivitiesByProjectId, deleteActivity } from '../services/extensionService'
+import { useNotification } from '../context/NotificationContext'
 
 interface ActivityListProps {
   programId: string
@@ -13,6 +14,7 @@ export function ActivityList({ programId, projectId, onEdit, onRefresh }: Activi
   const [activities, setActivities] = useState<Activity[]>([])
   const [error, setError] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<'date' | 'cost' | 'beneficiaries'>('date')
+  const { showError, showSuccess } = useNotification()
 
   useEffect(() => {
     loadActivities()
@@ -33,13 +35,17 @@ export function ActivityList({ programId, projectId, onEdit, onRefresh }: Activi
       return
 
     try {
+      const activity = activities.find(a => a.id === activityId)
       await deleteActivity(programId, projectId, activityId)
       setActivities((prev) =>
         prev.filter((a) => a.id !== activityId)
       )
       if (onRefresh) onRefresh()
+      showSuccess('Activity deleted', `"${activity?.title}" has been removed`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete activity')
+      const message = err instanceof Error ? err.message : 'Failed to delete activity'
+      setError(message)
+      showError('Deletion failed', message)
     }
   }
 

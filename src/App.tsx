@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AppProvider } from './context/AppContext'
+import { NotificationProvider } from './context/NotificationContext'
 import { Header } from './components/Header'
 import { Sidebar } from './components/Sidebar'
 import { Login } from './components/Login'
 import { Dashboard } from './components/Dashboard'
 import { DataManagement } from './components/DataManagement'
 import { Settings } from './components/Settings'
+import { NotificationToast } from './components/NotificationToast'
 import './styles/layout.css'
 import './styles/header.css'
 
@@ -42,7 +44,10 @@ export default function App() {
   return (
     <AuthProvider>
       <AppProvider>
-        <AppContent />
+        <NotificationProvider>
+          <AppContent />
+          <NotificationToast />
+        </NotificationProvider>
       </AppProvider>
     </AuthProvider>
   )

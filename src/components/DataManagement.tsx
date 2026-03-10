@@ -14,13 +14,13 @@ import {
   updateExtensionProgram,
   updateProject
 } from '../services/extensionService'
-import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
+import { useNotification } from '../context/NotificationContext'
 import { ActivityForm } from './ActivityForm'
 
 export function DataManagement() {
-  const { setNotification } = useApp()
   const { user } = useAuth()
+  const { showError, showSuccess } = useNotification()
   
   // Data states
   const [programs, setPrograms] = useState<ExtensionProgram[]>([])
@@ -58,7 +58,7 @@ export function DataManagement() {
       const data = await getExtensionPrograms()
       setPrograms(data)
     } catch (error) {
-      setNotification({ type: 'error', text: 'Failed to load programs' })
+      showError('Loading failed', 'Could not load programs')
       console.error('Error:', error)
     }
   }
@@ -129,35 +129,41 @@ export function DataManagement() {
 
   const handleCreateProgram = async () => {
     if (!newProgram.title.trim()) {
-      setNotification({ type: 'error', text: 'Program title is required' })
+      showError('Missing information', 'Program title is required')
       return
     }
 
     try {
       const today = new Date().toISOString().split('T')[0]
-      await createExtensionProgram({
+      const createData: any = {
         title: newProgram.title,
-        description: newProgram.description,
+        description: newProgram.description || '',
         startDate: newProgram.startDate || today,
         endDate: newProgram.endDate || today,
-        color: newProgram.color,
-        implementingCollege: newProgram.implementingCollege,
+        color: newProgram.color || '#3B82F6',
         createdBy: user?.id || 'unknown',
         archived: false,
-      })
-      setNotification({ type: 'success', text: 'Program created successfully!' })
+      }
+      
+      // Add implementing college only if it's set
+      if (newProgram.implementingCollege) {
+        createData.implementingCollege = newProgram.implementingCollege
+      }
+      
+      await createExtensionProgram(createData)
+      showSuccess('Program created', `"${newProgram.title}" has been added`)
       setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '' })
       setView('list')
       loadPrograms()
     } catch (error) {
-      setNotification({ type: 'error', text: 'Failed to create program' })
+      showError('Creation failed', 'Could not create program')
       console.error('Error:', error)
     }
   }
 
   const handleCreateProject = async () => {
     if (!selectedProgram || !newProject.title.trim()) {
-      setNotification({ type: 'error', text: 'Program and project name are required' })
+      showError('Missing information', 'Program and project name are required')
       return
     }
 
@@ -171,46 +177,55 @@ export function DataManagement() {
         createdBy: user?.id || 'unknown',
         archived: false,
       })
-      setNotification({ type: 'success', text: 'Project created successfully!' })
+      showSuccess('Project created', `"${newProject.title}" has been added`)
       setNewProject({ title: '', description: '', startDate: '', endDate: '' })
       setView('list')
       // Reload projects for this program
       projects.delete(selectedProgram.id)
       loadProjectsForProgram(selectedProgram.id)
     } catch (error) {
-      setNotification({ type: 'error', text: 'Failed to create project' })
+      showError('Creation failed', 'Could not create project')
       console.error('Error:', error)
     }
   }
 
   const handleEditProgram = async () => {
     if (!editingProgram || !editingProgram.title.trim()) {
-      setNotification({ type: 'error', text: 'Program title is required' })
+      showError('Missing information', 'Program title is required')
       return
     }
 
     try {
-      await updateExtensionProgram(editingProgram.id, {
+      // Build update object, only including fields with values
+      const updateData: any = {
         title: editingProgram.title,
-        description: editingProgram.description,
+        description: editingProgram.description || '',
         startDate: editingProgram.startDate,
         endDate: editingProgram.endDate,
-        color: editingProgram.color,
-        implementingCollege: editingProgram.implementingCollege,
-      })
-      setNotification({ type: 'success', text: 'Program updated successfully!' })
+      }
+      
+      // Only include optional fields if they have values
+      if (editingProgram.color) {
+        updateData.color = editingProgram.color
+      }
+      if (editingProgram.implementingCollege) {
+        updateData.implementingCollege = editingProgram.implementingCollege
+      }
+      
+      await updateExtensionProgram(editingProgram.id, updateData)
+      showSuccess('Program updated', `"${editingProgram.title}" has been saved`)
       setEditingProgram(null)
       setView('list')
       loadPrograms()
     } catch (error) {
-      setNotification({ type: 'error', text: 'Failed to update program' })
+      showError('Update failed', 'Could not update program')
       console.error('Error:', error)
     }
   }
 
   const handleEditProject = async () => {
     if (!selectedProgram || !editingProject || !editingProject.title.trim()) {
-      setNotification({ type: 'error', text: 'Project name is required' })
+      showError('Missing information', 'Project name is required')
       return
     }
 
@@ -221,14 +236,14 @@ export function DataManagement() {
         startDate: editingProject.startDate,
         endDate: editingProject.endDate,
       })
-      setNotification({ type: 'success', text: 'Project updated successfully!' })
+      showSuccess('Project updated', `"${editingProject.title}" has been saved`)
       setEditingProject(null)
       setView('list')
       // Reload projects for this program
       projects.delete(selectedProgram.id)
       loadProjectsForProgram(selectedProgram.id)
     } catch (error) {
-      setNotification({ type: 'error', text: 'Failed to update project' })
+      showError('Update failed', 'Could not update project')
       console.error('Error:', error)
     }
   }
@@ -267,7 +282,7 @@ export function DataManagement() {
             total: parseInt(activityData.beneficiaries.total),
           },
         })
-        setNotification({ type: 'success', text: 'Activity updated successfully!' })
+        showSuccess('Activity updated', 'Changes have been saved')
       } else {
         await createActivity(selectedProgram.id, selectedProject.id, {
           title: activityData.title,
@@ -294,7 +309,7 @@ export function DataManagement() {
           createdBy: user?.id || 'unknown',
           status: 'draft',
         })
-        setNotification({ type: 'success', text: 'Activity created successfully!' })
+        showSuccess('Activity created', `"${activityData.title}" has been added`)
       }
 
       setView('list')
@@ -305,7 +320,7 @@ export function DataManagement() {
         loadProjectsForProgram(selectedProgram.id)
       }
     } catch (error) {
-      setNotification({ type: 'error', text: 'Failed to save activity' })
+      showError('Save failed', 'Could not save activity')
       console.error('Error:', error)
     }
   }
@@ -376,22 +391,27 @@ export function DataManagement() {
     // Check if program is within date range and year
     const programDateMatch = isWithinDateRange(program.startDate, program.endDate) && isWithinYear(program.startDate, program.endDate)
     
-    if (programMatches && programDateMatch) return true
+    // Check program college filter
+    const programCollegeMatch = hasMatchingCollege(program.implementingCollege || '')
+    
+    if (programMatches && programDateMatch && programCollegeMatch) return true
     
     // Check projects and activities
     const projectsInProgram = projects.get(program.id) || []
     const projectMatches = projectsInProgram.some((proj) => {
       const projSearch = searchLower === '' || matchesSearch(proj.title) || matchesSearch(proj.description || '')
       const projDate = isWithinDateRange(proj.startDate, proj.endDate) && isWithinYear(proj.startDate, proj.endDate)
+      // Projects inherit college from program
+      const projCollege = hasMatchingCollege(program.implementingCollege || '')
       
-      if (projSearch && projDate) return true
+      if (projSearch && projDate && projCollege) return true
       
       // Check activities
       const activitiesInProject = activities.get(proj.id) || []
       return activitiesInProject.some((act) => {
         const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
         const actDate = isWithinDateRange(act.startDate, act.endDate) && isWithinYear(act.startDate, act.endDate)
-        const actCollege = hasMatchingCollege(act.implementingCollege)
+        const actCollege = hasMatchingCollege(act.implementingCollege || '')
         
         return actSearch && actDate && actCollege
       })
@@ -411,14 +431,15 @@ export function DataManagement() {
       const hasMatchingProjects = projectsInProgram.some((proj) => {
         const projSearch = searchLower === '' || matchesSearch(proj.title) || matchesSearch(proj.description || '')
         const projDate = isWithinDateRange(proj.startDate, proj.endDate) && isWithinYear(proj.startDate, proj.endDate)
+        const projCollege = hasMatchingCollege(program.implementingCollege || '')
         
-        if (projSearch && projDate) return true
+        if (projSearch && projDate && projCollege) return true
         
         const activitiesInProject = activities.get(proj.id) || []
         return activitiesInProject.some((act) => {
           const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
           const actDate = isWithinDateRange(act.startDate, act.endDate) && isWithinYear(act.startDate, act.endDate)
-          const actCollege = hasMatchingCollege(act.implementingCollege)
+          const actCollege = hasMatchingCollege(act.implementingCollege || '')
           
           return actSearch && actDate && actCollege
         })
@@ -443,7 +464,7 @@ export function DataManagement() {
         const hasMatchingActivities = activitiesInProject.some((act) => {
           const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
           const actDate = isWithinDateRange(act.startDate, act.endDate) && isWithinYear(act.startDate, act.endDate)
-          const actCollege = hasMatchingCollege(act.implementingCollege)
+          const actCollege = hasMatchingCollege(act.implementingCollege || '')
           
           return actSearch && actDate && actCollege
         })
@@ -1085,10 +1106,10 @@ export function DataManagement() {
                               setSelectedProgram(null)
                               setSelectedProject(null)
                             }
-                            setNotification({ type: 'success', text: 'Program deleted successfully' })
+                            showSuccess('Program deleted', `"${program.title}" has been removed`)
                           })
                           .catch(() => {
-                            setNotification({ type: 'error', text: 'Failed to delete program' })
+                            showError('Deletion failed', 'Could not delete program')
                           })
                       }}
                       className="text-red-500 hover:text-red-700 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
@@ -1172,10 +1193,10 @@ export function DataManagement() {
                                       if (selectedProject?.id === project.id) {
                                         setSelectedProject(null)
                                       }
-                                      setNotification({ type: 'success', text: 'Project deleted successfully' })
+                                      showSuccess('Project deleted', `"${project.title}" has been removed`)
                                     })
                                     .catch(() => {
-                                      setNotification({ type: 'error', text: 'Failed to delete project' })
+                                      showError('Deletion failed', 'Could not delete project')
                                     })
                                 }}
                                 className="text-red-500 hover:text-red-700 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
@@ -1242,9 +1263,9 @@ export function DataManagement() {
                                                 newMap.set(key, acts.filter((a) => a.id !== activity.id))
                                                 return newMap
                                               })
-                                              setNotification({ type: 'success', text: 'Activity deleted successfully' })
+                                              showSuccess('Activity deleted', `"${activity.title}" has been removed`)
                                             } catch (error) {
-                                              setNotification({ type: 'error', text: 'Failed to delete activity' })
+                                              showError('Deletion failed', 'Could not delete activity')
                                             }
                                           }}
                                           className="text-red-600 hover:text-red-800 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"

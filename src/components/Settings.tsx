@@ -1,19 +1,39 @@
 import { useState } from 'react'
+import { useNotification } from '../context/NotificationContext'
+import { getExtensionPrograms } from '../services/extensionService'
 import '../styles/settings.css'
 
 export function Settings() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
-  const [language, setLanguage] = useState('en')
-  const [notifications, setNotifications] = useState(true)
+  const [exporting, setExporting] = useState(false)
+  const { showSuccess, showError, showInfo } = useNotification()
 
-  const handleExportData = () => {
-    alert('Data export feature coming soon!')
+  const handleExportData = async () => {
+    setExporting(true)
+    try {
+      showInfo('Exporting', 'Preparing your data...')
+      const programs = await getExtensionPrograms()
+      const dataStr = JSON.stringify(programs, null, 2)
+      const dataBlob = new Blob([dataStr], { type: 'application/json' })
+      const url = URL.createObjectURL(dataBlob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `eso-data-${new Date().toISOString().split('T')[0]}.json`
+      link.click()
+      URL.revokeObjectURL(url)
+      showSuccess('Export completed', `Data exported successfully`)
+    } catch (error) {
+      showError('Export failed', 'Could not export data')
+      console.error('Export error:', error)
+    } finally {
+      setExporting(false)
+    }
   }
 
   const handleClearCache = () => {
     if (window.confirm('Are you sure you want to clear cache? This cannot be undone.')) {
       localStorage.clear()
-      alert('Cache cleared successfully!')
+      showSuccess('Cache cleared', 'Local cache has been removed')
     }
   }
 
@@ -37,34 +57,9 @@ export function Settings() {
             </select>
           </label>
         </div>
-
-        <div className="settings-group">
-          <label>
-            <span className="setting-label">Language</span>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="setting-input"
-            >
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
-              <option value="tl">Tagalog</option>
-            </select>
-          </label>
-        </div>
-
-        <div className="settings-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={notifications}
-              onChange={(e) => setNotifications(e.target.checked)}
-              className="checkbox-input"
-            />
-            <span className="setting-label">Enable Notifications</span>
-          </label>
-        </div>
+        <p style={{ fontSize: '0.8rem', color: '#999', marginTop: '0.5rem' }}>
+          Notifications are enabled by default and will appear in the top-right corner when you perform actions.
+        </p>
       </div>
 
       {/* Data Management Section */}
@@ -77,9 +72,11 @@ export function Settings() {
         <div className="settings-actions">
           <button
             onClick={handleExportData}
+            disabled={exporting}
             className="settings-button settings-button-primary"
+            style={{ opacity: exporting ? 0.6 : 1, cursor: exporting ? 'not-allowed' : 'pointer' }}
           >
-            📥 Export Data
+            {exporting ? '⏳ Exporting...' : '📥 Export Data'}
           </button>
           <button
             onClick={handleClearCache}
