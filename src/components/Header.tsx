@@ -1,7 +1,12 @@
 import { useAuth } from '../context/AuthContext'
 import '../styles/header.css'
 
-export function Header() {
+interface HeaderProps {
+  activeTab?: 'dashboard' | 'data' | 'settings'
+  onTabChange?: (tab: 'dashboard' | 'data' | 'settings') => void
+}
+
+export function Header({ activeTab, onTabChange }: HeaderProps) {
   const { logout, user } = useAuth()
 
   return (
@@ -12,8 +17,16 @@ export function Header() {
         </div>
         <div className="header-user">
           <span>{user?.email}</span>
-          <button onClick={logout} className="header-logout-btn">
-            Logout
+          <button
+            onClick={() => onTabChange?.('settings')}
+            className={`header-icon-btn ${activeTab === 'settings' ? 'active' : ''}`}
+            title="Settings"
+            aria-label="Settings"
+          >
+            ⚙️
+          </button>
+          <button onClick={logout} className="header-icon-btn" title="Logout" aria-label="Logout">
+            🚪
           </button>
         </div>
       </div>

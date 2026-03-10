@@ -24,7 +24,7 @@ function AuthenticatedApp() {
 
   return (
     <div className="app-container">
-      <Header />
+      <Header activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="app-main">
         <Sidebar activeTab={activeTab} onTabChange={(tab: any) => setActiveTab(tab)} />
         <div className="app-content">

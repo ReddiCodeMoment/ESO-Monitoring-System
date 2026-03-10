@@ -67,6 +67,40 @@
   transform: translateY(0);
 }
 
+/* Icon button styles */
+.header-icon-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+}
+
+.header-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-icon-btn:active {
+  transform: translateY(0);
+}
+
+.header-icon-btn.active {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .header {
@@ -85,6 +119,7 @@
   .header-user {
     width: 100%;
     justify-content: space-between;
+    gap: 1rem;
   }
 
   .header-user span {
@@ -94,5 +129,12 @@
   .header-logout-btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
+  }
+
+  .header-icon-btn {
+    padding: 0.5rem;
+    font-size: 1rem;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
   }
 }
