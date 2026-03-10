@@ -175,3 +175,12 @@ export const EXTENSION_AGENDAS = [
   'Technical-Vocational Training (TVET) Program on Skills and Agri-Fishery and Related Program for farmers and Fisherfolks',
   'Technology Transfer and Adoption Utilization Program',
 ]
+
+export const IMPLEMENTING_COLLEGES = [
+  'CTE',
+  'COM',
+  'CHS',
+  'CCJE',
+  'CAS',
+  'CABEHIM',
+]
