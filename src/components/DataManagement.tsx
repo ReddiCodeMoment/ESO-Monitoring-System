@@ -364,7 +364,7 @@ export function DataManagement() {
   const displayExpandedProjects = searchLower === '' ? expandedProjects : getAutoExpandedProjects()
 
   return (
-    <div className="space-y-6" style={{ padding: '2rem' }}>
+    <div className="space-y-8" style={{ padding: '2rem' }}>
       {/* Modal Backdrop and Form */}
       {view === 'form' && selectedProject && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto px-4">
@@ -384,9 +384,9 @@ export function DataManagement() {
       {/* Main Content Area - dimmed when form modal is open */}
       <div style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
       {/* Quick Action Buttons */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        <div className="flex gap-3 flex-wrap">
+      <div className="bg-white rounded-lg shadow-md p-4">
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
+        <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => setView('createProgram')}
             className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition"
