@@ -188,7 +188,7 @@ export function ActivityForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-lg shadow-lg p-6 max-w-6xl mx-auto"
+      className="bg-white rounded-lg shadow-lg p-6 w-[80vw] max-w-5xl mx-auto"
     >
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
