@@ -46,7 +46,7 @@ export function DataManagement() {
   const [filterYear, setFilterYear] = useState('')
   
   // Form states
-  const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6' })
+  const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '' })
   const [newProject, setNewProject] = useState({ title: '', description: '', startDate: '', endDate: '' })
 
   useEffect(() => {
@@ -141,11 +141,12 @@ export function DataManagement() {
         startDate: newProgram.startDate || today,
         endDate: newProgram.endDate || today,
         color: newProgram.color,
+        implementingCollege: newProgram.implementingCollege,
         createdBy: user?.id || 'unknown',
         archived: false,
       })
       setNotification({ type: 'success', text: 'Program created successfully!' })
-      setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6' })
+      setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '' })
       setView('list')
       loadPrograms()
     } catch (error) {
@@ -195,6 +196,7 @@ export function DataManagement() {
         startDate: editingProgram.startDate,
         endDate: editingProgram.endDate,
         color: editingProgram.color,
+        implementingCollege: editingProgram.implementingCollege,
       })
       setNotification({ type: 'success', text: 'Program updated successfully!' })
       setEditingProgram(null)
@@ -553,6 +555,21 @@ export function DataManagement() {
                 <span className="text-sm text-gray-600">Select a color for this program</span>
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Implementing College</label>
+              <select
+                value={editingProgram.implementingCollege || ''}
+                onChange={(e) => setEditingProgram({ ...editingProgram, implementingCollege: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              >
+                <option value="">-- Select College --</option>
+                {IMPLEMENTING_COLLEGES.map((college) => (
+                  <option key={college} value={college}>
+                    {college}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="flex gap-2 pt-4">
               <button
                 onClick={handleEditProgram}
@@ -631,6 +648,21 @@ export function DataManagement() {
                 <span className="text-sm text-gray-600">Select a color for this program</span>
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Implementing College</label>
+              <select
+                value={newProgram.implementingCollege || ''}
+                onChange={(e) => setNewProgram({ ...newProgram, implementingCollege: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              >
+                <option value="">-- Select College --</option>
+                {IMPLEMENTING_COLLEGES.map((college) => (
+                  <option key={college} value={college}>
+                    {college}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="flex gap-2 pt-4">
               <button
                 onClick={handleCreateProgram}
@@ -641,7 +673,7 @@ export function DataManagement() {
               <button
                 onClick={() => {
                   setView('list')
-                  setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6' })
+                  setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '' })
                 }}
                 className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
               >
