@@ -188,11 +188,11 @@ export function ActivityForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto"
+      className="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto"
     >
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">Activity Form</h2>
+          <h2 className="text-2xl font-bold">ESO Monitoring System</h2>
           <span className="text-sm font-semibold text-gray-600">
             Page {currentPage} of {totalPages}
           </span>
