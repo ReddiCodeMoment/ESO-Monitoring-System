@@ -64,7 +64,6 @@ export function Dashboard() {
         description: newProgram.description || '',
         startDate: newProgram.startDate,
         endDate: newProgram.endDate,
-        activities: [],
         createdBy: user?.id || 'unknown',
         archived: false,
       })

@@ -11,17 +11,18 @@ import {
   Timestamp,
   writeBatch,
 } from 'firebase/firestore'
-import { db } from '../firebase.config' // Make sure this exists
-import { ExtensionProgram, Activity } from '../types'
+import { db } from '../firebase.config'
+import { ExtensionProgram, Project, Activity } from '../types'
 
 // ===== EXTENSION PROGRAMS =====
 
 export const createExtensionProgram = async (
-  programData: Omit<ExtensionProgram, 'id' | 'createdAt' | 'updatedAt'>
+  programData: Omit<ExtensionProgram, 'id' | 'createdAt' | 'updatedAt' | 'projects'>
 ): Promise<string> => {
   try {
     const docRef = await addDoc(collection(db, 'extensionPrograms'), {
       ...programData,
+      projects: [],
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
       archived: false,
@@ -40,12 +41,46 @@ export const getExtensionPrograms = async (): Promise<ExtensionProgram[]> => {
       where('archived', '==', false)
     )
     const querySnapshot = await getDocs(q)
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate().toISOString() || '',
-      updatedAt: doc.data().updatedAt?.toDate().toISOString() || '',
-    })) as ExtensionProgram[]
+    const programs: ExtensionProgram[] = []
+
+    for (const docSnapshot of querySnapshot.docs) {
+      const programData = docSnapshot.data()
+      const projectsSnapshot = await getDocs(
+        collection(db, 'extensionPrograms', docSnapshot.id, 'projects')
+      )
+      const projects: Project[] = []
+
+      for (const projectDoc of projectsSnapshot.docs) {
+        const projectData = projectDoc.data()
+        const activitiesSnapshot = await getDocs(
+          collection(db, 'extensionPrograms', docSnapshot.id, 'projects', projectDoc.id, 'activities')
+        )
+        const activities = activitiesSnapshot.docs.map((actDoc) => ({
+          id: actDoc.id,
+          ...actDoc.data(),
+          createdAt: actDoc.data().createdAt?.toDate().toISOString() || '',
+          updatedAt: actDoc.data().updatedAt?.toDate().toISOString() || '',
+        })) as Activity[]
+
+        projects.push({
+          id: projectDoc.id,
+          ...projectData,
+          activities,
+          createdAt: projectData.createdAt?.toDate().toISOString() || '',
+          updatedAt: projectData.updatedAt?.toDate().toISOString() || '',
+        } as Project)
+      }
+
+      programs.push({
+        id: docSnapshot.id,
+        ...programData,
+        projects,
+        createdAt: programData.createdAt?.toDate().toISOString() || '',
+        updatedAt: programData.updatedAt?.toDate().toISOString() || '',
+      } as ExtensionProgram)
+    }
+
+    return programs
   } catch (error) {
     console.error('Error fetching programs:', error)
     throw error
@@ -58,15 +93,42 @@ export const getExtensionProgramById = async (
   try {
     const docRef = doc(db, 'extensionPrograms', programId)
     const docSnapshot = await getDoc(docRef)
-    if (docSnapshot.exists()) {
-      return {
-        id: docSnapshot.id,
-        ...docSnapshot.data(),
-        createdAt: docSnapshot.data().createdAt?.toDate().toISOString() || '',
-        updatedAt: docSnapshot.data().updatedAt?.toDate().toISOString() || '',
-      } as ExtensionProgram
+    if (!docSnapshot.exists()) return null
+
+    const programData = docSnapshot.data()
+    const projectsSnapshot = await getDocs(
+      collection(db, 'extensionPrograms', programId, 'projects')
+    )
+    const projects: Project[] = []
+
+    for (const projectDoc of projectsSnapshot.docs) {
+      const projectData = projectDoc.data()
+      const activitiesSnapshot = await getDocs(
+        collection(db, 'extensionPrograms', programId, 'projects', projectDoc.id, 'activities')
+      )
+      const activities = activitiesSnapshot.docs.map((actDoc) => ({
+        id: actDoc.id,
+        ...actDoc.data(),
+        createdAt: actDoc.data().createdAt?.toDate().toISOString() || '',
+        updatedAt: actDoc.data().updatedAt?.toDate().toISOString() || '',
+      })) as Activity[]
+
+      projects.push({
+        id: projectDoc.id,
+        ...projectData,
+        activities,
+        createdAt: projectData.createdAt?.toDate().toISOString() || '',
+        updatedAt: projectData.updatedAt?.toDate().toISOString() || '',
+      } as Project)
     }
-    return null
+
+    return {
+      id: docSnapshot.id,
+      ...programData,
+      projects,
+      createdAt: programData.createdAt?.toDate().toISOString() || '',
+      updatedAt: programData.updatedAt?.toDate().toISOString() || '',
+    } as ExtensionProgram
   } catch (error) {
     console.error('Error fetching program:', error)
     throw error
@@ -75,7 +137,7 @@ export const getExtensionProgramById = async (
 
 export const updateExtensionProgram = async (
   programId: string,
-  programData: Partial<Omit<ExtensionProgram, 'id' | 'createdAt'>>
+  programData: Partial<Omit<ExtensionProgram, 'id' | 'createdAt' | 'projects'>>
 ): Promise<void> => {
   try {
     const docRef = doc(db, 'extensionPrograms', programId)
@@ -99,15 +161,137 @@ export const deleteExtensionProgram = async (programId: string): Promise<void> =
   }
 }
 
+// ===== PROJECTS =====
+
+export const createProject = async (
+  programId: string,
+  projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'activities'>
+): Promise<string> => {
+  try {
+    const docRef = await addDoc(
+      collection(db, 'extensionPrograms', programId, 'projects'),
+      {
+        ...projectData,
+        activities: [],
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      }
+    )
+    return docRef.id
+  } catch (error) {
+    console.error('Error creating project:', error)
+    throw error
+  }
+}
+
+export const getProjectsByProgramId = async (programId: string): Promise<Project[]> => {
+  try {
+    const projectsSnapshot = await getDocs(
+      collection(db, 'extensionPrograms', programId, 'projects')
+    )
+    const projects: Project[] = []
+
+    for (const projectDoc of projectsSnapshot.docs) {
+      const projectData = projectDoc.data()
+      const activitiesSnapshot = await getDocs(
+        collection(db, 'extensionPrograms', programId, 'projects', projectDoc.id, 'activities')
+      )
+      const activities = activitiesSnapshot.docs.map((actDoc) => ({
+        id: actDoc.id,
+        ...actDoc.data(),
+        createdAt: actDoc.data().createdAt?.toDate().toISOString() || '',
+        updatedAt: actDoc.data().updatedAt?.toDate().toISOString() || '',
+      })) as Activity[]
+
+      projects.push({
+        id: projectDoc.id,
+        ...projectData,
+        activities,
+        createdAt: projectData.createdAt?.toDate().toISOString() || '',
+        updatedAt: projectData.updatedAt?.toDate().toISOString() || '',
+      } as Project)
+    }
+
+    return projects
+  } catch (error) {
+    console.error('Error fetching projects:', error)
+    throw error
+  }
+}
+
+export const getProjectById = async (
+  programId: string,
+  projectId: string
+): Promise<Project | null> => {
+  try {
+    const docRef = doc(db, 'extensionPrograms', programId, 'projects', projectId)
+    const docSnapshot = await getDoc(docRef)
+    if (!docSnapshot.exists()) return null
+
+    const projectData = docSnapshot.data()
+    const activitiesSnapshot = await getDocs(
+      collection(db, 'extensionPrograms', programId, 'projects', projectId, 'activities')
+    )
+    const activities = activitiesSnapshot.docs.map((actDoc) => ({
+      id: actDoc.id,
+      ...actDoc.data(),
+      createdAt: actDoc.data().createdAt?.toDate().toISOString() || '',
+      updatedAt: actDoc.data().updatedAt?.toDate().toISOString() || '',
+    })) as Activity[]
+
+    return {
+      id: docSnapshot.id,
+      ...projectData,
+      activities,
+      createdAt: projectData.createdAt?.toDate().toISOString() || '',
+      updatedAt: projectData.updatedAt?.toDate().toISOString() || '',
+    } as Project
+  } catch (error) {
+    console.error('Error fetching project:', error)
+    throw error
+  }
+}
+
+export const updateProject = async (
+  programId: string,
+  projectId: string,
+  projectData: Partial<Omit<Project, 'id' | 'createdAt' | 'activities'>>
+): Promise<void> => {
+  try {
+    const docRef = doc(db, 'extensionPrograms', programId, 'projects', projectId)
+    await updateDoc(docRef, {
+      ...projectData,
+      updatedAt: Timestamp.now(),
+    })
+  } catch (error) {
+    console.error('Error updating project:', error)
+    throw error
+  }
+}
+
+export const deleteProject = async (
+  programId: string,
+  projectId: string
+): Promise<void> => {
+  try {
+    const docRef = doc(db, 'extensionPrograms', programId, 'projects', projectId)
+    await deleteDoc(docRef)
+  } catch (error) {
+    console.error('Error deleting project:', error)
+    throw error
+  }
+}
+
 // ===== ACTIVITIES =====
 
 export const createActivity = async (
   programId: string,
+  projectId: string,
   activityData: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<string> => {
   try {
     const docRef = await addDoc(
-      collection(db, 'extensionPrograms', programId, 'activities'),
+      collection(db, 'extensionPrograms', programId, 'projects', projectId, 'activities'),
       {
         ...activityData,
         createdAt: Timestamp.now(),
@@ -121,10 +305,13 @@ export const createActivity = async (
   }
 }
 
-export const getActivities = async (programId: string): Promise<Activity[]> => {
+export const getActivitiesByProjectId = async (
+  programId: string,
+  projectId: string
+): Promise<Activity[]> => {
   try {
     const querySnapshot = await getDocs(
-      collection(db, 'extensionPrograms', programId, 'activities')
+      collection(db, 'extensionPrograms', programId, 'projects', projectId, 'activities')
     )
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -138,8 +325,37 @@ export const getActivities = async (programId: string): Promise<Activity[]> => {
   }
 }
 
+// Backward compatibility: get all activities across all projects in a program
+export const getActivities = async (programId: string): Promise<Activity[]> => {
+  try {
+    const projectsSnapshot = await getDocs(
+      collection(db, 'extensionPrograms', programId, 'projects')
+    )
+    const allActivities: Activity[] = []
+
+    for (const projectDoc of projectsSnapshot.docs) {
+      const activitiesSnapshot = await getDocs(
+        collection(db, 'extensionPrograms', programId, 'projects', projectDoc.id, 'activities')
+      )
+      const activities = activitiesSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate().toISOString() || '',
+        updatedAt: doc.data().updatedAt?.toDate().toISOString() || '',
+      })) as Activity[]
+      allActivities.push(...activities)
+    }
+
+    return allActivities
+  } catch (error) {
+    console.error('Error fetching activities:', error)
+    throw error
+  }
+}
+
 export const getActivityById = async (
   programId: string,
+  projectId: string,
   activityId: string
 ): Promise<Activity | null> => {
   try {
@@ -147,6 +363,8 @@ export const getActivityById = async (
       db,
       'extensionPrograms',
       programId,
+      'projects',
+      projectId,
       'activities',
       activityId
     )
@@ -168,6 +386,7 @@ export const getActivityById = async (
 
 export const updateActivity = async (
   programId: string,
+  projectId: string,
   activityId: string,
   activityData: Partial<Omit<Activity, 'id' | 'createdAt'>>
 ): Promise<void> => {
@@ -176,6 +395,8 @@ export const updateActivity = async (
       db,
       'extensionPrograms',
       programId,
+      'projects',
+      projectId,
       'activities',
       activityId
     )
@@ -191,6 +412,7 @@ export const updateActivity = async (
 
 export const deleteActivity = async (
   programId: string,
+  projectId: string,
   activityId: string
 ): Promise<void> => {
   try {
@@ -198,6 +420,8 @@ export const deleteActivity = async (
       db,
       'extensionPrograms',
       programId,
+      'projects',
+      projectId,
       'activities',
       activityId
     )
@@ -212,11 +436,19 @@ export const deleteActivity = async (
 
 export const createBulkActivities = async (
   programId: string,
+  projectId: string,
   activities: Array<Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>>
 ): Promise<void> => {
   try {
     const batch = writeBatch(db)
-    const activitiesRef = collection(db, 'extensionPrograms', programId, 'activities')
+    const activitiesRef = collection(
+      db,
+      'extensionPrograms',
+      programId,
+      'projects',
+      projectId,
+      'activities'
+    )
 
     activities.forEach((activity) => {
       const newDocRef = doc(activitiesRef)
@@ -236,10 +468,18 @@ export const createBulkActivities = async (
 
 // ===== STATISTICS & REPORTS =====
 
-export const getActivityStats = async (programId: string) => {
+export const getActivityStats = async (programId: string, projectId?: string) => {
   try {
-    const activities = await getActivities(programId)
-    
+    let activities: Activity[] = []
+
+    if (projectId) {
+      // Get stats for specific project
+      activities = await getActivitiesByProjectId(programId, projectId)
+    } else {
+      // Get stats for entire program (all projects)
+      activities = await getActivities(programId)
+    }
+
     const totalBeneficiaries = activities.reduce(
       (acc, activity) => ({
         male: acc.male + activity.beneficiaries.male,
@@ -258,19 +498,11 @@ export const getActivityStats = async (programId: string) => {
       totalActivities: activities.length,
       totalBeneficiaries,
       totalCost,
-      sdgsInvolved: Array.from(
-        new Set(activities.flatMap((a) => a.sdgInvolved))
-      ),
-      statuses: activities.reduce(
-        (acc, activity) => ({
-          ...acc,
-          [activity.status]: (acc[activity.status] || 0) + 1,
-        }),
-        {} as Record<string, number>
-      ),
+      sdgCoverage: [...new Set(activities.flatMap(a => a.sdgInvolved))].length,
+      activitiesCount: activities.length,
     }
   } catch (error) {
-    console.error('Error calculating stats:', error)
+    console.error('Error calculating activity stats:', error)
     throw error
   }
 }

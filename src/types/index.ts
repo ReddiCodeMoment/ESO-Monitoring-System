@@ -56,13 +56,28 @@ export interface Activity {
   status: 'draft' | 'submitted' | 'approved' | 'completed'
 }
 
-export interface ExtensionProgram {
+export interface Project {
   id: string
   title: string
   description?: string
   startDate: string // ISO format YYYY-MM-DD
   endDate: string // ISO format YYYY-MM-DD
   activities: Activity[]
+  
+  // Metadata
+  createdAt: string
+  updatedAt: string
+  createdBy: string
+  archived: boolean
+}
+
+export interface ExtensionProgram {
+  id: string
+  title: string
+  description?: string
+  startDate: string // ISO format YYYY-MM-DD
+  endDate: string // ISO format YYYY-MM-DD
+  projects: Project[]
   
   // Metadata
   createdAt: string

@@ -1,26 +1,27 @@
 import { useState, useEffect } from 'react'
 import { Activity } from '../types'
-import { getActivities, deleteActivity } from '../services/extensionService'
+import { getActivitiesByProjectId, deleteActivity } from '../services/extensionService'
 
 interface ActivityListProps {
   programId: string
+  projectId: string
   onEdit: (activity: Activity) => void
   onRefresh?: () => void
 }
 
-export function ActivityList({ programId, onEdit, onRefresh }: ActivityListProps) {
+export function ActivityList({ programId, projectId, onEdit, onRefresh }: ActivityListProps) {
   const [activities, setActivities] = useState<Activity[]>([])
   const [error, setError] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<'date' | 'cost' | 'beneficiaries'>('date')
 
   useEffect(() => {
     loadActivities()
-  }, [programId])
+  }, [programId, projectId])
 
   const loadActivities = async () => {
     try {
       setError(null)
-      const data = await getActivities(programId)
+      const data = await getActivitiesByProjectId(programId, projectId)
       setActivities(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load activities')
@@ -32,7 +33,7 @@ export function ActivityList({ programId, onEdit, onRefresh }: ActivityListProps
       return
 
     try {
-      await deleteActivity(programId, activityId)
+      await deleteActivity(programId, projectId, activityId)
       setActivities((prev) =>
         prev.filter((a) => a.id !== activityId)
       )
