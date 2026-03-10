@@ -8,7 +8,9 @@ import {
   getProjectsByProgramId,
   createExtensionProgram,
   getActivitiesByProjectId,
-  deleteActivity
+  deleteActivity,
+  deleteExtensionProgram,
+  deleteProject
 } from '../services/extensionService'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
@@ -536,7 +538,7 @@ export function DataManagement() {
               <div key={program.id} className="border border-gray-200 rounded-lg overflow-hidden">
                 {/* Program Item */}
                 <div
-                  className={`p-4 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition ${
+                  className={`p-4 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition group ${
                     selectedProgram?.id === program.id ? 'bg-teal-50' : ''
                   }`}
                   onClick={() => {
@@ -565,6 +567,32 @@ export function DataManagement() {
                     >
                       ?
                     </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        const projectCount = (projects.get(program.id) || []).length
+                        if (!window.confirm(
+                          `Delete program "${program.title}"? This will delete ${projectCount} project(s) and all activities underneath.`
+                        )) return
+                        deleteExtensionProgram(program.id)
+                          .then(() => {
+                            setPrograms((prev) => prev.filter((p) => p.id !== program.id))
+                            projects.delete(program.id)
+                            if (selectedProgram?.id === program.id) {
+                              setSelectedProgram(null)
+                              setSelectedProject(null)
+                            }
+                            setNotification({ type: 'success', text: 'Program deleted successfully' })
+                          })
+                          .catch(() => {
+                            setNotification({ type: 'error', text: 'Failed to delete program' })
+                          })
+                      }}
+                      className="text-red-500 hover:text-red-700 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                      title="Delete program"
+                    >
+                      🗑️
+                    </button>
                     <span className="text-xs bg-teal-100 text-teal-700 px-3 py-1 rounded-full whitespace-nowrap ml-2">
                       Program
                     </span>
@@ -581,7 +609,7 @@ export function DataManagement() {
                         <div key={project.id} className="border-b border-gray-200 last:border-b-0">
                           {/* Project Item */}
                           <div
-                            className={`p-4 pl-12 cursor-pointer flex items-center justify-between hover:bg-gray-100 transition ${
+                            className={`p-4 pl-12 cursor-pointer flex items-center justify-between hover:bg-gray-100 transition group ${
                               selectedProject?.id === project.id ? 'bg-blue-50' : ''
                             }`}
                             onClick={() => {
@@ -610,6 +638,36 @@ export function DataManagement() {
                                 title="View project details"
                               >
                                 ?
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  const activityCount = (activities.get(`${program.id}-${project.id}`) || []).length
+                                  if (!window.confirm(
+                                    `Delete project "${project.title}"? This will delete ${activityCount} activity(ies) underneath.`
+                                  )) return
+                                  deleteProject(program.id, project.id)
+                                    .then(() => {
+                                      setProjects((prev) => {
+                                        const newMap = new Map(prev)
+                                        const prj = newMap.get(program.id) || []
+                                        newMap.set(program.id, prj.filter((p) => p.id !== project.id))
+                                        return newMap
+                                      })
+                                      activities.delete(`${program.id}-${project.id}`)
+                                      if (selectedProject?.id === project.id) {
+                                        setSelectedProject(null)
+                                      }
+                                      setNotification({ type: 'success', text: 'Project deleted successfully' })
+                                    })
+                                    .catch(() => {
+                                      setNotification({ type: 'error', text: 'Failed to delete project' })
+                                    })
+                                }}
+                                className="text-red-500 hover:text-red-700 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                                title="Delete project"
+                              >
+                                🗑️
                               </button>
                               <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full whitespace-nowrap ml-2">
                                 Project
@@ -652,9 +710,10 @@ export function DataManagement() {
                                             setEditingActivity(activity)
                                             setView('form')
                                           }}
-                                          className="text-blue-600 hover:text-blue-800 text-sm px-2 opacity-0 group-hover:opacity-100 transition"
+                                          className="text-blue-600 hover:text-blue-800 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                                          title="Edit activity"
                                         >
-                                          Edit
+                                          ✏️
                                         </button>
                                         <button
                                           onClick={async (e) => {
@@ -674,9 +733,10 @@ export function DataManagement() {
                                               setNotification({ type: 'error', text: 'Failed to delete activity' })
                                             }
                                           }}
-                                          className="text-red-600 hover:text-red-800 text-sm px-2 opacity-0 group-hover:opacity-100 transition"
+                                          className="text-red-600 hover:text-red-800 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                                          title="Delete activity"
                                         >
-                                          Delete
+                                          🗑️
                                         </button>
                                       </div>
                                     </div>
