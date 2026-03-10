@@ -6,6 +6,7 @@ import { Sidebar } from './components/Sidebar'
 import { Login } from './components/Login'
 import { Dashboard } from './components/Dashboard'
 import { DataManagement } from './components/DataManagement'
+import { Settings } from './components/Settings'
 import './styles/layout.css'
 import './styles/header.css'
 
@@ -30,7 +31,7 @@ function AuthenticatedApp() {
         <div className="app-content">
           {activeTab === 'dashboard' && <Dashboard />}
           {activeTab === 'data' && <DataManagement />}
-          {activeTab === 'settings' && <div className="content-section"><h2>Settings</h2><p>Settings coming soon...</p></div>}
+          {activeTab === 'settings' && <Settings />}
         </div>
       </main>
     </div>
