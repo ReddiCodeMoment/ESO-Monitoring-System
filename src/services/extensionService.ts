@@ -501,12 +501,15 @@ export const getActivityStats = async (programId: string, projectId?: string) =>
       0
     )
 
+    const sdgsInvolved = [...new Set(activities.flatMap(a => a.sdgInvolved))]
+
     return {
       totalActivities: activities.length,
       totalBeneficiaries,
       totalCost,
-      sdgCoverage: [...new Set(activities.flatMap(a => a.sdgInvolved))].length,
+      sdgCoverage: sdgsInvolved.length,
       activitiesCount: activities.length,
+      sdgsInvolved,
     }
   } catch (error) {
     console.error('Error calculating activity stats:', error)

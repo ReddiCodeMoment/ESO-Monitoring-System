@@ -85,6 +85,16 @@ export function Dashboard() {
       setProgramStats(stats)
     } catch (error) {
       console.error('Error loading program stats:', error)
+      // Show empty stats if no activities yet
+      setProgramStats({
+        totalActivities: 0,
+        totalBeneficiaries: { male: 0, female: 0, total: 0 },
+        totalCost: 0,
+        sdgCoverage: 0,
+        activitiesCount: 0,
+        sdgsInvolved: [],
+        statuses: {},
+      })
     }
   }
 
