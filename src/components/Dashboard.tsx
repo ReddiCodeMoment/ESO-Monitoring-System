@@ -195,62 +195,101 @@ export function Dashboard() {
               <h3 style={{ color: '#00332B', marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: '600' }}>
                 Create New Program
               </h3>
-              <div style={{ display: 'grid', gap: '1rem' }}>
-                <input
-                  type="text"
-                  placeholder="Program Title"
-                  value={newProgram.title}
-                  onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value })}
-                  style={{
-                    padding: '0.75rem 1rem',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    fontSize: '0.95rem',
-                    fontFamily: 'inherit',
-                  }}
-                  required
-                />
-                <textarea
-                  placeholder="Description (optional)"
-                  value={newProgram.description}
-                  onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value })}
-                  style={{
-                    padding: '0.75rem 1rem',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    fontSize: '0.95rem',
-                    fontFamily: 'inherit',
-                    minHeight: '80px',
-                    resize: 'vertical',
-                  }}
-                />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gap: '1.5rem' }}>
+                {/* Program Title Field */}
+                <div>
+                  <label style={{ display: 'block', color: '#00332B', fontWeight: '600', marginBottom: '0.5rem', fontSize: '0.95rem' }}>
+                    Program Title <span style={{ color: '#FF4E69' }}>*</span>
+                  </label>
                   <input
-                    type="number"
-                    placeholder="Start Year"
-                    value={newProgram.startYear}
-                    onChange={(e) => setNewProgram({ ...newProgram, startYear: parseInt(e.target.value) })}
+                    type="text"
+                    placeholder="e.g., Community Health Program 2026"
+                    value={newProgram.title}
+                    onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value })}
                     style={{
+                      width: '100%',
                       padding: '0.75rem 1rem',
                       border: '1px solid #ddd',
                       borderRadius: '6px',
                       fontSize: '0.95rem',
                       fontFamily: 'inherit',
+                      boxSizing: 'border-box',
                     }}
+                    required
                   />
-                  <input
-                    type="number"
-                    placeholder="End Year"
-                    value={newProgram.endYear}
-                    onChange={(e) => setNewProgram({ ...newProgram, endYear: parseInt(e.target.value) })}
+                  <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: '#999' }}>The name of your extension program</p>
+                </div>
+
+                {/* Description Field */}
+                <div>
+                  <label style={{ display: 'block', color: '#00332B', fontWeight: '600', marginBottom: '0.5rem', fontSize: '0.95rem' }}>
+                    Description <span style={{ color: '#999' }}>(Optional)</span>
+                  </label>
+                  <textarea
+                    placeholder="Describe the program's goals, target beneficiaries, activities, etc."
+                    value={newProgram.description}
+                    onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value })}
                     style={{
+                      width: '100%',
                       padding: '0.75rem 1rem',
                       border: '1px solid #ddd',
                       borderRadius: '6px',
                       fontSize: '0.95rem',
                       fontFamily: 'inherit',
+                      minHeight: '100px',
+                      resize: 'vertical',
+                      boxSizing: 'border-box',
                     }}
                   />
+                  <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: '#999' }}>Provide details about the program scope and objectives</p>
+                </div>
+
+                {/* Year Range Fields */}
+                <div>
+                  <label style={{ display: 'block', color: '#00332B', fontWeight: '600', marginBottom: '0.75rem', fontSize: '0.95rem' }}>
+                    Program Duration
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', color: '#555', fontWeight: '500', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
+                        Start Year
+                      </label>
+                      <input
+                        type="number"
+                        value={newProgram.startYear}
+                        onChange={(e) => setNewProgram({ ...newProgram, startYear: parseInt(e.target.value) })}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          border: '1px solid #ddd',
+                          borderRadius: '6px',
+                          fontSize: '0.95rem',
+                          fontFamily: 'inherit',
+                          boxSizing: 'border-box',
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', color: '#555', fontWeight: '500', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
+                        End Year
+                      </label>
+                      <input
+                        type="number"
+                        value={newProgram.endYear}
+                        onChange={(e) => setNewProgram({ ...newProgram, endYear: parseInt(e.target.value) })}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          border: '1px solid #ddd',
+                          borderRadius: '6px',
+                          fontSize: '0.95rem',
+                          fontFamily: 'inherit',
+                          boxSizing: 'border-box',
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: '#999' }}>Specify when the program runs</p>
                 </div>
                 <button
                   type="submit"
