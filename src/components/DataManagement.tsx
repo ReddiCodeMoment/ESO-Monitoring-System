@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ExtensionProgram, Project, Activity } from '../types'
+import { ExtensionProgram, Project, Activity, SDG_LIST } from '../types'
 import { 
   getExtensionPrograms, 
   createActivity, 
@@ -700,144 +700,232 @@ export function DataManagement() {
       {/* Info Modal */}
       {infoModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto px-4">
-          <div className="bg-white rounded-lg shadow-lg max-w-md w-full my-8">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  {infoModal.type === 'program' && 'Program Details'}
-                  {infoModal.type === 'project' && 'Project Details'}
-                  {infoModal.type === 'activity' && 'Activity Details'}
-                </h2>
-                <button
-                  onClick={() => setInfoModal(null)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="space-y-3 text-sm">
-                {infoModal.type === 'program' && (
-                  <>
-                    <div>
-                      <p className="text-gray-500 font-medium">Title</p>
-                      <p className="text-gray-900">{infoModal.data.title}</p>
-                    </div>
-                    {infoModal.data.description && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Description</p>
-                        <p className="text-gray-900">{infoModal.data.description}</p>
-                      </div>
-                    )}
-                    {infoModal.data.startDate && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Start Date</p>
-                        <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
-                      </div>
-                    )}
-                    {infoModal.data.endDate && (
-                      <div>
-                        <p className="text-gray-500 font-medium">End Date</p>
-                        <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
-                      </div>
-                    )}
-                  </>
-                )}
-
-                {infoModal.type === 'project' && (
-                  <>
-                    <div>
-                      <p className="text-gray-500 font-medium">Title</p>
-                      <p className="text-gray-900">{infoModal.data.title}</p>
-                    </div>
-                    {infoModal.data.description && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Description</p>
-                        <p className="text-gray-900">{infoModal.data.description}</p>
-                      </div>
-                    )}
-                    {infoModal.data.startDate && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Start Date</p>
-                        <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
-                      </div>
-                    )}
-                    {infoModal.data.endDate && (
-                      <div>
-                        <p className="text-gray-500 font-medium">End Date</p>
-                        <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
-                      </div>
-                    )}
-                  </>
-                )}
-
-                {infoModal.type === 'activity' && (
-                  <>
-                    <div>
-                      <p className="text-gray-500 font-medium">Title</p>
-                      <p className="text-gray-900">{infoModal.data.title}</p>
-                    </div>
-                    {infoModal.data.location && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Location</p>
-                        <p className="text-gray-900">{infoModal.data.location}</p>
-                      </div>
-                    )}
-                    {infoModal.data.startDate && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Start Date</p>
-                        <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
-                      </div>
-                    )}
-                    {infoModal.data.endDate && (
-                      <div>
-                        <p className="text-gray-500 font-medium">End Date</p>
-                        <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
-                      </div>
-                    )}
-                    {infoModal.data.extensionAgenda && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Extension Agenda</p>
-                        <p className="text-gray-900">{infoModal.data.extensionAgenda}</p>
-                      </div>
-                    )}
-                    {infoModal.data.implementingCollege && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Implementing College</p>
-                        <p className="text-gray-900">{infoModal.data.implementingCollege}</p>
-                      </div>
-                    )}
-                    {infoModal.data.sourceOfFund && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Source of Fund</p>
-                        <p className="text-gray-900">{infoModal.data.sourceOfFund}</p>
-                      </div>
-                    )}
-                    {infoModal.data.totalCost > 0 && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Total Cost</p>
-                        <p className="text-gray-900">${infoModal.data.totalCost.toLocaleString()}</p>
-                      </div>
-                    )}
-                    {infoModal.data.partnerAgency && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Partner Agency</p>
-                        <p className="text-gray-900">{infoModal.data.partnerAgency}</p>
-                      </div>
-                    )}
-                    {infoModal.data.beneficiaries?.total > 0 && (
-                      <div>
-                        <p className="text-gray-500 font-medium">Beneficiaries</p>
-                        <p className="text-gray-900">Total: {infoModal.data.beneficiaries.total} (M: {infoModal.data.beneficiaries.male}, F: {infoModal.data.beneficiaries.female})</p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-
+          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full my-8 flex flex-col max-h-[80vh]">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {infoModal.type === 'program' && 'Program Details'}
+                {infoModal.type === 'project' && 'Project Details'}
+                {infoModal.type === 'activity' && 'Activity Details'}
+              </h2>
               <button
                 onClick={() => setInfoModal(null)}
-                className="w-full mt-6 px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition font-medium"
+                className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="p-6 overflow-y-auto flex-1">
+              {infoModal.type === 'program' && (
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <p className="text-gray-500 font-medium">Title</p>
+                    <p className="text-gray-900">{infoModal.data.title}</p>
+                  </div>
+                  {infoModal.data.description && (
+                    <div>
+                      <p className="text-gray-500 font-medium">Description</p>
+                      <p className="text-gray-900">{infoModal.data.description}</p>
+                    </div>
+                  )}
+                  {infoModal.data.startDate && (
+                    <div>
+                      <p className="text-gray-500 font-medium">Start Date</p>
+                      <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                  {infoModal.data.endDate && (
+                    <div>
+                      <p className="text-gray-500 font-medium">End Date</p>
+                      <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {infoModal.type === 'project' && (
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <p className="text-gray-500 font-medium">Title</p>
+                    <p className="text-gray-900">{infoModal.data.title}</p>
+                  </div>
+                  {infoModal.data.description && (
+                    <div>
+                      <p className="text-gray-500 font-medium">Description</p>
+                      <p className="text-gray-900">{infoModal.data.description}</p>
+                    </div>
+                  )}
+                  {infoModal.data.startDate && (
+                    <div>
+                      <p className="text-gray-500 font-medium">Start Date</p>
+                      <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                  {infoModal.data.endDate && (
+                    <div>
+                      <p className="text-gray-500 font-medium">End Date</p>
+                      <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {infoModal.type === 'activity' && (
+                  <div className="space-y-6">
+                    {/* Basic Information */}
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">Basic Information</h3>
+                      <div className="space-y-3 text-sm">
+                        <div>
+                          <p className="text-gray-500 font-medium">Title</p>
+                          <p className="text-gray-900">{infoModal.data.title}</p>
+                        </div>
+                        {infoModal.data.location && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Location</p>
+                            <p className="text-gray-900">{infoModal.data.location}</p>
+                          </div>
+                        )}
+                        <div className="grid grid-cols-2 gap-3">
+                          {infoModal.data.startDate && (
+                            <div>
+                              <p className="text-gray-500 font-medium">Start Date</p>
+                              <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
+                            </div>
+                          )}
+                          {infoModal.data.endDate && (
+                            <div>
+                              <p className="text-gray-500 font-medium">End Date</p>
+                              <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                            </div>
+                          )}
+                        </div>
+                        {infoModal.data.duration && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Duration</p>
+                            <p className="text-gray-900">{infoModal.data.duration}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Organization & Implementation */}
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">Organization & Implementation</h3>
+                      <div className="space-y-3 text-sm">
+                        {infoModal.data.extensionAgenda && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Extension Agenda</p>
+                            <p className="text-gray-900">{infoModal.data.extensionAgenda}</p>
+                          </div>
+                        )}
+                        {infoModal.data.implementingCollege && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Implementing College</p>
+                            <p className="text-gray-900">{infoModal.data.implementingCollege}</p>
+                          </div>
+                        )}
+                        {infoModal.data.programsInvolved && infoModal.data.programsInvolved.length > 0 && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Programs Involved</p>
+                            <p className="text-gray-900">{infoModal.data.programsInvolved.join(', ')}</p>
+                          </div>
+                        )}
+                        {infoModal.data.facultyExtensionists && infoModal.data.facultyExtensionists.length > 0 && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Faculty Extensionists</p>
+                            <p className="text-gray-900">{infoModal.data.facultyExtensionists.join(', ')}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Partnership & Support */}
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">Partnership & Support</h3>
+                      <div className="space-y-3 text-sm">
+                        {infoModal.data.partnerAgency && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Partner Agency</p>
+                            <p className="text-gray-900">{infoModal.data.partnerAgency}</p>
+                          </div>
+                        )}
+                        {infoModal.data.typeOfPartner && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Type of Partner</p>
+                            <p className="text-gray-900">{infoModal.data.typeOfPartner}</p>
+                          </div>
+                        )}
+                        {infoModal.data.supportProvided && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Support Provided</p>
+                            <p className="text-gray-900">{infoModal.data.supportProvided}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Financial */}
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">Financial</h3>
+                      <div className="space-y-3 text-sm">
+                        {infoModal.data.sourceOfFund && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Source of Fund</p>
+                            <p className="text-gray-900">{infoModal.data.sourceOfFund}</p>
+                          </div>
+                        )}
+                        {infoModal.data.totalCost >= 0 && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Total Cost</p>
+                            <p className="text-gray-900">${infoModal.data.totalCost.toLocaleString()}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* SDG & Participants */}
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">SDGs & Participants</h3>
+                      <div className="space-y-3 text-sm">
+                        {infoModal.data.sdgInvolved && infoModal.data.sdgInvolved.length > 0 && (
+                          <div>
+                            <p className="text-gray-500 font-medium">SDGs Involved</p>
+                            <p className="text-gray-900">{infoModal.data.sdgInvolved.map((id: string) => {
+                              const sdg = SDG_LIST.find((s) => s.id === id)
+                              return sdg ? sdg.name : id
+                            }).join(', ')}</p>
+                          </div>
+                        )}
+                        {infoModal.data.typeOfParticipant && infoModal.data.typeOfParticipant.length > 0 && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Type of Participants</p>
+                            <p className="text-gray-900">{infoModal.data.typeOfParticipant.join(', ')}</p>
+                          </div>
+                        )}
+                        {infoModal.data.beneficiaries?.total > 0 && (
+                          <div>
+                            <p className="text-gray-500 font-medium">Beneficiaries</p>
+                            <p className="text-gray-900">
+                              Total: <span className="font-semibold">{infoModal.data.beneficiaries.total}</span>
+                              <br />
+                              <span className="text-xs text-gray-600">Male: {infoModal.data.beneficiaries.male} | Female: {infoModal.data.beneficiaries.female}</span>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-gray-200 bg-gray-50">
+              <button
+                onClick={() => setInfoModal(null)}
+                className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition font-medium"
               >
                 Close
               </button>
