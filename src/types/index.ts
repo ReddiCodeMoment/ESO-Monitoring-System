@@ -60,8 +60,8 @@ export interface ExtensionProgram {
   id: string
   title: string
   description?: string
-  startYear: number
-  endYear: number
+  startDate: string // ISO format YYYY-MM-DD
+  endDate: string // ISO format YYYY-MM-DD
   activities: Activity[]
   
   // Metadata

@@ -10,7 +10,8 @@ export function Dashboard() {
   const { setNotification } = useApp()
   const [programs, setPrograms] = useState<ExtensionProgram[]>([])
   const [showProgramForm, setShowProgramForm] = useState(false)
-  const [newProgram, setNewProgram] = useState({ title: '', description: '', startYear: new Date().getFullYear(), endYear: new Date().getFullYear() })
+  const today = new Date().toISOString().split('T')[0]
+  const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: today, endDate: today })
   const [stats, setStats] = useState({ totalPrograms: 0, totalActivities: 0, totalBeneficiaries: 0, totalCost: 0 })
   const [selectedProgram, setSelectedProgram] = useState<ExtensionProgram | null>(null)
   const [programStats, setProgramStats] = useState<any>(null)
@@ -61,15 +62,15 @@ export function Dashboard() {
       await createExtensionProgram({
         title: newProgram.title,
         description: newProgram.description || '',
-        startYear: newProgram.startYear,
-        endYear: newProgram.endYear,
+        startDate: newProgram.startDate,
+        endDate: newProgram.endDate,
         activities: [],
         createdBy: user?.id || 'unknown',
         archived: false,
       })
       
       setNotification({ type: 'success', text: 'Program created successfully!' })
-      setNewProgram({ title: '', description: '', startYear: new Date().getFullYear(), endYear: new Date().getFullYear() })
+      setNewProgram({ title: '', description: '', startDate: today, endDate: today })
       setShowProgramForm(false)
       loadPrograms()
     } catch (error) {
@@ -252,12 +253,12 @@ export function Dashboard() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
                       <label style={{ display: 'block', color: '#555', fontWeight: '500', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
-                        Start Year
+                        Start Date
                       </label>
                       <input
-                        type="number"
-                        value={newProgram.startYear}
-                        onChange={(e) => setNewProgram({ ...newProgram, startYear: parseInt(e.target.value) })}
+                        type="date"
+                        value={newProgram.startDate}
+                        onChange={(e) => setNewProgram({ ...newProgram, startDate: e.target.value })}
                         style={{
                           width: '100%',
                           padding: '0.75rem 1rem',
@@ -271,12 +272,12 @@ export function Dashboard() {
                     </div>
                     <div>
                       <label style={{ display: 'block', color: '#555', fontWeight: '500', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
-                        End Year
+                        End Date
                       </label>
                       <input
-                        type="number"
-                        value={newProgram.endYear}
-                        onChange={(e) => setNewProgram({ ...newProgram, endYear: parseInt(e.target.value) })}
+                        type="date"
+                        value={newProgram.endDate}
+                        onChange={(e) => setNewProgram({ ...newProgram, endDate: e.target.value })}
                         style={{
                           width: '100%',
                           padding: '0.75rem 1rem',
@@ -370,7 +371,7 @@ export function Dashboard() {
                     </div>
                   )}
                   <div style={{ fontSize: '0.85rem', color: '#999', display: 'flex', gap: '1rem' }}>
-                    <span>📅 {program.startYear} - {program.endYear}</span>
+                    <span>📅 {new Date(program.startDate).toLocaleDateString()} - {new Date(program.endDate).toLocaleDateString()}</span>
                   </div>
                 </div>
               ))}
