@@ -160,3 +160,18 @@ export const FUND_SOURCES = [
   'Partner Organization',
   'Other',
 ]
+
+export const EXTENSION_AGENDAS = [
+  'Adopt A Municipality/ Adopt A Community/ Social Development thru BIDANI Implementation',
+  'BatStateU Inclusive Social Innovation for Regional Growth (BISIG) Program',
+  'Community Outreach Program',
+  'Disaster Risk Reduction and Management and Disaster Preparedness and Response to Climate Change',
+  'Environment and Natural Resources Conservation, Protection and Rehabilitation Program',
+  'Gender and Development',
+  'Livelihood and other Entrepreneurship related on Agri-Fisheries (LEAF)',
+  'Parent\'s Empowerment Through Social Development (PESODEV)',
+  'Smart Analytics and Engineering Innovation',
+  'Technical Assistance and Advisory Services Program',
+  'Technical-Vocational Training (TVET) Program on Skills and Agri-Fishery and Related Program for farmers and Fisherfolks',
+  'Technology Transfer and Adoption Utilization Program',
+]

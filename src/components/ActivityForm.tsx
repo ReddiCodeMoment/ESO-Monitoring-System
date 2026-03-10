@@ -6,6 +6,7 @@ import {
   PARTNER_TYPES,
   PARTICIPANT_TYPES,
   FUND_SOURCES,
+  EXTENSION_AGENDAS,
 } from '../types'
 
 interface ActivityFormProps {
@@ -47,6 +48,8 @@ export function ActivityForm({
   })
 
   const [error, setError] = useState<string | null>(null)
+  const [showCustomAgenda, setShowCustomAgenda] = useState(false)
+  const [customAgenda, setCustomAgenda] = useState('')
 
   useEffect(() => {
     if (initialData) {
@@ -292,13 +295,66 @@ export function ActivityForm({
               <label className="block text-sm font-medium mb-1">
                 Extension Agenda
               </label>
-              <textarea
+              <select
                 name="extensionAgenda"
                 value={formData.extensionAgenda}
-                onChange={handleInputChange}
-                rows={4}
+                onChange={(e) => {
+                  if (e.target.value === 'custom') {
+                    setShowCustomAgenda(true)
+                  } else {
+                    setShowCustomAgenda(false)
+                    setFormData((prev) => ({
+                      ...prev,
+                      extensionAgenda: e.target.value,
+                    }))
+                  }
+                }}
                 className="w-full border rounded px-3 py-2"
-              />
+              >
+                <option value="">Select an agenda...</option>
+                {EXTENSION_AGENDAS.map((agenda) => (
+                  <option key={agenda} value={agenda}>
+                    {agenda}
+                  </option>
+                ))}
+                <option value="custom">+ Add Custom Agenda</option>
+              </select>
+
+              {showCustomAgenda && (
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    placeholder="Enter custom agenda"
+                    value={customAgenda}
+                    onChange={(e) => setCustomAgenda(e.target.value)}
+                    onBlur={() => {
+                      if (customAgenda.trim()) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          extensionAgenda: customAgenda,
+                        }))
+                        setCustomAgenda('')
+                        setShowCustomAgenda(false)
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && customAgenda.trim()) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          extensionAgenda: customAgenda,
+                        }))
+                        setCustomAgenda('')
+                        setShowCustomAgenda(false)
+                      }
+                    }}
+                    className="w-full border rounded px-3 py-2 bg-yellow-50"
+                    autoFocus
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Type custom agenda and press Enter or click outside
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </fieldset>
