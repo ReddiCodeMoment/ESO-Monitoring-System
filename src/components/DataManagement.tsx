@@ -39,6 +39,7 @@ export function DataManagement() {
   const [editingProgram, setEditingProgram] = useState<ExtensionProgram | null>(null)
   const [editingProject, setEditingProject] = useState<Project | null>(null)
   const [infoModal, setInfoModal] = useState<{ type: 'program' | 'project' | 'activity', data: any } | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
   
   // Form states
   const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '' })
@@ -297,6 +298,70 @@ export function DataManagement() {
 
   // Return TSX
   const programProjects = selectedProgram ? projects.get(selectedProgram.id) || [] : []
+
+  // Search/Filter logic
+  const searchLower = searchTerm.toLowerCase().trim()
+  const matchesSearch = (text: string): boolean => text.toLowerCase().includes(searchLower)
+  
+  const filteredPrograms = searchLower === ''
+    ? programs
+    : programs.filter((program) => {
+        const programMatches = matchesSearch(program.title) || matchesSearch(program.description || '')
+        if (programMatches) return true
+        
+        const projectsInProgram = projects.get(program.id) || []
+        const projectMatches = projectsInProgram.some((proj) => {
+          const projMatches = matchesSearch(proj.title) || matchesSearch(proj.description || '')
+          if (projMatches) return true
+          
+          const activitiesInProject = activities.get(proj.id) || []
+          return activitiesInProject.some((act) => matchesSearch(act.title) || matchesSearch(act.location || ''))
+        })
+        
+        return projectMatches
+      })
+  
+  // Auto-expand programs/projects that have search matches
+  const getAutoExpandedPrograms = (): Set<string> => {
+    if (searchLower === '') return expandedPrograms
+    
+    const expandedIds = new Set<string>()
+    filteredPrograms.forEach((program) => {
+      const projectsInProgram = projects.get(program.id) || []
+      const hasMatchingProjects = projectsInProgram.some((proj) => {
+        const projMatches = matchesSearch(proj.title) || matchesSearch(proj.description || '')
+        if (projMatches) return true
+        
+        const activitiesInProject = activities.get(proj.id) || []
+        return activitiesInProject.some((act) => matchesSearch(act.title) || matchesSearch(act.location || ''))
+      })
+      
+      if (hasMatchingProjects) {
+        expandedIds.add(program.id)
+      }
+    })
+    return expandedIds
+  }
+  
+  const getAutoExpandedProjects = (): Set<string> => {
+    if (searchLower === '') return expandedProjects
+    
+    const expandedIds = new Set<string>()
+    filteredPrograms.forEach((program) => {
+      const projectsInProgram = projects.get(program.id) || []
+      projectsInProgram.forEach((proj) => {
+        const activitiesInProject = activities.get(proj.id) || []
+        const hasMatchingActivities = activitiesInProject.some((act) => matchesSearch(act.title) || matchesSearch(act.location || ''))
+        if (hasMatchingActivities) {
+          expandedIds.add(proj.id)
+        }
+      })
+    })
+    return expandedIds
+  }
+  
+  const displayExpandedPrograms = searchLower === '' ? expandedPrograms : getAutoExpandedPrograms()
+  const displayExpandedProjects = searchLower === '' ? expandedProjects : getAutoExpandedProjects()
 
   return (
     <div className="space-y-6" style={{ padding: '2rem' }}>
@@ -714,11 +779,30 @@ export function DataManagement() {
       {/* Hierarchical Tree View */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Programs & Projects</h3>
+        
+        {/* Search Input */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search programs, projects, or activities..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {searchTerm && (
+            <p className="text-xs text-gray-500 mt-2">
+              Found {filteredPrograms.length} program(s) {searchTerm ? 'matching your search' : ''}
+            </p>
+          )}
+        </div>
+
         {programs.length === 0 ? (
           <p className="text-gray-500">No programs found. Create one to get started.</p>
+        ) : filteredPrograms.length === 0 ? (
+          <p className="text-gray-500">No results for "{searchTerm}". Try a different search term.</p>
         ) : (
           <div className="space-y-2">
-            {programs.map((program) => (
+            {filteredPrograms.map((program) => (
               <div key={program.id} className="border border-gray-200 rounded-lg overflow-hidden">
                 {/* Program Item */}
                 <div
@@ -732,7 +816,7 @@ export function DataManagement() {
                   }}
                 >
                   <div className="flex items-center gap-3 flex-1">
-                    <span className={`transform transition text-gray-400 ${expandedPrograms.has(program.id) ? 'rotate-90' : ''}`}>
+                    <span className={`transform transition text-gray-400 ${displayExpandedPrograms.has(program.id) ? 'rotate-90' : ''}`}>
                       ▶
                     </span>
                     <div className="flex-1">
@@ -795,7 +879,7 @@ export function DataManagement() {
                 </div>
 
                 {/* Projects List (shown when program is expanded) */}
-                {expandedPrograms.has(program.id) && selectedProgram?.id === program.id && (
+                {displayExpandedPrograms.has(program.id) && selectedProgram?.id === program.id && (
                   <div className="bg-gray-50 border-t border-gray-200">
                     {programProjects.length === 0 ? (
                       <div className="p-4 pl-12 text-gray-500 text-sm">No projects yet</div>
@@ -813,7 +897,7 @@ export function DataManagement() {
                             }}
                           >
                             <div className="flex items-center gap-3 flex-1">
-                              <span className={`transform transition text-gray-400 ${expandedProjects.has(project.id) ? 'rotate-90' : ''}`}>
+                              <span className={`transform transition text-gray-400 ${displayExpandedProjects.has(project.id) ? 'rotate-90' : ''}`}>
                                 ▶
                               </span>
                               <div className="flex-1">
@@ -882,7 +966,7 @@ export function DataManagement() {
                           </div>
 
                           {/* Activities List (shown when project is expanded) */}
-                          {expandedProjects.has(project.id) && (
+                          {displayExpandedProjects.has(project.id) && (
                             <div className="bg-white border-t border-gray-100">
                               {(() => {
                                 const key = `${program.id}-${project.id}`
