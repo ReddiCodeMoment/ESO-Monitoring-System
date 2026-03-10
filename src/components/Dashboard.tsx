@@ -1,17 +1,10 @@
 import { useState, useEffect } from 'react'
 import { ExtensionProgram } from '../types'
-import { getExtensionPrograms, getActivityStats, createExtensionProgram, deleteExtensionProgram } from '../services/extensionService'
-import { useAuth } from '../context/AuthContext'
-import { useApp } from '../context/AppContext'
+import { getExtensionPrograms, getActivityStats } from '../services/extensionService'
 import '../styles/layout.css'
 
 export function Dashboard() {
-  const { user } = useAuth()
-  const { setNotification } = useApp()
   const [programs, setPrograms] = useState<ExtensionProgram[]>([])
-  const [showProgramForm, setShowProgramForm] = useState(false)
-  const today = new Date().toISOString().split('T')[0]
-  const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: today, endDate: today })
   const [stats, setStats] = useState({ totalPrograms: 0, totalActivities: 0, totalBeneficiaries: 0, totalCost: 0 })
   const [selectedProgram, setSelectedProgram] = useState<ExtensionProgram | null>(null)
   const [programStats, setProgramStats] = useState<any>(null)
@@ -48,33 +41,6 @@ export function Dashboard() {
       })
     } catch (error) {
       console.error('Error loading programs:', error)
-    }
-  }
-
-  const handleCreateProgram = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newProgram.title.trim()) {
-      setNotification({ type: 'error', text: 'Program title is required' })
-      return
-    }
-
-    try {
-      await createExtensionProgram({
-        title: newProgram.title,
-        description: newProgram.description || '',
-        startDate: newProgram.startDate,
-        endDate: newProgram.endDate,
-        createdBy: user?.id || 'unknown',
-        archived: false,
-      })
-      
-      setNotification({ type: 'success', text: 'Program created successfully!' })
-      setNewProgram({ title: '', description: '', startDate: today, endDate: today })
-      setShowProgramForm(false)
-      loadPrograms()
-    } catch (error) {
-      setNotification({ type: 'error', text: 'Failed to create program' })
-      console.error('Error creating program:', error)
     }
   }
 
@@ -171,161 +137,8 @@ export function Dashboard() {
             <h2 style={{ color: '#00332B', fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>
               Extension Programs
             </h2>
-            <button
-              onClick={() => setShowProgramForm(!showProgramForm)}
-              style={{
-                background: showProgramForm ? '#e0f2f1' : '#128DA1',
-                color: showProgramForm ? '#128DA1' : 'white',
-                border: 'none',
-                padding: '0.75rem 1.25rem',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.95rem',
-                transition: 'all 0.3s ease',
-              }}
-            >
-              {showProgramForm ? '✕ Cancel' : '+ New Program'}
-            </button>
           </div>
 
-          {/* Create Program Form */}
-          {showProgramForm && (
-            <form
-              onSubmit={handleCreateProgram}
-              style={{
-                background: 'white',
-                padding: '1.75rem',
-                borderRadius: '12px',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                marginBottom: '2rem',
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <h3 style={{ color: '#00332B', marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: '600' }}>
-                Create New Program
-              </h3>
-              <div style={{ display: 'grid', gap: '1.5rem' }}>
-                {/* Program Title Field */}
-                <div>
-                  <label style={{ display: 'block', color: '#00332B', fontWeight: '600', marginBottom: '0.5rem', fontSize: '0.95rem' }}>
-                    Program Title <span style={{ color: '#FF4E69' }}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Community Health Program 2026"
-                    value={newProgram.title}
-                    onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 1rem',
-                      border: '1px solid #ddd',
-                      borderRadius: '6px',
-                      fontSize: '0.95rem',
-                      fontFamily: 'inherit',
-                      boxSizing: 'border-box',
-                    }}
-                    required
-                  />
-                  <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: '#999' }}>The name of your extension program</p>
-                </div>
-
-                {/* Description Field */}
-                <div>
-                  <label style={{ display: 'block', color: '#00332B', fontWeight: '600', marginBottom: '0.5rem', fontSize: '0.95rem' }}>
-                    Description <span style={{ color: '#999' }}>(Optional)</span>
-                  </label>
-                  <textarea
-                    placeholder="Describe the program's goals, target beneficiaries, activities, etc."
-                    value={newProgram.description}
-                    onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 1rem',
-                      border: '1px solid #ddd',
-                      borderRadius: '6px',
-                      fontSize: '0.95rem',
-                      fontFamily: 'inherit',
-                      minHeight: '100px',
-                      resize: 'vertical',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                  <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: '#999' }}>Provide details about the program scope and objectives</p>
-                </div>
-
-                {/* Year Range Fields */}
-                <div>
-                  <label style={{ display: 'block', color: '#00332B', fontWeight: '600', marginBottom: '0.75rem', fontSize: '0.95rem' }}>
-                    Program Duration
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div>
-                      <label style={{ display: 'block', color: '#555', fontWeight: '500', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
-                        Start Date
-                      </label>
-                      <input
-                        type="date"
-                        value={newProgram.startDate}
-                        onChange={(e) => setNewProgram({ ...newProgram, startDate: e.target.value })}
-                        style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          border: '1px solid #ddd',
-                          borderRadius: '6px',
-                          fontSize: '0.95rem',
-                          fontFamily: 'inherit',
-                          boxSizing: 'border-box',
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', color: '#555', fontWeight: '500', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
-                        End Date
-                      </label>
-                      <input
-                        type="date"
-                        value={newProgram.endDate}
-                        onChange={(e) => setNewProgram({ ...newProgram, endDate: e.target.value })}
-                        style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          border: '1px solid #ddd',
-                          borderRadius: '6px',
-                          fontSize: '0.95rem',
-                          fontFamily: 'inherit',
-                          boxSizing: 'border-box',
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.85rem', color: '#999' }}>Specify when the program runs</p>
-                </div>
-                <button
-                  type="submit"
-                  style={{
-                    padding: '0.75rem 1.25rem',
-                    background: '#128DA1',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                    fontSize: '0.95rem',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onMouseOver={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.background = '#0e7a8a'
-                  }}
-                  onMouseOut={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.background = '#128DA1'
-                  }}
-                >
-                  Create Program
-                </button>
-              </div>
-            </form>
-          )}
 
           {/* Programs List */}
           {programs.length === 0 ? (
@@ -341,7 +154,7 @@ export function Dashboard() {
               }}
             >
               <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📋</div>
-              <p>No programs yet. Click "New Program" to get started.</p>
+              <p>No programs yet. Create a program in Data Management to get started.</p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -504,36 +317,6 @@ export function Dashboard() {
               >
                 Manage Activities
               </a>
-              <button
-                onClick={() => {
-                  if (window.confirm('Delete this program?')) {
-                    deleteExtensionProgram(selectedProgram.id).then(() => {
-                      loadPrograms()
-                      setSelectedProgram(null)
-                      setNotification({ type: 'success', text: 'Program deleted' })
-                    })
-                  }
-                }}
-                style={{
-                  padding: '0.75rem 1rem',
-                  background: '#FF4E69',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  fontSize: '0.9rem',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseOver={(e) => {
-                  (e.currentTarget as HTMLElement).style.opacity = '0.9'
-                }}
-                onMouseOut={(e) => {
-                  (e.currentTarget as HTMLElement).style.opacity = '1'
-                }}
-              >
-                Delete Program
-              </button>
             </div>
           </div>
         )}
