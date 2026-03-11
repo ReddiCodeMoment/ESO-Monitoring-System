@@ -958,7 +958,7 @@ export function DataManagement() {
             placeholder="Search programs, projects, or activities..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
+            className="w-full px-5 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
           {searchTerm && (
             <p className="text-xs text-gray-500 mt-2">
@@ -968,32 +968,32 @@ export function DataManagement() {
         </div>
 
         {/* Filters */}
-        <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="mb-4 p-6 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
           <div className="flex items-end gap-4 flex-wrap">
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Date Range Start</label>
+              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase">Date Range Start</label>
               <input
                 type="date"
                 value={filterStartDate}
                 onChange={(e) => setFilterStartDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-700 dark:text-white"
               />
             </div>
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Date Range End</label>
+              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase">Date Range End</label>
               <input
                 type="date"
                 value={filterEndDate}
                 onChange={(e) => setFilterEndDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-700 dark:text-white"
               />
             </div>
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Implementing College</label>
+              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase">Implementing College</label>
               <select
                 value={filterCollege}
                 onChange={(e) => setFilterCollege(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-700 dark:text-white"
               >
                 <option value="">-- All Colleges --</option>
                 {IMPLEMENTING_COLLEGES.map((college) => (
@@ -1004,11 +1004,11 @@ export function DataManagement() {
               </select>
             </div>
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">Year</label>
+              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase">Year</label>
               <select
                 value={filterYear}
                 onChange={(e) => setFilterYear(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-700 dark:text-white"
               >
                 <option value="">-- All Years --</option>
                 {getAvailableYears().map((year) => (
@@ -1026,7 +1026,7 @@ export function DataManagement() {
                   setFilterCollege('')
                   setFilterYear('')
                 }}
-                className="px-3 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 transition text-sm font-medium"
+                className="px-4 py-3 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition text-sm font-medium"
               >
                 Clear Filters
               </button>
@@ -1051,8 +1051,8 @@ export function DataManagement() {
               <div key={program.id} className="border border-gray-200 rounded-lg overflow-hidden" style={{ borderLeftWidth: '5px', borderLeftColor: program.color || '#3B82F6' }}>
                 {/* Program Item */}
                 <div
-                  className={`p-4 cursor-pointer flex items-center justify-between hover:bg-gray-50 transition group ${
-                    selectedProgram?.id === program.id ? 'bg-teal-50' : ''
+                  className={`p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition group ${
+                    selectedProgram?.id === program.id ? 'bg-teal-50 dark:bg-gray-700' : ''
                   }`}
                   onClick={() => {
                     setSelectedProgram(program)
@@ -1127,14 +1127,14 @@ export function DataManagement() {
                 {displayExpandedPrograms.has(program.id) && selectedProgram?.id === program.id && (
                   <div className="bg-gray-50 border-t border-gray-200">
                     {programProjects.length === 0 ? (
-                      <div className="p-4 pl-12 text-gray-500 text-sm">No projects yet</div>
+                      <div className="p-6 pl-12 text-gray-500 text-sm">No projects yet</div>
                     ) : (
                       programProjects.map((project) => (
                         <div key={project.id} className="border-b border-gray-200 last:border-b-0">
                           {/* Project Item */}
                           <div
-                            className={`p-4 pl-12 cursor-pointer flex items-center justify-between hover:bg-gray-100 transition group ${
-                              selectedProject?.id === project.id ? 'bg-blue-50' : ''
+                            className={`p-6 pl-12 cursor-pointer flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition group ${
+                              selectedProject?.id === project.id ? 'bg-blue-50 dark:bg-gray-700' : ''
                             }`}
                             onClick={() => {
                               setSelectedProject(project)
@@ -1212,15 +1212,15 @@ export function DataManagement() {
 
                           {/* Activities List (shown when project is expanded) */}
                           {displayExpandedProjects.has(project.id) && (
-                            <div className="bg-white border-t border-gray-100">
+                            <div className="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
                               {(() => {
                                 const key = `${program.id}-${project.id}`
                                 const projectActivities = activities.get(key) || []
                                 return projectActivities.length === 0 ? (
-                                  <div className="p-3 pl-20 text-gray-400 text-sm italic">No activities yet</div>
+                                  <div className="p-4 pl-20 text-gray-400 text-sm italic">No activities yet</div>
                                 ) : (
                                   projectActivities.map((activity) => (
-                                    <div key={activity.id} className="p-3 pl-20 border-b border-gray-100 last:border-b-0 flex items-center justify-between hover:bg-gray-50 group">
+                                    <div key={activity.id} className="p-4 pl-20 border-b border-gray-100 last:border-b-0 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 group">
                                       <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-gray-800 truncate">{activity.title}</p>
                                         <p className="text-xs text-gray-500">{activity.location}</p>
