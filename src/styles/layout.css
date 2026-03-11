@@ -3,6 +3,7 @@
    ============================================ */
 
 :root {
+  /* Brand / accent colors (light theme) */
   --color-primary: #128DA1;
   --color-primary-light: #28b0c8;
   --color-primary-dark: #0d5f74;
@@ -11,35 +12,47 @@
   --color-warning: #ffc107;
   --color-danger: #FF4E69;
   --color-info: #128DA1;
-  --color-bg: #D9E3DA;
-  --color-bg-alt: #E8EFED;
-  --color-border: #bcc9c3;
+
+  /* Surface + text (light theme) – match original light look */
+  /* App background */
+  --color-bg: #f8fafb;
+  /* Cards / panels */
+  --color-bg-alt: #ffffff;
+  /* Subtle section backgrounds */
+  --bg-secondary: #f8fafb;
+
+  --color-border: #e0e0e0;
+  --border-color: #e0e0e0;
+
   --color-text: #00332B;
   --color-text-light: #4a6b63;
   --color-text-lighter: #7a9b93;
-  --bg-secondary: #E8EFED;
-  --border-color: #bcc9c3;
   --text-primary: #00332B;
   --text-secondary: #4a6b63;
+
   --shadow-sm: 0 2px 4px rgba(18, 141, 161, 0.06);
   --shadow-md: 0 10px 25px rgba(18, 141, 161, 0.12);
   --border-radius: 8px;
 }
 
-/* Dark mode variable overrides */
+/* Dark mode variable overrides - keeps the same teal palette,
+   but darkens backgrounds and lightens text for contrast. */
 :root.dark-mode {
-  --color-bg: #020617;
-  --color-bg-alt: #020617;
-  --color-border: #1e293b;
-  --color-text: #e5e7eb;
-  --color-text-light: #9ca3af;
-  --color-primary: #f97373;
-  --color-primary-light: #fecaca;
-  --color-primary-dark: #b91c1c;
-  --bg-secondary: #020617;
-  --border-color: #1e293b;
-  --text-primary: #e5e7eb;
-  --text-secondary: #9ca3af;
+  --color-bg: #020a0e;
+  --color-bg-alt: #071921;
+  --color-border: #16343f;
+  --color-text: #e6f4f7;
+  --color-text-light: #8fbac3;
+  --color-text-lighter: #9fc8d5;
+
+  --bg-secondary: #05141b;
+  --border-color: #16343f;
+  --text-primary: #e6f4f7;
+  --text-secondary: #8fbac3;
+
+  --color-primary: #18a4b7;
+  --color-primary-light: #3bc0d2;
+  --color-primary-dark: #0a6b7a;
 }
 
 * {

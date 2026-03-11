@@ -73,8 +73,8 @@ export function ActivityList({ programId, projectId, onEdit, onRefresh }: Activi
   const sortedActivities = getSortedActivities()
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="p-6 border-b flex justify-between items-center">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="p-6 border-b dark:border-gray-700 flex justify-between items-center">
         <h3 className="text-lg font-semibold">Activities ({activities.length})</h3>
         <div>
           <label className="text-sm font-medium mr-2">Sort by:</label>
@@ -83,7 +83,7 @@ export function ActivityList({ programId, projectId, onEdit, onRefresh }: Activi
             onChange={(e) =>
               setSortBy(e.target.value as 'date' | 'cost' | 'beneficiaries')
             }
-            className="border rounded px-3 py-1 text-sm"
+            className="border border-gray-300 dark:border-gray-600 rounded px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="date">Date</option>
             <option value="cost">Total Cost</option>
@@ -94,28 +94,28 @@ export function ActivityList({ programId, projectId, onEdit, onRefresh }: Activi
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-gray-50 dark:bg-gray-700 border-b dark:border-gray-600">
             <tr>
-              <th className="px-6 py-3 text-left font-semibold">Title</th>
-              <th className="px-6 py-3 text-left font-semibold">Location</th>
-              <th className="px-6 py-3 text-left font-semibold">Dates</th>
-              <th className="px-6 py-3 text-right font-semibold">Beneficiaries</th>
-              <th className="px-6 py-3 text-right font-semibold">Cost</th>
-              <th className="px-6 py-3 text-left font-semibold">Status</th>
-              <th className="px-6 py-3 text-center font-semibold">Actions</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-gray-100">Title</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-gray-100">Location</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-gray-100">Dates</th>
+              <th className="px-6 py-3 text-right font-semibold text-gray-900 dark:text-gray-100">Beneficiaries</th>
+              <th className="px-6 py-3 text-right font-semibold text-gray-900 dark:text-gray-100">Cost</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-gray-100">Status</th>
+              <th className="px-6 py-3 text-center font-semibold text-gray-900 dark:text-gray-100">Actions</th>
             </tr>
           </thead>
           <tbody>
             {sortedActivities.map((activity) => (
               <tr
                 key={activity.id}
-                className="border-b hover:bg-gray-50 transition"
+                className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <td className="px-6 py-4 font-medium max-w-xs truncate">
                   {activity.title}
                 </td>
                 <td className="px-6 py-4">{activity.location}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                   {new Date(activity.startDate).toLocaleDateString()} -{' '}
                   {new Date(activity.endDate).toLocaleDateString()}
                 </td>
@@ -163,19 +163,19 @@ export function ActivityList({ programId, projectId, onEdit, onRefresh }: Activi
       </div>
 
       {/* Summary Statistics */}
-      <div className="bg-gray-50 px-6 py-4 border-t grid grid-cols-4 gap-4">
+      <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t dark:border-gray-600 grid grid-cols-4 gap-4">
         <div>
-          <p className="text-xs text-gray-600">Total Activities</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300">Total Activities</p>
           <p className="text-2xl font-bold">{activities.length}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-600">Total Beneficiaries</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300">Total Beneficiaries</p>
           <p className="text-2xl font-bold">
             {activities.reduce((sum, a) => sum + a.beneficiaries.total, 0)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-gray-600">Total Cost</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300">Total Cost</p>
           <p className="text-2xl font-bold">
             ${activities
               .reduce((sum, a) => sum + a.totalCost, 0)
@@ -183,7 +183,7 @@ export function ActivityList({ programId, projectId, onEdit, onRefresh }: Activi
           </p>
         </div>
         <div>
-          <p className="text-xs text-gray-600">Gender Breakdown</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300">Gender Breakdown</p>
           <p className="text-sm font-semibold">
             M:{' '}
             {activities.reduce((sum, a) => sum + a.beneficiaries.male, 0)} | F:{' '}

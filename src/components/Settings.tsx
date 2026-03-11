@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNotification } from '../context/NotificationContext'
 import { getExtensionPrograms } from '../services/extensionService'
 import '../styles/settings.css'
@@ -7,6 +7,37 @@ export function Settings() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [exporting, setExporting] = useState(false)
   const { showSuccess, showError, showInfo } = useNotification()
+
+  // Initialize theme from localStorage on first load
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('theme') as 'light' | 'dark' | null
+      const initialTheme = stored === 'dark' || stored === 'light' ? stored : 'light'
+      setTheme(initialTheme)
+      if (initialTheme === 'dark') {
+        document.documentElement.classList.add('dark-mode')
+      } else {
+        document.documentElement.classList.remove('dark-mode')
+      }
+    } catch {
+      // Fallback to light if storage isn't available
+      document.documentElement.classList.remove('dark-mode')
+    }
+  }, [])
+
+  // Apply theme changes and persist choice
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark-mode')
+    } else {
+      document.documentElement.classList.remove('dark-mode')
+    }
+    try {
+      localStorage.setItem('theme', theme)
+    } catch {
+      // Ignore storage errors
+    }
+  }, [theme])
 
   const handleExportData = async () => {
     setExporting(true)

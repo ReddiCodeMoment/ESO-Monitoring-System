@@ -184,18 +184,18 @@ export function ActivityForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-lg shadow-lg p-6 w-[80vw] max-w-5xl mx-auto"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-[80vw] max-w-5xl mx-auto"
     >
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold">ESO Monitoring System</h2>
-          <span className="text-sm font-semibold text-gray-600">
+          <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">
             Page {currentPage} of {totalPages}
           </span>
         </div>
         
         {/* Progress Bar */}
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
           <div
             className="bg-teal-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${(currentPage / totalPages) * 100}%` }}

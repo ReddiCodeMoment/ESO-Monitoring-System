@@ -501,8 +501,8 @@ export function DataManagement() {
       {/* Main Content Area - dimmed when form modal is open */}
       <div className="space-y-8" style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
       {/* Quick Action Buttons */}
-      <div className="bg-gray-50 rounded-lg shadow-sm p-3 border border-gray-200">
-        <h3 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Quick Actions</h3>
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-3 border border-gray-200 dark:border-gray-700">
+        <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Quick Actions</h3>
         <div className="flex gap-1 flex-wrap">
           <button
             onClick={() => setView('createProgram')}
@@ -527,67 +527,67 @@ export function DataManagement() {
 
       {/* Edit Program Form */}
       {(view as any) === 'editProgram' && editingProgram && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Program</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Edit Program</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Title *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title *</label>
               <input
                 type="text"
                 value={editingProgram.title}
                 onChange={(e) => setEditingProgram({ ...editingProgram, title: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 placeholder="Program title"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
               <textarea
                 value={editingProgram.description}
                 onChange={(e) => setEditingProgram({ ...editingProgram, description: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 rows={3}
                 placeholder="Program description"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
                 <input
                   type="date"
                   value={editingProgram.startDate}
                   onChange={(e) => setEditingProgram({ ...editingProgram, startDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">End Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
                 <input
                   type="date"
                   value={editingProgram.endDate}
                   onChange={(e) => setEditingProgram({ ...editingProgram, endDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Program Color</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Program Color</label>
               <div className="flex gap-3 items-center">
                 <input
                   type="color"
                   value={editingProgram.color || '#3B82F6'}
                   onChange={(e) => setEditingProgram({ ...editingProgram, color: e.target.value })}
-                  className="w-16 h-10 border border-gray-300 rounded-lg cursor-pointer"
+                  className="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
                 />
-                <span className="text-sm text-gray-600">Select a color for this program</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Select a color for this program</span>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Implementing College</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Implementing College</label>
               <select
                 value={editingProgram.implementingCollege || ''}
                 onChange={(e) => setEditingProgram({ ...editingProgram, implementingCollege: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
                 <option value="">-- Select College --</option>
                 {IMPLEMENTING_COLLEGES.map((college) => (
@@ -609,7 +609,7 @@ export function DataManagement() {
                   setView('list')
                   setEditingProgram(null)
                 }}
-                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                className="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-700 transition"
               >
                 Cancel
               </button>
@@ -620,67 +620,67 @@ export function DataManagement() {
 
       {/* Create Program Form */}
       {view === 'createProgram' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Create New Program</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Create New Program</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Title *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title *</label>
               <input
                 type="text"
                 value={newProgram.title}
-                onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 placeholder="Program title"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
               <textarea
                 value={newProgram.description}
                 onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 rows={3}
                 placeholder="Program description"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
                 <input
                   type="date"
                   value={newProgram.startDate}
                   onChange={(e) => setNewProgram({ ...newProgram, startDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">End Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
                 <input
                   type="date"
                   value={newProgram.endDate}
                   onChange={(e) => setNewProgram({ ...newProgram, endDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Program Color</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Program Color</label>
               <div className="flex gap-3 items-center">
                 <input
                   type="color"
                   value={newProgram.color || '#3B82F6'}
                   onChange={(e) => setNewProgram({ ...newProgram, color: e.target.value })}
-                  className="w-16 h-10 border border-gray-300 rounded-lg cursor-pointer"
+                  className="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
                 />
-                <span className="text-sm text-gray-600">Select a color for this program</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Select a color for this program</span>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Implementing College</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Implementing College</label>
               <select
                 value={newProgram.implementingCollege || ''}
                 onChange={(e) => setNewProgram({ ...newProgram, implementingCollege: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
                 <option value="">-- Select College --</option>
                 {IMPLEMENTING_COLLEGES.map((college) => (
@@ -702,7 +702,7 @@ export function DataManagement() {
                   setView('list')
                   setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '' })
                 }}
-                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                className="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-700 transition"
               >
                 Cancel
               </button>
@@ -713,46 +713,46 @@ export function DataManagement() {
 
       {/* Edit Project Form */}
       {view === 'editProject' && editingProject && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Project</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Edit Project</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Title *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title *</label>
               <input
                 type="text"
                 value={editingProject.title}
                 onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 placeholder="Project title"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
               <textarea
                 value={editingProject.description}
                 onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 rows={3}
                 placeholder="Project description"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
                 <input
                   type="date"
                   value={editingProject.startDate}
                   onChange={(e) => setEditingProject({ ...editingProject, startDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">End Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
                 <input
                   type="date"
                   value={editingProject.endDate}
                   onChange={(e) => setEditingProject({ ...editingProject, endDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
               </div>
             </div>
@@ -768,7 +768,7 @@ export function DataManagement() {
                   setEditingProject(null)
                   setView('list')
                 }}
-                className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition"
+                className="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 rounded-lg hover:bg-gray-400 transition"
               >
                 Cancel
               </button>
@@ -779,11 +779,11 @@ export function DataManagement() {
 
       {/* Create Project - Select Parent Form */}
       {view === 'createProject' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Parent Program for New Project</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6\">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4\">Select Parent Program for New Project</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Program *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Program *</label>
               <select
                 value={selectedProgram?.id || ''}
                 onChange={(e) => {
@@ -792,7 +792,7 @@ export function DataManagement() {
                     setSelectedProgram(program)
                   }
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
               >
                 <option value="">-- Select a Program --</option>
                 {programs.map((p) => (
@@ -805,45 +805,45 @@ export function DataManagement() {
 
             {selectedProgram && (
               <div className="pt-4 border-t border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-4">Project Details</h4>
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4\">Project Details</h4>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Title *</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Title *</label>
                     <input
                       type="text"
                       value={newProject.title}
                       onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
                       placeholder="Project title"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Description</label>
                     <textarea
                       value={newProject.description}
                       onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
                       rows={3}
                       placeholder="Project description"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Start Date</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Start Date</label>
                       <input
                         type="date"
                         value={newProject.startDate}
                         onChange={(e) => setNewProject({ ...newProject, startDate: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">End Date</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">End Date</label>
                       <input
                         type="date"
                         value={newProject.endDate}
                         onChange={(e) => setNewProject({ ...newProject, endDate: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
                       />
                     </div>
                   </div>
@@ -860,7 +860,7 @@ export function DataManagement() {
                         setNewProject({ title: '', description: '', startDate: '', endDate: '' })
                         setSelectedProgram(null)
                       }}
-                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                      className="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 transition"
                     >
                       Cancel
                     </button>
@@ -874,11 +874,11 @@ export function DataManagement() {
 
       {/* Create Activity - Select Parent Form */}
       {view === 'createActivity' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Parent for New Activity</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6\">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4\">Select Parent for New Activity</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Program *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Program *</label>
               <select
                 value={selectedProgram?.id || ''}
                 onChange={(e) => {
@@ -888,7 +888,7 @@ export function DataManagement() {
                     setSelectedProject(null)
                   }
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
               >
                 <option value="">-- Select a Program --</option>
                 {programs.map((p) => (
@@ -901,14 +901,14 @@ export function DataManagement() {
 
             {selectedProgram && (
               <div>
-                <label className="block text-sm font-medium text-gray-700">Project *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Project *</label>
                 <select
                   value={selectedProject?.id || ''}
                   onChange={(e) => {
                     const project = programProjects.find((pr) => pr.id === e.target.value)
                     if (project) setSelectedProject(project)
                   }}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
                 >
                   <option value="">-- Select a Project --</option>
                   {programProjects.map((pr) => (
@@ -938,7 +938,7 @@ export function DataManagement() {
                   setSelectedProgram(null)
                   setSelectedProject(null)
                 }}
-                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                className="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 transition"
               >
                 Cancel
               </button>
@@ -948,8 +948,8 @@ export function DataManagement() {
       )}
 
       {/* Hierarchical Tree View */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Programs & Projects</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6\">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4\">Programs & Projects</h3>
         
         {/* Search Input */}
         <div className="mb-4">
@@ -958,7 +958,7 @@ export function DataManagement() {
             placeholder="Search programs, projects, or activities..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
           />
           {searchTerm && (
             <p className="text-xs text-gray-500 mt-2">
@@ -976,7 +976,7 @@ export function DataManagement() {
                 type="date"
                 value={filterStartDate}
                 onChange={(e) => setFilterStartDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               />
             </div>
             <div className="flex-1 min-w-[200px]">
@@ -985,7 +985,7 @@ export function DataManagement() {
                 type="date"
                 value={filterEndDate}
                 onChange={(e) => setFilterEndDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               />
             </div>
             <div className="flex-1 min-w-[200px]">
@@ -993,7 +993,7 @@ export function DataManagement() {
               <select
                 value={filterCollege}
                 onChange={(e) => setFilterCollege(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               >
                 <option value="">-- All Colleges --</option>
                 {IMPLEMENTING_COLLEGES.map((college) => (
@@ -1008,7 +1008,7 @@ export function DataManagement() {
               <select
                 value={filterYear}
                 onChange={(e) => setFilterYear(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               >
                 <option value="">-- All Years --</option>
                 {getAvailableYears().map((year) => (
@@ -1026,7 +1026,7 @@ export function DataManagement() {
                   setFilterCollege('')
                   setFilterYear('')
                 }}
-                className="px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition text-sm font-medium"
+                className="px-3 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 transition text-sm font-medium"
               >
                 Clear Filters
               </button>
@@ -1295,7 +1295,7 @@ export function DataManagement() {
       {/* Info Modal */}
       {infoModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto px-4">
-          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full my-8 flex flex-col max-h-[80vh]">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-2xl w-full my-8 flex flex-col max-h-[80vh]">
             {/* Header */}
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">
@@ -1506,7 +1506,7 @@ export function DataManagement() {
                             <p className="text-gray-900">
                               Total: <span className="font-semibold">{infoModal.data.beneficiaries.total}</span>
                               <br />
-                              <span className="text-xs text-gray-600">Male: {infoModal.data.beneficiaries.male} | Female: {infoModal.data.beneficiaries.female}</span>
+                              <span className="text-xs text-gray-600 dark:text-gray-300\">Male: {infoModal.data.beneficiaries.male} | Female: {infoModal.data.beneficiaries.female}</span>
                             </p>
                           </div>
                         )}
@@ -1533,3 +1533,6 @@ export function DataManagement() {
     </div>
   )
 }
+
+
+

@@ -113,71 +113,71 @@ export function Dashboard() {
 
 
   return (
-    <div style={{ padding: '1rem', background: '#f8fafb', minHeight: '100vh' }}>
+    <div style={{ padding: '1rem', background: 'var(--color-bg)', minHeight: '100vh' }}>
       {/* Page Header */}
-      <div style={{ marginBottom: '1rem', borderBottom: '2px solid #128DA1', paddingBottom: '0.75rem' }}>
-        <h1 style={{ color: '#00332B', fontSize: '1.5rem', fontWeight: '700', margin: '0 0 0.2rem 0' }}>
+      <div style={{ marginBottom: '1rem', borderBottom: '2px solid var(--color-primary)', paddingBottom: '0.75rem' }}>
+        <h1 style={{ color: 'var(--text-primary)', fontSize: '1.5rem', fontWeight: '700', margin: '0 0 0.2rem 0' }}>
           Dashboard
         </h1>
-        <p style={{ color: '#666', fontSize: '0.8rem', margin: 0 }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>
           Monitor and manage extension programs and activities
         </p>
       </div>
 
       {/* Statistics Cards - Overall Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div style={{ background: 'white', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #e0e0e0', borderLeft: '4px solid #128DA1' }}>
-          <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>
+        <div style={{ background: 'var(--color-bg-alt)', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid var(--color-border)', borderLeft: '4px solid var(--color-primary)' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-light)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>
             Total Programs
           </div>
-          <div style={{ fontSize: '1.6rem', fontWeight: '700', color: '#128DA1', lineHeight: '1' }}>
+          <div style={{ fontSize: '1.6rem', fontWeight: '700', color: 'var(--color-primary)', lineHeight: '1' }}>
             {stats.totalPrograms}
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#999', marginTop: '0.2rem' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-lighter)', marginTop: '0.2rem' }}>
             Active programs
           </div>
         </div>
 
-        <div style={{ background: 'white', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #e0e0e0', borderLeft: '4px solid #128DA1' }}>
-          <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>
+        <div style={{ background: 'var(--color-bg-alt)', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid var(--color-border)', borderLeft: '4px solid var(--color-primary)' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-light)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>
             Total Activities
           </div>
-          <div style={{ fontSize: '1.6rem', fontWeight: '700', color: '#128DA1', lineHeight: '1' }}>
+          <div style={{ fontSize: '1.6rem', fontWeight: '700', color: 'var(--color-primary)', lineHeight: '1' }}>
             {stats.totalActivities}
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#999', marginTop: '0.2rem' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-lighter)', marginTop: '0.2rem' }}>
             Tracked activities
           </div>
         </div>
 
-        <div style={{ background: 'white', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #e0e0e0', borderLeft: '4px solid #128DA1' }}>
-          <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>
+        <div style={{ background: 'var(--color-bg-alt)', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid var(--color-border)', borderLeft: '4px solid var(--color-primary)' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-light)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>
             Total Beneficiaries
           </div>
-          <div style={{ fontSize: '1.6rem', fontWeight: '700', color: '#128DA1', lineHeight: '1' }}>
+          <div style={{ fontSize: '1.6rem', fontWeight: '700', color: 'var(--color-primary)', lineHeight: '1' }}>
             {stats.totalBeneficiaries.toLocaleString()}
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#999', marginTop: '0.2rem' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-lighter)', marginTop: '0.2rem' }}>
             People reached
           </div>
         </div>
 
-        <div style={{ background: 'white', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #e0e0e0', borderLeft: '4px solid #FF4E69' }}>
-          <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>
+        <div style={{ background: 'var(--color-bg-alt)', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid var(--color-border)', borderLeft: '4px solid var(--color-accent)' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-light)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem' }}>
             Total Investment
           </div>
-          <div style={{ fontSize: '1.6rem', fontWeight: '700', color: '#FF4E69', lineHeight: '1' }}>
+          <div style={{ fontSize: '1.6rem', fontWeight: '700', color: 'var(--color-accent)', lineHeight: '1' }}>
             ${stats.totalCost.toLocaleString()}
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#999', marginTop: '0.2rem' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-lighter)', marginTop: '0.2rem' }}>
             Total cost
           </div>
         </div>
       </div>
 
       {/* Program Filter Section */}
-      <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid #e0e0e0', marginBottom: '1rem' }}>
-        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#00332B', fontWeight: '600', fontSize: '0.85rem' }}>
+      <div style={{ background: 'var(--color-bg-alt)', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)', border: '1px solid var(--color-border)', marginBottom: '1rem' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.85rem' }}>
           Select a Program to View Details
         </label>
         <select
@@ -196,21 +196,21 @@ export function Dashboard() {
             padding: '0.45rem 0.75rem',
             fontSize: '0.85rem',
             borderRadius: '8px',
-            border: '1px solid #ddd',
-            background: 'white',
-            color: '#333',
+            border: '1px solid var(--color-border)',
+            background: 'var(--color-bg-alt)',
+            color: 'var(--color-text)',
             fontFamily: 'inherit',
             cursor: 'pointer',
             transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
           }}
           onFocus={(e: React.FocusEvent<HTMLSelectElement>) => {
             const target = e.currentTarget as HTMLSelectElement;
-            (target as HTMLElement).style.borderColor = '#128DA1';
+            (target as HTMLElement).style.borderColor = 'var(--color-primary)';
             (target as HTMLElement).style.boxShadow = '0 0 0 3px rgba(18,141,161,0.1)';
           }}
           onBlur={(e: React.FocusEvent<HTMLSelectElement>) => {
             const target = e.currentTarget as HTMLSelectElement;
-            (target as HTMLElement).style.borderColor = '#ddd';
+            (target as HTMLElement).style.borderColor = 'var(--color-border)';
             (target as HTMLElement).style.boxShadow = 'none';
           }}
         >
@@ -227,19 +227,19 @@ export function Dashboard() {
       {selectedProgram && programStats && (
         <div
           style={{
-            background: 'white',
+            background: 'var(--color-bg-alt)',
             padding: '1.5rem',
             borderRadius: '12px',
             boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-            border: '1px solid #e0e0e0',
+            border: '1px solid var(--color-border)',
             borderLeft: `5px solid ${selectedProgram.color || '#128DA1'}`,
           }}
         >
           {/* Program Header */}
-          <div style={{ marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '2px solid #f0f0f0' }}>
+          <div style={{ marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '2px solid var(--color-border)' }}>
             <h3
               style={{
-                color: '#00332B',
+                color: 'var(--text-primary)',
                 fontSize: '1.1rem',
                 fontWeight: '700',
                 margin: '0 0 0.2rem 0',
@@ -250,11 +250,11 @@ export function Dashboard() {
               {!selectedActivity && selectedProject && ` > ${selectedProject.title}`}
             </h3>
             {selectedProgram.description && !selectedProject && (
-              <p style={{ color: '#666', fontSize: '0.8rem', margin: 0 }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>
                 {selectedProgram.description}
               </p>
             )}
-            <div style={{ fontSize: '0.75rem', color: '#999', marginTop: '0.2rem' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-lighter)', marginTop: '0.2rem' }}>
               📅 {new Date(selectedProgram.startDate).toLocaleDateString()} - {new Date(selectedProgram.endDate).toLocaleDateString()}
               {selectedProgram.implementingCollege && (
                 <span style={{ marginLeft: '1rem' }}>🏫 {selectedProgram.implementingCollege}</span>
@@ -264,8 +264,8 @@ export function Dashboard() {
 
           {/* Project Selector */}
           {selectedProgram.projects && selectedProgram.projects.length > 0 && (
-            <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid #e0e0e0' }}>
-              <label style={{ display: 'block', marginBottom: '0.4rem', color: '#00332B', fontWeight: '600', fontSize: '0.8rem' }}>
+            <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid var(--color-border)' }}>
+              <label style={{ display: 'block', marginBottom: '0.4rem', color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.8rem' }}>
                 Select a Project (Optional)
               </label>
               <select
@@ -280,9 +280,9 @@ export function Dashboard() {
                   padding: '0.45rem 0.75rem',
                   fontSize: '0.8rem',
                   borderRadius: '6px',
-                  border: '1px solid #ddd',
-                  background: 'white',
-                  color: '#333',
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-bg-alt)',
+                  color: 'var(--color-text)',
                   fontFamily: 'inherit',
                   cursor: 'pointer',
                   transition: 'border-color 0.3s ease',
@@ -300,8 +300,8 @@ export function Dashboard() {
 
           {/* Activity Selector (only show if project is selected) */}
           {selectedProject && selectedProject.activities && selectedProject.activities.length > 0 && (
-            <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid #e0e0e0' }}>
-              <label style={{ display: 'block', marginBottom: '0.4rem', color: '#00332B', fontWeight: '600', fontSize: '0.8rem' }}>
+            <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid var(--color-border)' }}>
+              <label style={{ display: 'block', marginBottom: '0.4rem', color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.8rem' }}>
                 Select an Activity (Optional)
               </label>
               <select
@@ -315,9 +315,9 @@ export function Dashboard() {
                   padding: '0.45rem 0.75rem',
                   fontSize: '0.8rem',
                   borderRadius: '6px',
-                  border: '1px solid #ddd',
-                  background: 'white',
-                  color: '#333',
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-bg-alt)',
+                  color: 'var(--color-text)',
                   fontFamily: 'inherit',
                   cursor: 'pointer',
                   transition: 'border-color 0.3s ease',
@@ -335,30 +335,30 @@ export function Dashboard() {
 
           {/* Program Stats Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
-            <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '10px', textAlign: 'center', border: '1px solid #e0e0e0' }}>
+            <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '10px', textAlign: 'center', border: '1px solid var(--color-border)' }}>
               <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
                 Total Activities
               </div>
-              <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#128DA1' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--color-primary)' }}>
                 {displayedStats?.totalActivities || 0}
               </div>
             </div>
-            <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '10px', textAlign: 'center', border: '1px solid #e0e0e0' }}>
+            <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '10px', textAlign: 'center', border: '1px solid var(--color-border)' }}>
               <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
                 Total Beneficiaries
               </div>
-              <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#128DA1' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--color-primary)' }}>
                 {(displayedStats?.totalBeneficiaries?.total || 0).toLocaleString()}
               </div>
-              <div style={{ fontSize: '0.65rem', color: '#999', marginTop: '0.2rem' }}>
+              <div style={{ fontSize: '0.65rem', color: 'var(--color-text-lighter)', marginTop: '0.2rem' }}>
                 👨 {displayedStats?.totalBeneficiaries?.male || 0} | 👩 {displayedStats?.totalBeneficiaries?.female || 0}
               </div>
             </div>
-            <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '10px', textAlign: 'center', border: '1px solid #e0e0e0' }}>
+            <div style={{ background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '10px', textAlign: 'center', border: '1px solid var(--color-border)' }}>
               <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: '600', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
                 Total Investment
               </div>
-              <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#FF4E69' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--color-accent)' }}>
                 ${((displayedStats?.totalCost || 0) / 1000).toFixed(1)}k
               </div>
             </div>
@@ -366,9 +366,9 @@ export function Dashboard() {
 
           {/* Additional Stats */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
-            <div style={{ background: '#f8fafb', padding: '0.75rem', borderRadius: '8px', textAlign: 'center', border: '1px solid #e0e0e0' }}>
-              <div style={{ fontSize: '0.65rem', color: '#999', fontWeight: '600' }}>SDGs COVERED</div>
-              <div style={{ fontSize: '1.3rem', fontWeight: '700', color: '#128DA1', marginTop: '0.2rem' }}>
+            <div style={{ background: 'var(--bg-secondary)', padding: '0.75rem', borderRadius: '8px', textAlign: 'center', border: '1px solid var(--color-border)' }}>
+              <div style={{ fontSize: '0.65rem', color: 'var(--color-text-lighter)', fontWeight: '600' }}>SDGs COVERED</div>
+              <div style={{ fontSize: '1.3rem', fontWeight: '700', color: 'var(--color-primary)', marginTop: '0.2rem' }}>
                 {displayedStats?.sdgsInvolved?.length || 0}
               </div>
             </div>
