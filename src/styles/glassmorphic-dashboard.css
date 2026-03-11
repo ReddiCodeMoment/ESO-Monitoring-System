@@ -471,7 +471,7 @@
   backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
   border-radius: var(--glass-border-radius);
-  padding: 2rem;
+  padding: 2.5rem;
   width: 100%;
   max-width: 600px;
   max-height: 90vh;
