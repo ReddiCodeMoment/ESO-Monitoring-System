@@ -961,7 +961,7 @@ export function DataManagement() {
             className="w-full px-5 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
           {searchTerm && (
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
               Found {filteredPrograms.length} program(s) {searchTerm ? 'matching your search' : ''}
             </p>
           )}
@@ -1033,16 +1033,16 @@ export function DataManagement() {
             )}
           </div>
           {(filterStartDate || filterEndDate || filterCollege || filterYear) && (
-            <p className="text-xs text-gray-600 mt-3">
+            <p className="text-xs text-gray-600 dark:text-gray-300 mt-3">
               ✓ Showing {filteredPrograms.length} program(s) matching your filters
             </p>
           )}
         </div>
 
         {programs.length === 0 ? (
-          <p className="text-gray-500">No programs found. Create one to get started.</p>
+          <p className="text-gray-500 dark:text-gray-400">No programs found. Create one to get started.</p>
         ) : filteredPrograms.length === 0 ? (
-          <p className="text-gray-500">
+          <p className="text-gray-500 dark:text-gray-400">
             No results matching your {hasFilters ? 'filters and search criteria' : 'search'}. Try adjusting your search or filters.
           </p>
         ) : (
@@ -1052,7 +1052,7 @@ export function DataManagement() {
                 {/* Program Item */}
                 <div
                   className={`p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition group ${
-                    selectedProgram?.id === program.id ? 'bg-teal-50 dark:bg-gray-700' : ''
+                    selectedProgram?.id === program.id ? 'bg-teal-50 dark:bg-gray-750' : ''
                   }`}
                   onClick={() => {
                     setSelectedProgram(program)
@@ -1061,12 +1061,12 @@ export function DataManagement() {
                   }}
                 >
                   <div className="flex items-center gap-3 flex-1">
-                    <span className={`transform transition text-gray-400 ${displayExpandedPrograms.has(program.id) ? 'rotate-90' : ''}`}>
+                    <span className={`transform transition text-gray-400 dark:text-gray-500 ${displayExpandedPrograms.has(program.id) ? 'rotate-90' : ''}`}>
                       ▶
                     </span>
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-900">{program.title}</p>
-                      {program.description && <p className="text-sm text-gray-500">{program.description}</p>}
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">{program.title}</p>
+                      {program.description && <p className="text-sm text-gray-500 dark:text-gray-400">{program.description}</p>}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-4">
@@ -1075,7 +1075,7 @@ export function DataManagement() {
                         e.stopPropagation()
                         setInfoModal({ type: 'program', data: program })
                       }}
-                      className="text-gray-500 hover:text-gray-700 font-semibold text-lg w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 transition"
+                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-lg w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition"
                       title="View program details"
                     >
                       ?
@@ -1134,7 +1134,7 @@ export function DataManagement() {
                           {/* Project Item */}
                           <div
                             className={`p-6 pl-12 cursor-pointer flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition group ${
-                              selectedProject?.id === project.id ? 'bg-blue-50 dark:bg-gray-700' : ''
+                              selectedProject?.id === project.id ? 'bg-blue-50 dark:bg-gray-750' : ''
                             }`}
                             onClick={() => {
                               setSelectedProject(project)
@@ -1142,13 +1142,13 @@ export function DataManagement() {
                             }}
                           >
                             <div className="flex items-center gap-3 flex-1">
-                              <span className={`transform transition text-gray-400 ${displayExpandedProjects.has(project.id) ? 'rotate-90' : ''}`}>
+                              <span className={`transform transition text-gray-400 dark:text-gray-500 ${displayExpandedProjects.has(project.id) ? 'rotate-90' : ''}`}>
                                 ▶
                               </span>
                               <div className="flex-1">
-                                <p className="font-semibold text-gray-800">{project.title}</p>
+                                <p className="font-semibold text-gray-800 dark:text-gray-100">{project.title}</p>
                                 {project.description && (
-                                  <p className="text-sm text-gray-500">{project.description}</p>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">{project.description}</p>
                                 )}
                               </div>
                             </div>
@@ -1158,7 +1158,7 @@ export function DataManagement() {
                                   e.stopPropagation()
                                   setInfoModal({ type: 'project', data: project })
                                 }}
-                                className="text-gray-500 hover:text-gray-700 font-semibold text-lg w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 transition"
+                                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-lg w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition"
                                 title="View project details"
                               >
                                 ?
@@ -1220,10 +1220,10 @@ export function DataManagement() {
                                   <div className="p-4 pl-20 text-gray-400 text-sm italic">No activities yet</div>
                                 ) : (
                                   projectActivities.map((activity) => (
-                                    <div key={activity.id} className="p-4 pl-20 border-b border-gray-100 last:border-b-0 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 group">
+                                    <div key={activity.id} className="p-4 pl-20 border-b border-gray-100 dark:border-gray-700 last:border-b-0 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 group">
                                       <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-gray-800 truncate">{activity.title}</p>
-                                        <p className="text-xs text-gray-500">{activity.location}</p>
+                                        <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{activity.title}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">{activity.location}</p>
                                       </div>
                                       <div className="flex items-center gap-2 ml-4">
                                         <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded whitespace-nowrap">
@@ -1234,7 +1234,7 @@ export function DataManagement() {
                                             e.stopPropagation()
                                             setInfoModal({ type: 'activity', data: activity })
                                           }}
-                                          className="text-gray-500 hover:text-gray-700 font-semibold text-sm w-5 h-5 flex items-center justify-center rounded-full hover:bg-gray-100 transition opacity-0 group-hover:opacity-100"
+                                          className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-sm w-5 h-5 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition opacity-0 group-hover:opacity-100"
                                           title="View activity details"
                                         >
                                           ?
@@ -1316,25 +1316,25 @@ export function DataManagement() {
               {infoModal.type === 'program' && (
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="text-gray-500 font-medium">Title</p>
-                    <p className="text-gray-900">{infoModal.data.title}</p>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">Title</p>
+                    <p className="text-gray-900 dark:text-gray-100">{infoModal.data.title}</p>
                   </div>
                   {infoModal.data.description && (
                     <div>
-                      <p className="text-gray-500 font-medium">Description</p>
-                      <p className="text-gray-900">{infoModal.data.description}</p>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">Description</p>
+                      <p className="text-gray-900 dark:text-gray-100">{infoModal.data.description}</p>
                     </div>
                   )}
                   {infoModal.data.startDate && (
                     <div>
-                      <p className="text-gray-500 font-medium">Start Date</p>
-                      <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">Start Date</p>
+                      <p className="text-gray-900 dark:text-gray-100">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
                     </div>
                   )}
                   {infoModal.data.endDate && (
                     <div>
-                      <p className="text-gray-500 font-medium">End Date</p>
-                      <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">End Date</p>
+                      <p className="text-gray-900 dark:text-gray-100">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
                     </div>
                   )}
                 </div>
@@ -1343,25 +1343,25 @@ export function DataManagement() {
               {infoModal.type === 'project' && (
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="text-gray-500 font-medium">Title</p>
-                    <p className="text-gray-900">{infoModal.data.title}</p>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">Title</p>
+                    <p className="text-gray-900 dark:text-gray-100">{infoModal.data.title}</p>
                   </div>
                   {infoModal.data.description && (
                     <div>
-                      <p className="text-gray-500 font-medium">Description</p>
-                      <p className="text-gray-900">{infoModal.data.description}</p>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">Description</p>
+                      <p className="text-gray-900 dark:text-gray-100">{infoModal.data.description}</p>
                     </div>
                   )}
                   {infoModal.data.startDate && (
                     <div>
-                      <p className="text-gray-500 font-medium">Start Date</p>
-                      <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">Start Date</p>
+                      <p className="text-gray-900 dark:text-gray-100">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
                     </div>
                   )}
                   {infoModal.data.endDate && (
                     <div>
-                      <p className="text-gray-500 font-medium">End Date</p>
-                      <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">End Date</p>
+                      <p className="text-gray-900 dark:text-gray-100">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
                     </div>
                   )}
                 </div>
@@ -1371,7 +1371,7 @@ export function DataManagement() {
                   <div className="space-y-6">
                     {/* Basic Information */}
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">Basic Information</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 pb-2 border-b border-gray-200 dark:border-gray-600">Basic Information</h3>
                       <div className="space-y-3 text-sm">
                         <div>
                           <p className="text-gray-500 font-medium">Title</p>
@@ -1379,28 +1379,28 @@ export function DataManagement() {
                         </div>
                         {infoModal.data.location && (
                           <div>
-                            <p className="text-gray-500 font-medium">Location</p>
-                            <p className="text-gray-900">{infoModal.data.location}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Location</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.location}</p>
                           </div>
                         )}
                         <div className="grid grid-cols-2 gap-3">
                           {infoModal.data.startDate && (
                             <div>
-                              <p className="text-gray-500 font-medium">Start Date</p>
-                              <p className="text-gray-900">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
+                              <p className="text-gray-500 dark:text-gray-400 font-medium">Start Date</p>
+                              <p className="text-gray-900 dark:text-gray-100">{new Date(infoModal.data.startDate).toLocaleDateString()}</p>
                             </div>
                           )}
                           {infoModal.data.endDate && (
                             <div>
-                              <p className="text-gray-500 font-medium">End Date</p>
-                              <p className="text-gray-900">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                              <p className="text-gray-500 dark:text-gray-400 font-medium">End Date</p>
+                              <p className="text-gray-900 dark:text-gray-100">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
                             </div>
                           )}
                         </div>
                         {infoModal.data.duration && (
                           <div>
-                            <p className="text-gray-500 font-medium">Duration</p>
-                            <p className="text-gray-900">{infoModal.data.duration}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Duration</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.duration}</p>
                           </div>
                         )}
                       </div>
@@ -1408,30 +1408,30 @@ export function DataManagement() {
 
                     {/* Organization & Implementation */}
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">Organization & Implementation</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 pb-2 border-b border-gray-200 dark:border-gray-600">Organization & Implementation</h3>
                       <div className="space-y-3 text-sm">
                         {infoModal.data.extensionAgenda && (
                           <div>
-                            <p className="text-gray-500 font-medium">Extension Agenda</p>
-                            <p className="text-gray-900">{infoModal.data.extensionAgenda}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Extension Agenda</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.extensionAgenda}</p>
                           </div>
                         )}
                         {infoModal.data.implementingCollege && (
                           <div>
-                            <p className="text-gray-500 font-medium">Implementing College</p>
-                            <p className="text-gray-900">{infoModal.data.implementingCollege}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Implementing College</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.implementingCollege}</p>
                           </div>
                         )}
                         {infoModal.data.programsInvolved && infoModal.data.programsInvolved.length > 0 && (
                           <div>
-                            <p className="text-gray-500 font-medium">Programs Involved</p>
-                            <p className="text-gray-900">{infoModal.data.programsInvolved.join(', ')}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Programs Involved</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.programsInvolved.join(', ')}</p>
                           </div>
                         )}
                         {infoModal.data.facultyExtensionists && infoModal.data.facultyExtensionists.length > 0 && (
                           <div>
-                            <p className="text-gray-500 font-medium">Faculty Extensionists</p>
-                            <p className="text-gray-900">{infoModal.data.facultyExtensionists.join(', ')}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Faculty Extensionists</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.facultyExtensionists.join(', ')}</p>
                           </div>
                         )}
                       </div>
@@ -1439,24 +1439,24 @@ export function DataManagement() {
 
                     {/* Partnership & Support */}
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">Partnership & Support</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 pb-2 border-b border-gray-200 dark:border-gray-600">Partnership & Support</h3>
                       <div className="space-y-3 text-sm">
                         {infoModal.data.partnerAgency && (
                           <div>
-                            <p className="text-gray-500 font-medium">Partner Agency</p>
-                            <p className="text-gray-900">{infoModal.data.partnerAgency}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Partner Agency</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.partnerAgency}</p>
                           </div>
                         )}
                         {infoModal.data.typeOfPartner && (
                           <div>
-                            <p className="text-gray-500 font-medium">Type of Partner</p>
-                            <p className="text-gray-900">{infoModal.data.typeOfPartner}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Type of Partner</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.typeOfPartner}</p>
                           </div>
                         )}
                         {infoModal.data.supportProvided && (
                           <div>
-                            <p className="text-gray-500 font-medium">Support Provided</p>
-                            <p className="text-gray-900">{infoModal.data.supportProvided}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Support Provided</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.supportProvided}</p>
                           </div>
                         )}
                       </div>
@@ -1464,18 +1464,18 @@ export function DataManagement() {
 
                     {/* Financial */}
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">Financial</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3 pb-2 border-b border-gray-200 dark:border-gray-600">Financial</h3>
                       <div className="space-y-3 text-sm">
                         {infoModal.data.sourceOfFund && (
                           <div>
-                            <p className="text-gray-500 font-medium">Source of Fund</p>
-                            <p className="text-gray-900">{infoModal.data.sourceOfFund}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Source of Fund</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.sourceOfFund}</p>
                           </div>
                         )}
                         {infoModal.data.totalCost >= 0 && (
                           <div>
-                            <p className="text-gray-500 font-medium">Total Cost</p>
-                            <p className="text-gray-900">${infoModal.data.totalCost.toLocaleString()}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Total Cost</p>
+                            <p className="text-gray-900 dark:text-gray-100">${infoModal.data.totalCost.toLocaleString()}</p>
                           </div>
                         )}
                       </div>
@@ -1487,8 +1487,8 @@ export function DataManagement() {
                       <div className="space-y-3 text-sm">
                         {infoModal.data.sdgInvolved && infoModal.data.sdgInvolved.length > 0 && (
                           <div>
-                            <p className="text-gray-500 font-medium">SDGs Involved</p>
-                            <p className="text-gray-900">{infoModal.data.sdgInvolved.map((id: string) => {
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">SDGs Involved</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.sdgInvolved.map((id: string) => {
                               const sdg = SDG_LIST.find((s) => s.id === id)
                               return sdg ? sdg.name : id
                             }).join(', ')}</p>
@@ -1496,17 +1496,17 @@ export function DataManagement() {
                         )}
                         {infoModal.data.typeOfParticipant && infoModal.data.typeOfParticipant.length > 0 && (
                           <div>
-                            <p className="text-gray-500 font-medium">Type of Participants</p>
-                            <p className="text-gray-900">{infoModal.data.typeOfParticipant.join(', ')}</p>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Type of Participants</p>
+                            <p className="text-gray-900 dark:text-gray-100">{infoModal.data.typeOfParticipant.join(', ')}</p>
                           </div>
                         )}
                         {infoModal.data.beneficiaries?.total > 0 && (
                           <div>
-                            <p className="text-gray-500 font-medium">Beneficiaries</p>
-                            <p className="text-gray-900">
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">Beneficiaries</p>
+                            <p className="text-gray-900 dark:text-gray-100">
                               Total: <span className="font-semibold">{infoModal.data.beneficiaries.total}</span>
                               <br />
-                              <span className="text-xs text-gray-600 dark:text-gray-300\">Male: {infoModal.data.beneficiaries.male} | Female: {infoModal.data.beneficiaries.female}</span>
+                              <span className="text-xs text-gray-600 dark:text-gray-400">Male: {infoModal.data.beneficiaries.male} | Female: {infoModal.data.beneficiaries.female}</span>
                             </p>
                           </div>
                         )}
@@ -1517,10 +1517,10 @@ export function DataManagement() {
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-gray-200 bg-gray-50">
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
               <button
                 onClick={() => setInfoModal(null)}
-                className="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition font-medium"
+                className="w-full px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition font-medium"
               >
                 Close
               </button>
