@@ -874,11 +874,11 @@ export function DataManagement() {
 
       {/* Create Activity - Select Parent Form */}
       {view === 'createActivity' && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6\">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4\">Select Parent for New Activity</h3>
-          <div className="space-y-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">Select Parent for New Activity</h3>
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Program *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Program *</label>
               <select
                 value={selectedProgram?.id || ''}
                 onChange={(e) => {
@@ -888,7 +888,7 @@ export function DataManagement() {
                     setSelectedProject(null)
                   }
                 }}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
+                className="w-full px-5 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
                 <option value="">-- Select a Program --</option>
                 {programs.map((p) => (
@@ -901,14 +901,14 @@ export function DataManagement() {
 
             {selectedProgram && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Project *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Project *</label>
                 <select
                   value={selectedProject?.id || ''}
                   onChange={(e) => {
                     const project = programProjects.find((pr) => pr.id === e.target.value)
                     if (project) setSelectedProject(project)
                   }}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
+                  className="w-full px-5 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 >
                   <option value="">-- Select a Project --</option>
                   {programProjects.map((pr) => (
@@ -948,8 +948,8 @@ export function DataManagement() {
       )}
 
       {/* Hierarchical Tree View */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6\">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4\">Programs & Projects</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mt-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">Programs & Projects</h3>
         
         {/* Search Input */}
         <div className="mb-4">
