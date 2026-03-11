@@ -481,7 +481,7 @@ export function DataManagement() {
   const displayExpandedProjects = hasFilters ? getAutoExpandedProjects() : expandedProjects
 
   return (
-    <div className="space-y-8" style={{ padding: '2rem' }}>
+    <div className="space-y-8 bg-white dark:bg-gray-900 min-h-screen" style={{ padding: '2rem' }}>
       {/* Modal Backdrop and Form */}
       {view === 'form' && selectedProject && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto px-4">
@@ -499,7 +499,7 @@ export function DataManagement() {
       )}
 
       {/* Main Content Area - dimmed when form modal is open */}
-      <div className="space-y-8" style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
+      <div className="space-y-8 bg-white dark:bg-gray-900" style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
       {/* Quick Action Buttons */}
       <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-3 border border-gray-200 dark:border-gray-700">
         <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Quick Actions</h3>
