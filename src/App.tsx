@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AppProvider } from './context/AppContext'
 import { NotificationProvider } from './context/NotificationContext'
@@ -41,6 +41,22 @@ function AuthenticatedApp() {
 }
 
 export default function App() {
+  // Ensure theme is applied as soon as the app loads,
+  // before the user navigates to Settings.
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('theme') as 'light' | 'dark' | null
+      const initialTheme = stored === 'dark' || stored === 'light' ? stored : 'light'
+      if (initialTheme === 'dark') {
+        document.documentElement.classList.add('dark-mode')
+      } else {
+        document.documentElement.classList.remove('dark-mode')
+      }
+    } catch {
+      document.documentElement.classList.remove('dark-mode')
+    }
+  }, [])
+
   return (
     <AuthProvider>
       <AppProvider>
