@@ -1835,3 +1835,32 @@ input[type="checkbox"]:checked {
     font-size: 0.85rem;
   }
 }
+
+/* ===== Data Management Dark Mode Overrides ===== */
+:root.dark-mode .bg-white {
+  background-color: #071921 !important;
+  color: #e6f4f7;
+}
+
+:root.dark-mode .bg-gray-50 {
+  background-color: #071921 !important;
+  color: #e6f4f7;
+}
+
+:root.dark-mode .bg-gray-100 {
+  background-color: #05141b !important;
+  color: #e6f4f7;
+}
+
+:root.dark-mode input,
+:root.dark-mode textarea,
+:root.dark-mode select {
+  background-color: #05141b !important;
+  color: #e6f4f7 !important;
+  border-color: #16343f !important;
+}
+
+:root.dark-mode input::placeholder,
+:root.dark-mode textarea::placeholder {
+  color: #8fbac3 !important;
+}
