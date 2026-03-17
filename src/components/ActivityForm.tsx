@@ -6,6 +6,7 @@ import {
   PARTNER_TYPES,
   FUND_SOURCES,
   EXTENSION_AGENDAS,
+  TYPE_OF_COMMUNITY_SERVICE,
 } from '../types'
 
 interface ActivityFormProps {
@@ -28,6 +29,7 @@ export function ActivityForm({
     startDate: '',
     endDate: '',
     extensionAgenda: '',
+    typeOfCommunityService: '',
     duration: '',
     sdgInvolved: [],
     implementingCollege: '',
@@ -61,6 +63,7 @@ export function ActivityForm({
         startDate: initialData.startDate,
         endDate: initialData.endDate,
         extensionAgenda: initialData.extensionAgenda,
+        typeOfCommunityService: initialData.typeOfCommunityService,
         duration: initialData.duration,
         sdgInvolved: initialData.sdgInvolved,
         implementingCollege: initialData.implementingCollege,
@@ -349,6 +352,25 @@ export function ActivityForm({
                 </div>
               )}
             </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Type of Community Service
+              </label>
+              <select
+                name="typeOfCommunityService"
+                value={formData.typeOfCommunityService}
+                onChange={handleInputChange}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value="">Select a type...</option>
+                {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </fieldset>
       )}
@@ -363,8 +385,7 @@ export function ActivityForm({
             {SDG_LIST.map((sdg) => (
               <label key={sdg.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer border border-gray-100">
                 <div
-                  className="w-4 h-4 rounded flex-shrink-0"
-                  style={{ backgroundColor: sdg.color }}
+                  className="w-4 h-4 rounded flex-shrink-0 bg-teal-500"
                   title={sdg.name}
                 ></div>
                 <input

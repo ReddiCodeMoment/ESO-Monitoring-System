@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useCallback } from 'react'
 
 interface AuthContextType {
   isAuthenticated: boolean
-  user: { id: string; email: string } | null
+  userEmail: string | null
   login: (email: string) => Promise<void>
   logout: () => void
 }
@@ -11,21 +11,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState<{ id: string; email: string } | null>(null)
+  const [userEmail, setUserEmail] = useState<string | null>(null)
 
   const login = useCallback(async (email: string) => {
     // TODO: Implement authentication logic
     setIsAuthenticated(true)
-    setUser({ id: email.split('@')[0], email })
+    setUserEmail(email)
   }, [])
 
   const logout = useCallback(() => {
     setIsAuthenticated(false)
-    setUser(null)
+    setUserEmail(null)
   }, [])
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userEmail, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

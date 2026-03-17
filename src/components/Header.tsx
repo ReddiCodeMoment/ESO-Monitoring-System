@@ -1,13 +1,8 @@
 import { useAuth } from '../context/AuthContext'
 import '../styles/header.css'
 
-interface HeaderProps {
-  activeTab?: 'dashboard' | 'data' | 'settings'
-  onTabChange?: (tab: 'dashboard' | 'data' | 'settings') => void
-}
-
-export function Header({ activeTab, onTabChange }: HeaderProps) {
-  const { logout, user } = useAuth()
+export function Header() {
+  const { logout, userEmail } = useAuth()
 
   return (
     <header className="header">
@@ -16,17 +11,9 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
           <h1>ESO Monitoring System</h1>
         </div>
         <div className="header-user">
-          <span>{user?.email}</span>
-          <button
-            onClick={() => onTabChange?.('settings')}
-            className={`header-icon-btn ${activeTab === 'settings' ? 'active' : ''}`}
-            title="Settings"
-            aria-label="Settings"
-          >
-            ⚙️
-          </button>
-          <button onClick={logout} className="header-icon-btn" title="Logout" aria-label="Logout">
-            🚪
+          <span>{userEmail}</span>
+          <button onClick={logout} className="header-logout-btn">
+            Logout
           </button>
         </div>
       </div>

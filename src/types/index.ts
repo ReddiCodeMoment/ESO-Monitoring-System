@@ -11,82 +11,141 @@ export interface BaseRecord {
   archived: boolean
 }
 
-// ===== ESO MONITORING SYSTEM TYPES =====
+// Extension Agendas
+export const EXTENSION_AGENDAS = [
+  'Adopt A Municipality/ Adopt A Community/ Social Development thru BIDANI Implementation',
+  'BatStateUI Inclusive Social Innovation for Regional Growth ( BISIG) Program',
+  'Community Outreach Program',
+  'Disaster Risk Reduction and Management and Disaster Preparedness and Response to Climate Change',
+  'Environment and Natural Resources Conservation, Protection and Rehabilitation Program',
+  'Gender and Development',
+  'Livelihood and other Entrepreneurship related on Agri-Fisheries ( LEAF )',
+  'Parent\'s Empowerment Through Social Development (PESODEV)',
+  'Smart Analytics and Engineering Innovation',
+  'Technical Assistance and Advisory Services Program',
+  'Technical- Vocational Training(TVET) Program on Skills and Agri-Fishery and Related Program for farmers and Fisherfolks',
+  'Technology Transfer and Adoption Utilization Program',
+]
 
-export interface Beneficiaries {
-  male: number
-  female: number
-  total: number
+// Type of Community Service
+export const TYPE_OF_COMMUNITY_SERVICE = [
+  'Advocacy and communication campaign (IEC)',
+  'Capability-building training',
+  'Community Outreach',
+  'Technical Assistance and Advisory Service',
+  'Technology Transfer',
+  'Others'
+]
+
+export interface ExtensionProgram {
+  id: string
+  title: string
+  description: string
+  startDate: string
+  endDate: string
+  color?: string
+  implementingCollege: string
+  extensionAgenda: string
+  typeOfCommunityService: string
+  projects?: Project[]
+  createdBy: string
+  archived: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Project {
+  id: string
+  title: string
+  description: string
+  startDate: string
+  endDate: string
+  extensionAgenda: string
+  typeOfCommunityService: string
+  activities?: Activity[]
+  createdAt: string
+  updatedAt: string
+  createdBy: string
 }
 
 export interface Activity {
   id: string
   title: string
   location: string
-  startDate: string // ISO format YYYY-MM-DD
-  endDate: string // ISO format YYYY-MM-DD
+  startDate: string
+  endDate: string
   extensionAgenda: string
-  duration: string // e.g., "8 hours", "2 days", "3 months"
-  
-  // SDG selection
-  sdgInvolved: string[] // Array of SDG numbers (1-17)
-  
-  // Organization details
+  typeOfCommunityService: string
+  duration: string
+  sdgInvolved: string[]
   implementingCollege: string
-  programsInvolved: string[] // Multiple programs
-  facultyExtensionists: string[] // Array of faculty names
-  
-  // Partnership
+  programsInvolved: string[]
+  facultyExtensionists: string[]
   partnerAgency: string
-  typeOfPartner: string // e.g., "Government", "Private", "NGO", "Community Organization"
+  typeOfPartner: string
   supportProvided: string
-  
-  // Financials
   totalCost: number
-  sourceOfFund: string // e.g., "Internal", "External Grant", "Budget Allocation"
-  
-  // Participants
-  typeOfParticipant: string[] // e.g., ["Students", "Faculty", "Community"]
-  beneficiaries: Beneficiaries
-  
-  // Metadata
+  sourceOfFund: string
+  typeOfParticipant: string[]
+  beneficiaries: {
+    male: number
+    female: number
+    total: number
+  }
+  status?: 'draft' | 'submitted' | 'approved' | 'completed'
   createdAt: string
   updatedAt: string
   createdBy: string
-  status: 'draft' | 'submitted' | 'approved' | 'completed'
 }
 
-export interface Project {
-  id: string
-  title: string
-  description?: string
-  startDate: string // ISO format YYYY-MM-DD
-  endDate: string // ISO format YYYY-MM-DD
-  activities: Activity[]
-  
-  // Metadata
-  createdAt: string
-  updatedAt: string
-  createdBy: string
-  archived: boolean
-}
+// Reusable Constants
+export const IMPLEMENTING_COLLEGES = [
+  'College of Agriculture',
+  'College of Arts and Sciences',
+  'College of Business and Accountancy',
+  'College of Education',
+  'College of Engineering',
+  'College of Health Sciences',
+  'College of Law',
+  'College of Medicine',
+]
 
-export interface ExtensionProgram {
-  id: string
-  title: string
-  description?: string
-  color?: string // Hex color code for visual identification
-  implementingCollege?: string // College responsible for the program
-  startDate: string // ISO format YYYY-MM-DD
-  endDate: string // ISO format YYYY-MM-DD
-  projects: Project[]
-  
-  // Metadata
-  createdAt: string
-  updatedAt: string
-  createdBy: string
-  archived: boolean
-}
+export const SDG_LIST = [
+  { id: '1', name: 'No Poverty', description: 'End poverty' },
+  { id: '2', name: 'Zero Hunger', description: 'End hunger' },
+  { id: '3', name: 'Good Health and Well-being', description: 'Health and wellness' },
+  { id: '4', name: 'Quality Education', description: 'Education' },
+  { id: '5', name: 'Gender Equality', description: 'Gender equality' },
+  { id: '6', name: 'Clean Water and Sanitation', description: 'Water and sanitation' },
+  { id: '7', name: 'Affordable and Clean Energy', description: 'Energy' },
+  { id: '8', name: 'Decent Work and Economic Growth', description: 'Work and growth' },
+  { id: '9', name: 'Industry, Innovation and Infrastructure', description: 'Industry and innovation' },
+  { id: '10', name: 'Reduced Inequalities', description: 'Reduce inequalities' },
+  { id: '11', name: 'Sustainable Cities and Communities', description: 'Sustainable cities' },
+  { id: '12', name: 'Responsible Consumption and Production', description: 'Consumption' },
+  { id: '13', name: 'Climate Action', description: 'Climate' },
+  { id: '14', name: 'Life Below Water', description: 'Marine life' },
+  { id: '15', name: 'Life on Land', description: 'Land life' },
+  { id: '16', name: 'Peace, Justice and Strong Institutions', description: 'Peace' },
+  { id: '17', name: 'Partnerships for the Goals', description: 'Partnerships' },
+]
+
+export const PARTNER_TYPES = [
+  'Government Agency',
+  'Non-Governmental Organization (NGO)',
+  'Private Sector',
+  'Academic Institution',
+  'Community Organization',
+  'International Organization',
+]
+
+export const FUND_SOURCES = [
+  'Internal University Funds',
+  'Government Grant',
+  'Donation from Private Sector',
+  'International Funding',
+  'Student Fees',
+]
 
 export interface ActivityFormData {
   title: string
@@ -94,6 +153,7 @@ export interface ActivityFormData {
   startDate: string
   endDate: string
   extensionAgenda: string
+  typeOfCommunityService: string
   duration: string
   sdgInvolved: string[]
   implementingCollege: string
@@ -111,72 +171,3 @@ export interface ActivityFormData {
     total: string
   }
 }
-
-// SDG Constants
-export const SDG_LIST = [
-  { id: '1', name: 'No Poverty', color: '#E5243B' },
-  { id: '2', name: 'Zero Hunger', color: '#DCC40B' },
-  { id: '3', name: 'Good Health and Well-being', color: '#4C9F38' },
-  { id: '4', name: 'Quality Education', color: '#C6192B' },
-  { id: '5', name: 'Gender Equality', color: '#E5003B' },
-  { id: '6', name: 'Clean Water and Sanitation', color: '#26BDE2' },
-  { id: '7', name: 'Affordable and Clean Energy', color: '#FCCC0A' },
-  { id: '8', name: 'Decent Work and Economic Growth', color: '#A21942' },
-  { id: '9', name: 'Industry, Innovation and Infrastructure', color: '#DD1C3B' },
-  { id: '10', name: 'Reduced Inequalities', color: '#DD1C3B' },
-  { id: '11', name: 'Sustainable Cities and Communities', color: '#FD6925' },
-  { id: '12', name: 'Responsible Consumption and Production', color: '#BF8B2E' },
-  { id: '13', name: 'Climate Action', color: '#407D52' },
-  { id: '14', name: 'Life Below Water', color: '#0A97D9' },
-  { id: '15', name: 'Life on Land', color: '#56C596' },
-  { id: '16', name: 'Peace, Justice and Strong Institutions', color: '#00689D' },
-  { id: '17', name: 'Partnerships for the Goals', color: '#667D8D' },
-]
-
-export const PARTNER_TYPES = [
-  'Local',
-  'Regional',
-  'National',
-  'International',
-]
-
-export const PARTICIPANT_TYPES = [
-  'Students',
-  'Faculty Members',
-  'Staff',
-  'Community Members',
-  'Government Officials',
-  'Business Partners',
-  'Other',
-]
-
-export const FUND_SOURCES = [
-  'Institutional, MDS Fund',
-  'Institutional, STF Fund',
-  'External Fund',
-  'Others',
-]
-
-export const EXTENSION_AGENDAS = [
-  'Adopt A Municipality/ Adopt A Community/ Social Development thru BIDANI Implementation',
-  'BatStateU Inclusive Social Innovation for Regional Growth (BISIG) Program',
-  'Community Outreach Program',
-  'Disaster Risk Reduction and Management and Disaster Preparedness and Response to Climate Change',
-  'Environment and Natural Resources Conservation, Protection and Rehabilitation Program',
-  'Gender and Development',
-  'Livelihood and other Entrepreneurship related on Agri-Fisheries (LEAF)',
-  'Parent\'s Empowerment Through Social Development (PESODEV)',
-  'Smart Analytics and Engineering Innovation',
-  'Technical Assistance and Advisory Services Program',
-  'Technical-Vocational Training (TVET) Program on Skills and Agri-Fishery and Related Program for farmers and Fisherfolks',
-  'Technology Transfer and Adoption Utilization Program',
-]
-
-export const IMPLEMENTING_COLLEGES = [
-  'CTE',
-  'COM',
-  'CHS',
-  'CCJE',
-  'CAS',
-  'CABEHIM',
-]

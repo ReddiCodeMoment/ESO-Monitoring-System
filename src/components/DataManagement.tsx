@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ExtensionProgram, Project, Activity, SDG_LIST, IMPLEMENTING_COLLEGES } from '../types'
+import { ExtensionProgram, Project, Activity, SDG_LIST, IMPLEMENTING_COLLEGES, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE } from '../types'
 import { 
   getExtensionPrograms, 
   createActivity, 
@@ -19,7 +19,7 @@ import { useNotification } from '../context/NotificationContext'
 import { ActivityForm } from './ActivityForm'
 
 export function DataManagement() {
-  const { user } = useAuth()
+  const { userEmail } = useAuth()
   const { showError, showSuccess } = useNotification()
   
   // Data states
@@ -46,8 +46,8 @@ export function DataManagement() {
   const [filterYear, setFilterYear] = useState('')
   
   // Form states
-  const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '' })
-  const [newProject, setNewProject] = useState({ title: '', description: '', startDate: '', endDate: '' })
+  const [newProgram, setNewProgram] = useState({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '', extensionAgenda: '', typeOfCommunityService: '' })
+  const [newProject, setNewProject] = useState({ title: '', description: '', startDate: '', endDate: '', extensionAgenda: '', typeOfCommunityService: '' })
 
   useEffect(() => {
     loadPrograms()
@@ -141,7 +141,7 @@ export function DataManagement() {
         startDate: newProgram.startDate || today,
         endDate: newProgram.endDate || today,
         color: newProgram.color || '#3B82F6',
-        createdBy: user?.id || 'unknown',
+        createdBy: userEmail || 'unknown',
         archived: false,
       }
       
@@ -150,9 +150,19 @@ export function DataManagement() {
         createData.implementingCollege = newProgram.implementingCollege
       }
       
+      // Add extension agenda if it's set
+      if (newProgram.extensionAgenda) {
+        createData.extensionAgenda = newProgram.extensionAgenda
+      }
+      
+      // Add type of community service if it's set
+      if (newProgram.typeOfCommunityService) {
+        createData.typeOfCommunityService = newProgram.typeOfCommunityService
+      }
+      
       await createExtensionProgram(createData)
       showSuccess('Program created', `"${newProgram.title}" has been added`)
-      setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '' })
+      setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '', extensionAgenda: '', typeOfCommunityService: '' })
       setView('list')
       loadPrograms()
     } catch (error) {
@@ -174,11 +184,12 @@ export function DataManagement() {
         description: newProject.description,
         startDate: newProject.startDate || today,
         endDate: newProject.endDate || today,
-        createdBy: user?.id || 'unknown',
-        archived: false,
+        extensionAgenda: newProject.extensionAgenda,
+        typeOfCommunityService: newProject.typeOfCommunityService,
+        createdBy: userEmail || 'unknown',
       })
       showSuccess('Project created', `"${newProject.title}" has been added`)
-      setNewProject({ title: '', description: '', startDate: '', endDate: '' })
+      setNewProject({ title: '', description: '', startDate: '', endDate: '', extensionAgenda: '', typeOfCommunityService: '' })
       setView('list')
       // Reload projects for this program
       projects.delete(selectedProgram.id)
@@ -265,6 +276,7 @@ export function DataManagement() {
           startDate: activityData.startDate,
           endDate: activityData.endDate,
           extensionAgenda: activityData.extensionAgenda,
+          typeOfCommunityService: activityData.typeOfCommunityService,
           duration: activityData.duration,
           sdgInvolved: activityData.sdgInvolved,
           implementingCollege: activityData.implementingCollege,
@@ -290,6 +302,7 @@ export function DataManagement() {
           startDate: activityData.startDate,
           endDate: activityData.endDate,
           extensionAgenda: activityData.extensionAgenda,
+          typeOfCommunityService: activityData.typeOfCommunityService,
           duration: activityData.duration,
           sdgInvolved: activityData.sdgInvolved,
           implementingCollege: activityData.implementingCollege,
@@ -306,7 +319,7 @@ export function DataManagement() {
             female: parseInt(activityData.beneficiaries.female),
             total: parseInt(activityData.beneficiaries.total),
           },
-          createdBy: user?.id || 'unknown',
+          createdBy: userEmail || 'unknown',
           status: 'draft',
         })
         showSuccess('Activity created', `"${activityData.title}" has been added`)
@@ -597,6 +610,36 @@ export function DataManagement() {
                 ))}
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Extension Agenda</label>
+              <select
+                value={editingProgram.extensionAgenda || ''}
+                onChange={(e) => setEditingProgram({ ...editingProgram, extensionAgenda: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">-- Select Agenda --</option>
+                {EXTENSION_AGENDAS.map((agenda) => (
+                  <option key={agenda} value={agenda}>
+                    {agenda}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type of Community Service</label>
+              <select
+                value={editingProgram.typeOfCommunityService || ''}
+                onChange={(e) => setEditingProgram({ ...editingProgram, typeOfCommunityService: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">-- Select Type --</option>
+                {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="flex gap-2 pt-4">
               <button
                 onClick={handleEditProgram}
@@ -690,6 +733,36 @@ export function DataManagement() {
                 ))}
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Extension Agenda</label>
+              <select
+                value={newProgram.extensionAgenda || ''}
+                onChange={(e) => setNewProgram({ ...newProgram, extensionAgenda: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">-- Select Agenda --</option>
+                {EXTENSION_AGENDAS.map((agenda) => (
+                  <option key={agenda} value={agenda}>
+                    {agenda}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type of Community Service</label>
+              <select
+                value={newProgram.typeOfCommunityService || ''}
+                onChange={(e) => setNewProgram({ ...newProgram, typeOfCommunityService: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">-- Select Type --</option>
+                {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="flex gap-2 pt-4">
               <button
                 onClick={handleCreateProgram}
@@ -700,7 +773,7 @@ export function DataManagement() {
               <button
                 onClick={() => {
                   setView('list')
-                  setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '' })
+                  setNewProgram({ title: '', description: '', startDate: '', endDate: '', color: '#3B82F6', implementingCollege: '', extensionAgenda: '', typeOfCommunityService: '' })
                 }}
                 className="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-700 transition"
               >
@@ -755,6 +828,36 @@ export function DataManagement() {
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
               </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Extension Agenda</label>
+              <select
+                value={editingProject.extensionAgenda || ''}
+                onChange={(e) => setEditingProject({ ...editingProject, extensionAgenda: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">-- Select Agenda --</option>
+                {EXTENSION_AGENDAS.map((agenda) => (
+                  <option key={agenda} value={agenda}>
+                    {agenda}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type of Community Service</label>
+              <select
+                value={editingProject.typeOfCommunityService || ''}
+                onChange={(e) => setEditingProject({ ...editingProject, typeOfCommunityService: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">-- Select Type --</option>
+                {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex gap-3 pt-4">
               <button
@@ -847,6 +950,36 @@ export function DataManagement() {
                       />
                     </div>
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Extension Agenda</label>
+                    <select
+                      value={newProject.extensionAgenda || ''}
+                      onChange={(e) => setNewProject({ ...newProject, extensionAgenda: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
+                    >
+                      <option value="">-- Select Agenda --</option>
+                      {EXTENSION_AGENDAS.map((agenda) => (
+                        <option key={agenda} value={agenda}>
+                          {agenda}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300\">Type of Community Service</label>
+                    <select
+                      value={newProject.typeOfCommunityService || ''}
+                      onChange={(e) => setNewProject({ ...newProject, typeOfCommunityService: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100\"
+                    >
+                      <option value="">-- Select Type --</option>
+                      {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <div className="flex gap-2 pt-4">
                     <button
                       onClick={handleCreateProject}
@@ -857,7 +990,7 @@ export function DataManagement() {
                     <button
                       onClick={() => {
                         setView('list')
-                        setNewProject({ title: '', description: '', startDate: '', endDate: '' })
+                        setNewProject({ title: '', description: '', startDate: '', endDate: '', extensionAgenda: '', typeOfCommunityService: '' })
                         setSelectedProgram(null)
                       }}
                       className="px-6 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-400 transition"

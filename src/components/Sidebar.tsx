@@ -21,6 +21,12 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         >
           📋 Data
         </button>
+        <button
+          className={`sidebar-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
+          onClick={() => onTabChange('settings')}
+        >
+          ⚙️ Settings
+        </button>
       </nav>
     </aside>
   )
