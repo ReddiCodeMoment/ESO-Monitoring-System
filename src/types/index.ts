@@ -47,6 +47,7 @@ export interface ExtensionProgram {
   startDate: string
   endDate: string
   color?: string
+  location?: string
   implementingCollege: string
   extensionAgenda: string
   typeOfCommunityService: string
@@ -72,6 +73,7 @@ export interface Project {
   id: string
   title: string
   description: string
+  location?: string
   startDate: string
   endDate: string
   extensionAgenda: string

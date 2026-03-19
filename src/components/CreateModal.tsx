@@ -24,6 +24,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
   const [programForm, setProgramForm] = useState({
     title: '',
     description: '',
+    location: '',
     startDate: '',
     endDate: '',
     color: '#3B82F6',
@@ -47,6 +48,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
   const [projectForm, setProjectForm] = useState({
     title: '',
     description: '',
+    location: '',
     startDate: '',
     endDate: '',
     extensionAgenda: '',
@@ -109,6 +111,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
         setProgramForm({
           title: '',
           description: '',
+          location: '',
           startDate: '',
           endDate: '',
           color: '#3B82F6',
@@ -136,6 +139,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
         setProjectForm({
           title: '',
           description: '',
+          location: '',
           startDate: '',
           endDate: '',
           extensionAgenda: '',
@@ -268,6 +272,15 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
                     onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
                     placeholder="Program description"
                     rows={3}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Location</label>
+                  <input
+                    type="text"
+                    value={programForm.location}
+                    onChange={(e) => setProgramForm({ ...programForm, location: e.target.value })}
+                    placeholder="Program location"
                   />
                 </div>
                 <div className="form-row">
@@ -571,6 +584,15 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
                 onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
                 placeholder="Project description"
                 rows={3}
+              />
+            </div>
+            <div className="form-group">
+              <label>Location</label>
+              <input
+                type="text"
+                value={projectForm.location}
+                onChange={(e) => setProjectForm({ ...projectForm, location: e.target.value })}
+                placeholder="Project location"
               />
             </div>
             <div className="form-row">

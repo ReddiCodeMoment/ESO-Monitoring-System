@@ -407,7 +407,7 @@ export function DataManagement() {
 
     try {
       const today = new Date().toISOString().split('T')[0]
-      await createProject(parentProgram.id, {
+      const projectData: any = {
         title: data.title,
         description: data.description || '',
         startDate: data.startDate || today,
@@ -415,7 +415,19 @@ export function DataManagement() {
         extensionAgenda: data.extensionAgenda || '',
         typeOfCommunityService: data.typeOfCommunityService || '',
         createdBy: userEmail || 'unknown',
-      })
+      }
+      
+      if (data.location && data.location.trim()) {
+        projectData.location = data.location
+      }
+      if (data.status && data.status.trim()) {
+        projectData.status = data.status
+      }
+      if (data.sdgInvolved && data.sdgInvolved.length > 0) {
+        projectData.sdgInvolved = data.sdgInvolved
+      }
+      
+      await createProject(parentProgram.id, projectData)
       showSuccess('Project created', `"${data.title}" has been added`)
       setIsCreateModalOpen(false)
       // Reload projects for this program
@@ -732,6 +744,16 @@ export function DataManagement() {
                 placeholder="Program description"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Location</label>
+              <input
+                type="text"
+                value={editingProgram.location || ''}
+                onChange={(e) => setEditingProgram({ ...editingProgram, location: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                placeholder="Program location"
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
@@ -1019,6 +1041,16 @@ export function DataManagement() {
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 rows={3}
                 placeholder="Project description"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Location</label>
+              <input
+                type="text"
+                value={editingProject.location || ''}
+                onChange={(e) => setEditingProject({ ...editingProject, location: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                placeholder="Project location"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
