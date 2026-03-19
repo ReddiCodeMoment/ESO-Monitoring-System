@@ -1,8 +1,10 @@
 import '../styles/layout.css'
 
+type Tab = 'dashboard' | 'data' | 'settings'
+
 interface SidebarProps {
-  activeTab: string
-  onTabChange: (tab: string) => void
+  activeTab: Tab
+  onTabChange: (tab: Tab) => void
 }
 
 export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
