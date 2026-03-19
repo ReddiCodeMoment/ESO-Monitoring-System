@@ -17,6 +17,7 @@ import {
 import { useAuth } from '../context/AuthContext'
 import { useNotification } from '../context/NotificationContext'
 import { ActivityForm } from './ActivityForm'
+import { CreateModal } from './CreateModal'
 
 export function DataManagement() {
   const { userEmail } = useAuth()
@@ -35,6 +36,7 @@ export function DataManagement() {
   const [expandedPrograms, setExpandedPrograms] = useState<Set<string>>(new Set())
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set())
   const [view, setView] = useState<'list' | 'form' | 'createProgram' | 'createProject' | 'createActivity' | 'editProgram' | 'editProject'>('list')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null)
   const [editingProgram, setEditingProgram] = useState<ExtensionProgram | null>(null)
   const [editingProject, setEditingProject] = useState<Project | null>(null)
@@ -338,6 +340,111 @@ export function DataManagement() {
     }
   }
 
+  // CreateModal handlers
+  const handleCreateProgramFromModal = async (data: any) => {
+    try {
+      const createData: any = {
+        title: data.title,
+        description: data.description || '',
+        startDate: data.startDate || new Date().toISOString().split('T')[0],
+        endDate: data.endDate || new Date().toISOString().split('T')[0],
+        color: data.color || '#3B82F6',
+        createdBy: userEmail || 'unknown',
+        archived: false,
+      }
+      
+      // Add optional fields only if they have values
+      if (data.implementingCollege && data.implementingCollege.trim()) {
+        createData.implementingCollege = data.implementingCollege
+      }
+      if (data.extensionAgenda && data.extensionAgenda.trim()) {
+        createData.extensionAgenda = data.extensionAgenda
+      }
+      if (data.typeOfCommunityService && data.typeOfCommunityService.trim()) {
+        createData.typeOfCommunityService = data.typeOfCommunityService
+      }
+      
+      await createExtensionProgram(createData)
+      showSuccess('Program created', `"${data.title}" has been added`)
+      setIsCreateModalOpen(false)
+      loadPrograms()
+    } catch (error) {
+      showError('Creation failed', 'Could not create program')
+      console.error('Error:', error)
+    }
+  }
+
+  const handleCreateProjectFromModal = async (data: any) => {
+    if (!selectedProgram) {
+      showError('Missing information', 'Program must be selected')
+      return
+    }
+
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      await createProject(selectedProgram.id, {
+        title: data.title,
+        description: data.description || '',
+        startDate: data.startDate || today,
+        endDate: data.endDate || today,
+        extensionAgenda: data.extensionAgenda || '',
+        typeOfCommunityService: data.typeOfCommunityService || '',
+        createdBy: userEmail || 'unknown',
+      })
+      showSuccess('Project created', `"${data.title}" has been added`)
+      setIsCreateModalOpen(false)
+      // Reload projects for this program
+      projects.delete(selectedProgram.id)
+      loadProjectsForProgram(selectedProgram.id)
+    } catch (error) {
+      showError('Creation failed', 'Could not create project')
+      console.error('Error:', error)
+    }
+  }
+
+  const handleCreateActivityFromModal = async (data: any) => {
+    if (!selectedProgram || !selectedProject) {
+      showError('Missing information', 'Program and project must be selected')
+      return
+    }
+
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      await createActivity(selectedProgram.id, selectedProject.id, {
+        title: data.title || '',
+        location: data.location || '',
+        startDate: data.startDate || today,
+        endDate: data.endDate || today,
+        extensionAgenda: data.extensionAgenda || '',
+        typeOfCommunityService: data.typeOfCommunityService || '',
+        duration: data.duration || 'Not specified',
+        sdgInvolved: [],
+        implementingCollege: selectedProgram.implementingCollege || '',
+        programsInvolved: [],
+        facultyExtensionists: [],
+        partnerAgency: '',
+        typeOfPartner: '',
+        supportProvided: '',
+        totalCost: 0,
+        sourceOfFund: '',
+        typeOfParticipant: [],
+        beneficiaries: { male: 0, female: 0, total: 0 },
+        createdBy: userEmail || 'unknown',
+        status: 'draft',
+      })
+      showSuccess('Activity created', `"${data.title}" has been added`)
+      setIsCreateModalOpen(false)
+      // Reload projects
+      if (selectedProgram) {
+        projects.delete(selectedProgram.id)
+        loadProjectsForProgram(selectedProgram.id)
+      }
+    } catch (error) {
+      showError('Creation failed', 'Could not create activity')
+      console.error('Error:', error)
+    }
+  }
+
   // Return TSX
   const programProjects = selectedProgram ? projects.get(selectedProgram.id) || [] : []
 
@@ -513,29 +620,14 @@ export function DataManagement() {
 
       {/* Main Content Area - dimmed when form modal is open */}
       <div className="space-y-8" style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
-      {/* Quick Action Buttons */}
+      {/* Create Button */}
       <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-3 border border-gray-200 dark:border-gray-700">
-        <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">Quick Actions</h3>
-        <div className="flex gap-1 flex-wrap">
-          <button
-            onClick={() => setView('createProgram')}
-            className="px-3 py-1 text-sm bg-teal-500 text-white rounded hover:bg-teal-600 transition"
-          >
-            + New Program
-          </button>
-          <button
-            onClick={() => setView('createProject')}
-            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-          >
-            + New Project
-          </button>
-          <button
-            onClick={() => setView('createActivity')}
-            className="px-3 py-1 text-sm bg-rose-500 text-white rounded hover:bg-rose-600 transition"
-          >
-            + New Activity
-          </button>
-        </div>
+        <button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="px-4 py-2 text-sm bg-teal-500 text-white rounded hover:bg-teal-600 transition font-semibold"
+        >
+          + Create
+        </button>
       </div>
 
       {/* Edit Program Form */}
@@ -1661,6 +1753,16 @@ export function DataManagement() {
           </div>
         </div>
       )}
+
+      {/* Create Modal */}
+      <CreateModal
+        isOpen={isCreateModalOpen}
+        selectedProgram={selectedProgram}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreateProgram={handleCreateProgramFromModal}
+        onCreateProject={handleCreateProjectFromModal}
+        onCreateActivity={handleCreateActivityFromModal}
+      />
 
       {/* End of Main Content Area */}
     </div>
