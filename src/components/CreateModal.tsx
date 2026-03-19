@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExtensionProgram, Project, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE, IMPLEMENTING_COLLEGES } from '../types'
+import { ExtensionProgram, Project, SDG_LIST, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE, IMPLEMENTING_COLLEGES, TYPE_OF_BENEFICIARIES } from '../types'
 import '../styles/modal.css'
 
 interface CreateModalProps {
@@ -29,6 +29,14 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
     implementingCollege: '',
     extensionAgenda: '',
     typeOfCommunityService: '',
+    sdgInvolved: [] as string[],
+    typeOfBeneficiaries: [] as string[],
+    beneficiaries: {
+      male: 0,
+      female: 0,
+      total: 0,
+      unspecified: false,
+    },
   })
 
   // Project form state
@@ -56,6 +64,24 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
     setStep('form')
   }
 
+  const handleSDGToggle = (sdgId: string) => {
+    setProgramForm((prev) => ({
+      ...prev,
+      sdgInvolved: prev.sdgInvolved.includes(sdgId)
+        ? prev.sdgInvolved.filter((id) => id !== sdgId)
+        : [...prev.sdgInvolved, sdgId],
+    }))
+  }
+
+  const handleBeneficiaryTypeToggle = (beneficiaryType: string) => {
+    setProgramForm((prev) => ({
+      ...prev,
+      typeOfBeneficiaries: prev.typeOfBeneficiaries.includes(beneficiaryType)
+        ? prev.typeOfBeneficiaries.filter((type) => type !== beneficiaryType)
+        : [...prev.typeOfBeneficiaries, beneficiaryType],
+    }))
+  }
+
   const handleSubmit = async () => {
     setLoading(true)
     try {
@@ -70,6 +96,14 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
           implementingCollege: '',
           extensionAgenda: '',
           typeOfCommunityService: '',
+          sdgInvolved: [],
+          typeOfBeneficiaries: [],
+          beneficiaries: {
+            male: 0,
+            female: 0,
+            total: 0,
+            unspecified: false,
+          },
         })
       } else if (creationType === 'project') {
         await onCreateProject({
@@ -247,6 +281,138 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
                 ))}
               </select>
             </div>
+
+            {/* SDG Checklist */}
+            <div className="form-group">
+              <label>Sustainable Development Goals (SDGs)</label>
+              <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto p-2 border rounded bg-gray-50">
+                {SDG_LIST.map((sdg) => (
+                  <label key={sdg.id} className="flex items-center gap-2 cursor-pointer p-1 hover:bg-white rounded">
+                    <input
+                      type="checkbox"
+                      checked={programForm.sdgInvolved.includes(sdg.id)}
+                      onChange={() => handleSDGToggle(sdg.id)}
+                      className="w-4 h-4 rounded"
+                    />
+                    <span className="text-sm">{sdg.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Beneficiaries Section */}
+            <div className="form-group">
+              <label>Beneficiaries</label>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={programForm.beneficiaries.unspecified}
+                    onChange={(e) =>
+                      setProgramForm({
+                        ...programForm,
+                        beneficiaries: {
+                          ...programForm.beneficiaries,
+                          unspecified: e.target.checked,
+                        },
+                      })
+                    }
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm">Not specified (just total count)</span>
+                </label>
+                {!programForm.beneficiaries.unspecified && (
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="text-xs font-medium text-gray-600">Male</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={programForm.beneficiaries.male}
+                        onChange={(e) =>
+                          setProgramForm({
+                            ...programForm,
+                            beneficiaries: {
+                              ...programForm.beneficiaries,
+                              male: parseInt(e.target.value) || 0,
+                            },
+                          })
+                        }
+                        className="w-full px-2 py-1 border rounded text-sm"
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-gray-600">Female</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={programForm.beneficiaries.female}
+                        onChange={(e) =>
+                          setProgramForm({
+                            ...programForm,
+                            beneficiaries: {
+                              ...programForm.beneficiaries,
+                              female: parseInt(e.target.value) || 0,
+                            },
+                          })
+                        }
+                        className="w-full px-2 py-1 border rounded text-sm"
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-gray-600">Total</label>
+                      <div className="w-full px-2 py-1 border rounded bg-gray-100 text-sm">
+                        {programForm.beneficiaries.male + programForm.beneficiaries.female}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {programForm.beneficiaries.unspecified && (
+                  <div>
+                    <label className="text-xs font-medium text-gray-600">Total Beneficiaries</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={programForm.beneficiaries.total || 0}
+                      onChange={(e) =>
+                        setProgramForm({
+                          ...programForm,
+                          beneficiaries: {
+                            ...programForm.beneficiaries,
+                            total: parseInt(e.target.value) || 0,
+                          },
+                        })
+                      }
+                      className="w-full px-2 py-1 border rounded text-sm"
+                      placeholder="0"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Beneficiary Type Selection */}
+            <div className="form-group">
+              <label>Type of Beneficiaries</label>
+              <div className="max-h-64 overflow-y-auto p-2 border rounded bg-gray-50">
+                <div className="grid grid-cols-2 gap-2">
+                  {TYPE_OF_BENEFICIARIES.map((beneficiaryType) => (
+                    <label key={beneficiaryType} className="flex items-center gap-2 cursor-pointer p-1 hover:bg-white rounded">
+                      <input
+                        type="checkbox"
+                        checked={programForm.typeOfBeneficiaries.includes(beneficiaryType)}
+                        onChange={() => handleBeneficiaryTypeToggle(beneficiaryType)}
+                        className="w-4 h-4 rounded"
+                      />
+                      <span className="text-sm">{beneficiaryType}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div className="modal-actions">
               <button className="btn-cancel" onClick={() => setStep('select')}>Back</button>
               <button className="btn-confirm" onClick={handleSubmit} disabled={loading || !programForm.title}>

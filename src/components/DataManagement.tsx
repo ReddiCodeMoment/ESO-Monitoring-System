@@ -363,6 +363,15 @@ export function DataManagement() {
       if (data.typeOfCommunityService && data.typeOfCommunityService.trim()) {
         createData.typeOfCommunityService = data.typeOfCommunityService
       }
+      if (data.sdgInvolved && data.sdgInvolved.length > 0) {
+        createData.sdgInvolved = data.sdgInvolved
+      }
+      if (data.typeOfBeneficiaries && data.typeOfBeneficiaries.length > 0) {
+        createData.typeOfBeneficiaries = data.typeOfBeneficiaries
+      }
+      if (data.beneficiaries) {
+        createData.beneficiaries = data.beneficiaries
+      }
       
       await createExtensionProgram(createData)
       showSuccess('Program created', `"${data.title}" has been added`)

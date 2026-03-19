@@ -47,6 +47,14 @@ export interface ExtensionProgram {
   implementingCollege: string
   extensionAgenda: string
   typeOfCommunityService: string
+  sdgInvolved?: string[]
+  typeOfBeneficiaries?: string[]
+  beneficiaries?: {
+    male?: number
+    female?: number
+    total?: number
+    unspecified?: boolean
+  }
   projects?: Project[]
   createdBy: string
   archived: boolean
@@ -145,6 +153,31 @@ export const FUND_SOURCES = [
   'Donation from Private Sector',
   'International Funding',
   'Student Fees',
+]
+
+export const TYPE_OF_BENEFICIARIES = [
+  'BHW',
+  'BNS',
+  'Children',
+  'Cooperatives/ Enterprise',
+  'Differently-abled persons',
+  'Disaster Victims',
+  'Domestic workers',
+  'Farmer',
+  'Fisherfolk',
+  'Government Agencies',
+  'Industries',
+  'IPs',
+  'LGUs',
+  'Migrant workers',
+  'NGOs',
+  'Persons Deprived of liberty',
+  'POs/CSOs',
+  'Professional workers',
+  'Senior Citizens',
+  'Skilled workers',
+  'Women',
+  'Youth/ students',
 ]
 
 export interface ActivityFormData {
