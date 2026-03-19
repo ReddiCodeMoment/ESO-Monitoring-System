@@ -5,7 +5,7 @@
 .header {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: white;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
   position: sticky;
   top: 0;
   z-index: 40;
@@ -19,13 +19,13 @@
   justify-content: space-between;
   max-width: 1600px;
   margin: 0 auto;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   flex: 1;
 }
 
@@ -33,8 +33,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -50,7 +50,7 @@
 
 .header-brand h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -0.3px;
   color: white;
@@ -71,7 +71,7 @@
 .header-user {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .user-info {
@@ -82,7 +82,7 @@
 }
 
 .user-email {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.95);
   letter-spacing: 0.2px;
