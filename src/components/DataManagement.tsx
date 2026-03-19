@@ -375,14 +375,20 @@ export function DataManagement() {
   }
 
   const handleCreateProjectFromModal = async (data: any) => {
-    if (!selectedProgram) {
-      showError('Missing information', 'Program must be selected')
+    if (!data.parentProgramId) {
+      showError('Missing information', 'Please select a program')
+      return
+    }
+
+    const parentProgram = programs.find((p) => p.id === data.parentProgramId)
+    if (!parentProgram) {
+      showError('Invalid selection', 'Selected program not found')
       return
     }
 
     try {
       const today = new Date().toISOString().split('T')[0]
-      await createProject(selectedProgram.id, {
+      await createProject(parentProgram.id, {
         title: data.title,
         description: data.description || '',
         startDate: data.startDate || today,
@@ -394,8 +400,8 @@ export function DataManagement() {
       showSuccess('Project created', `"${data.title}" has been added`)
       setIsCreateModalOpen(false)
       // Reload projects for this program
-      projects.delete(selectedProgram.id)
-      loadProjectsForProgram(selectedProgram.id)
+      projects.delete(parentProgram.id)
+      loadProjectsForProgram(parentProgram.id)
     } catch (error) {
       showError('Creation failed', 'Could not create project')
       console.error('Error:', error)
@@ -403,23 +409,31 @@ export function DataManagement() {
   }
 
   const handleCreateActivityFromModal = async (data: any) => {
-    if (!selectedProgram || !selectedProject) {
-      showError('Missing information', 'Program and project must be selected')
+    if (!data.parentProgramId || !data.parentProjectId) {
+      showError('Missing information', 'Please select both a program and project')
+      return
+    }
+
+    const parentProgram = programs.find((p) => p.id === data.parentProgramId)
+    const parentProject = (projects.get(data.parentProgramId) || []).find((p) => p.id === data.parentProjectId)
+
+    if (!parentProgram || !parentProject) {
+      showError('Invalid selection', 'Selected program or project not found')
       return
     }
 
     try {
       const today = new Date().toISOString().split('T')[0]
-      await createActivity(selectedProgram.id, selectedProject.id, {
+      await createActivity(parentProgram.id, parentProject.id, {
         title: data.title || '',
         location: data.location || '',
         startDate: data.startDate || today,
         endDate: data.endDate || today,
         extensionAgenda: data.extensionAgenda || '',
         typeOfCommunityService: data.typeOfCommunityService || '',
-        duration: data.duration || 'Not specified',
+        duration: 'Not specified',
         sdgInvolved: [],
-        implementingCollege: selectedProgram.implementingCollege || '',
+        implementingCollege: parentProgram.implementingCollege || '',
         programsInvolved: [],
         facultyExtensionists: [],
         partnerAgency: '',
@@ -435,9 +449,9 @@ export function DataManagement() {
       showSuccess('Activity created', `"${data.title}" has been added`)
       setIsCreateModalOpen(false)
       // Reload projects
-      if (selectedProgram) {
-        projects.delete(selectedProgram.id)
-        loadProjectsForProgram(selectedProgram.id)
+      if (parentProgram) {
+        projects.delete(parentProgram.id)
+        loadProjectsForProgram(parentProgram.id)
       }
     } catch (error) {
       showError('Creation failed', 'Could not create activity')
@@ -1757,7 +1771,8 @@ export function DataManagement() {
       {/* Create Modal */}
       <CreateModal
         isOpen={isCreateModalOpen}
-        selectedProgram={selectedProgram}
+        programs={programs}
+        projects={projects}
         onClose={() => setIsCreateModalOpen(false)}
         onCreateProgram={handleCreateProgramFromModal}
         onCreateProject={handleCreateProjectFromModal}
