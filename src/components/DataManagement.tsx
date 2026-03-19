@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ExtensionProgram, Project, Activity, SDG_LIST, IMPLEMENTING_COLLEGES, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE } from '../types'
+import { ExtensionProgram, Project, Activity, SDG_LIST, IMPLEMENTING_COLLEGES, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE, PROGRAM_STATUS } from '../types'
 import { 
   getExtensionPrograms, 
   createActivity, 
@@ -8,9 +8,6 @@ import {
   getProjectsByProgramId,
   createExtensionProgram,
   getActivitiesByProjectId,
-  deleteActivity,
-  deleteExtensionProgram,
-  deleteProject,
   updateExtensionProgram,
   updateProject
 } from '../services/extensionService'
@@ -33,7 +30,6 @@ export function DataManagement() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   
   // UI states
-  const [expandedPrograms, setExpandedPrograms] = useState<Set<string>>(new Set())
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set())
   const [view, setView] = useState<'list' | 'form' | 'createProgram' | 'createProject' | 'createActivity' | 'editProgram' | 'editProject'>('list')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -65,17 +61,7 @@ export function DataManagement() {
     }
   }
 
-  const toggleProgram = (programId: string) => {
-    const newExpanded = new Set(expandedPrograms)
-    if (newExpanded.has(programId)) {
-      newExpanded.delete(programId)
-    } else {
-      newExpanded.add(programId)
-      // Load projects if not already loaded
-      loadProjectsForProgram(programId)
-    }
-    setExpandedPrograms(newExpanded)
-  }
+
 
   const loadProjectsForProgram = async (programId: string) => {
     if (projects.has(programId)) return
@@ -224,6 +210,21 @@ export function DataManagement() {
       if (editingProgram.implementingCollege) {
         updateData.implementingCollege = editingProgram.implementingCollege
       }
+      if (editingProgram.extensionAgenda) {
+        updateData.extensionAgenda = editingProgram.extensionAgenda
+      }
+      if (editingProgram.typeOfCommunityService) {
+        updateData.typeOfCommunityService = editingProgram.typeOfCommunityService
+      }
+      if (editingProgram.budgetUtilization && editingProgram.budgetUtilization > 0) {
+        updateData.budgetUtilization = editingProgram.budgetUtilization
+      }
+      if (editingProgram.sourceOfFund) {
+        updateData.sourceOfFund = editingProgram.sourceOfFund
+      }
+      if (editingProgram.status) {
+        updateData.status = editingProgram.status
+      }
       
       await updateExtensionProgram(editingProgram.id, updateData)
       showSuccess('Program updated', `"${editingProgram.title}" has been saved`)
@@ -362,6 +363,15 @@ export function DataManagement() {
       }
       if (data.typeOfCommunityService && data.typeOfCommunityService.trim()) {
         createData.typeOfCommunityService = data.typeOfCommunityService
+      }
+      if (data.budgetUtilization && data.budgetUtilization > 0) {
+        createData.budgetUtilization = data.budgetUtilization
+      }
+      if (data.sourceOfFund && data.sourceOfFund.trim()) {
+        createData.sourceOfFund = data.sourceOfFund
+      }
+      if (data.status && data.status.trim()) {
+        createData.status = data.status
       }
       if (data.sdgInvolved && data.sdgInvolved.length > 0) {
         createData.sdgInvolved = data.sdgInvolved
@@ -563,38 +573,6 @@ export function DataManagement() {
     return projectMatches
   })
   
-  // Auto-expand programs/projects that have matches
-  const getAutoExpandedPrograms = (): Set<string> => {
-    const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege || filterYear
-    if (!hasFilters) return expandedPrograms
-    
-    const expandedIds = new Set<string>()
-    filteredPrograms.forEach((program) => {
-      const projectsInProgram = projects.get(program.id) || []
-      const hasMatchingProjects = projectsInProgram.some((proj) => {
-        const projSearch = searchLower === '' || matchesSearch(proj.title) || matchesSearch(proj.description || '')
-        const projDate = isWithinDateRange(proj.startDate, proj.endDate) && isWithinYear(proj.startDate, proj.endDate)
-        const projCollege = hasMatchingCollege(program.implementingCollege || '')
-        
-        if (projSearch && projDate && projCollege) return true
-        
-        const activitiesInProject = activities.get(proj.id) || []
-        return activitiesInProject.some((act) => {
-          const actSearch = searchLower === '' || matchesSearch(act.title) || matchesSearch(act.location || '')
-          const actDate = isWithinDateRange(act.startDate, act.endDate) && isWithinYear(act.startDate, act.endDate)
-          const actCollege = hasMatchingCollege(act.implementingCollege || '')
-          
-          return actSearch && actDate && actCollege
-        })
-      })
-      
-      if (hasMatchingProjects) {
-        expandedIds.add(program.id)
-      }
-    })
-    return expandedIds
-  }
-  
   const getAutoExpandedProjects = (): Set<string> => {
     const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege || filterYear
     if (!hasFilters) return expandedProjects
@@ -620,7 +598,6 @@ export function DataManagement() {
   }
   
   const hasFilters = searchLower !== '' || filterStartDate || filterEndDate || filterCollege || filterYear
-  const displayExpandedPrograms = hasFilters ? getAutoExpandedPrograms() : expandedPrograms
   const displayExpandedProjects = hasFilters ? getAutoExpandedProjects() : expandedProjects
 
   return (
@@ -751,6 +728,43 @@ export function DataManagement() {
                 {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
                   <option key={type} value={type}>
                     {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Budget Utilization (PHP)</label>
+              <input
+                type="number"
+                value={editingProgram.budgetUtilization || ''}
+                onChange={(e) => setEditingProgram({ ...editingProgram, budgetUtilization: parseFloat(e.target.value) || 0 })}
+                min="0"
+                step="0.01"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                placeholder="0"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Source of Fund</label>
+              <input
+                type="text"
+                value={editingProgram.sourceOfFund || ''}
+                onChange={(e) => setEditingProgram({ ...editingProgram, sourceOfFund: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                placeholder="e.g., Government, Private, NGO"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+              <select
+                value={editingProgram.status || ''}
+                onChange={(e) => setEditingProgram({ ...editingProgram, status: e.target.value as 'On Going' | 'Completed' | undefined })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">-- Select Status --</option>
+                {PROGRAM_STATUS.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
                   </option>
                 ))}
               </select>
@@ -1195,28 +1209,230 @@ export function DataManagement() {
         </div>
       )}
 
-      {/* Hierarchical Tree View */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mt-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">Programs & Projects</h3>
+      {/* Split Panel Layout */}
+      <div className="flex gap-6 mt-6 h-[calc(100vh-200px)]">
         
-        {/* Search Input */}
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Search programs, projects, or activities..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-5 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-          />
-          {searchTerm && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              Found {filteredPrograms.length} program(s) {searchTerm ? 'matching your search' : ''}
-            </p>
-          )}
+        {/* LEFT PANEL: Programs List */}
+        <div className="w-96 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex flex-col overflow-hidden">
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Programs</h3>
+            
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder="Search programs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm"
+            />
+            {searchTerm && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                Found {filteredPrograms.length} program(s)
+              </p>
+            )}
+          </div>
+
+          {/* Programs List - Scrollable */}
+          <div className="flex-1 overflow-y-auto">
+            {programs.length === 0 ? (
+              <p className="text-gray-500 dark:text-gray-400 text-sm">No programs yet</p>
+            ) : filteredPrograms.length === 0 ? (
+              <p className="text-gray-500 dark:text-gray-400 text-sm">No matching programs</p>
+            ) : (
+              <div className="space-y-2">
+                {filteredPrograms.map((program) => (
+                  <div
+                    key={program.id}
+                    onClick={() => {
+                      setSelectedProgram(program)
+                      setSelectedProject(null)
+                      loadProjectsForProgram(program.id)
+                    }}
+                    className={`p-4 rounded-lg cursor-pointer transition border-l-4 ${
+                      selectedProgram?.id === program.id
+                        ? 'bg-teal-50 dark:bg-gray-700 border-l-teal-500'
+                        : 'bg-gray-50 dark:bg-gray-700 border-l-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    }`}
+                    style={{
+                      borderLeftColor: selectedProgram?.id === program.id ? (program.color || '#14b8a6') : '#d1d5db'
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-gray-900 dark:text-gray-100 truncate text-sm">{program.title}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {new Date(program.startDate).getFullYear()} - {new Date(program.endDate).getFullYear()}
+                        </p>
+                      </div>
+                      {program.status && (
+                        <span className={`text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap ${
+                          program.status === 'Completed' 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                            : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                        }`}>
+                          {program.status}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Filters */}
-        <div className="mb-4 p-6 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+        {/* RIGHT PANEL: Details & Projects */}
+        <div className="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 flex flex-col overflow-hidden">
+          {selectedProgram ? (
+            <>
+              {/* Program Details Header */}
+              <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{selectedProgram.title}</h2>
+                    {selectedProgram.description && (
+                      <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">{selectedProgram.description}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingProgram(selectedProgram)
+                        setView('editProgram')
+                      }}
+                      className="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900 rounded-lg transition"
+                      title="Edit program"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => setInfoModal({ type: 'program', data: selectedProgram })}
+                      className="p-2 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition"
+                      title="View details"
+                    >
+                      ℹ️
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400">
+                  <div>📅 {new Date(selectedProgram.startDate).toLocaleDateString()} - {new Date(selectedProgram.endDate).toLocaleDateString()}</div>
+                  {selectedProgram.implementingCollege && <div>🏫 {selectedProgram.implementingCollege}</div>}
+                  {selectedProgram.status && (
+                    <div>
+                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                        selectedProgram.status === 'Completed' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                          : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                      }`}>
+                        {selectedProgram.status}
+                      </span>
+                    </div>
+                  )}
+                  {selectedProgram.budgetUtilization && selectedProgram.budgetUtilization > 0 && (
+                    <div>💰 ₱{selectedProgram.budgetUtilization.toLocaleString('en-PH')}</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Projects & Activities - Scrollable */}
+              <div className="flex-1 overflow-y-auto">
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Projects ({(projects.get(selectedProgram.id) || []).length})</h3>
+                    <button
+                      onClick={() => {
+                        setIsCreateModalOpen(true)
+                      }}
+                      className="text-xs bg-teal-500 hover:bg-teal-600 text-white px-3 py-1 rounded transition"
+                    >
+                      + Add Project
+                    </button>
+                  </div>
+
+                  {(projects.get(selectedProgram.id) || []).length === 0 ? (
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">No projects yet</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {(projects.get(selectedProgram.id) || []).map((project) => (
+                        <div
+                          key={project.id}
+                          onClick={() => {
+                            setSelectedProject(project)
+                            toggleProject(project.id, selectedProgram.id)
+                          }}
+                          className={`p-4 rounded-lg cursor-pointer transition border ${
+                            selectedProject?.id === project.id
+                              ? 'bg-blue-50 dark:bg-gray-700 border-blue-300 dark:border-blue-500'
+                              : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">{project.title}</p>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setInfoModal({ type: 'project', data: project })
+                              }}
+                              className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                            >
+                              ℹ️
+                            </button>
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{project.description || 'No description'}</p>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {new Date(project.startDate).toLocaleDateString()} - {new Date(project.endDate).toLocaleDateString()}
+                          </div>
+
+                          {/* Activities for this project */}
+                          {displayExpandedProjects.has(project.id) && (
+                            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Activities ({(activities.get(`${selectedProgram.id}-${project.id}`) || []).length})
+                              </p>
+                              {(activities.get(`${selectedProgram.id}-${project.id}`) || []).length === 0 ? (
+                                <p className="text-xs text-gray-500 dark:text-gray-400">No activities</p>
+                              ) : (
+                                <div className="space-y-2">
+                                  {(activities.get(`${selectedProgram.id}-${project.id}`) || []).map((activity) => (
+                                    <div key={activity.id} className="bg-white dark:bg-gray-800 p-2 rounded text-xs border border-gray-200 dark:border-gray-600">
+                                      <div className="flex items-center justify-between gap-2">
+                                        <span className="font-medium text-gray-900 dark:text-gray-100 truncate">{activity.title}</span>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation()
+                                            setInfoModal({ type: 'activity', data: activity })
+                                          }}
+                                          className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                                        >
+                                          ℹ️
+                                        </button>
+                                      </div>
+                                      <p className="text-gray-500 dark:text-gray-400 mt-1">{activity.location}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-gray-500 dark:text-gray-400">Select a program to view details</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Filters Section - Compact Below */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mt-6">
+        <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">Filters</h4>
+        <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
           <div className="flex items-end gap-4 flex-wrap">
             <div className="flex-1 min-w-[200px]">
               <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase">Date Range Start</label>
@@ -1286,257 +1502,6 @@ export function DataManagement() {
             </p>
           )}
         </div>
-
-        {programs.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400">No programs found. Create one to get started.</p>
-        ) : filteredPrograms.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400">
-            No results matching your {hasFilters ? 'filters and search criteria' : 'search'}. Try adjusting your search or filters.
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {filteredPrograms.map((program) => (
-              <div key={program.id} className="border border-gray-200 rounded-lg overflow-hidden" style={{ borderLeftWidth: '5px', borderLeftColor: program.color || '#3B82F6' }}>
-                {/* Program Item */}
-                <div
-                  className={`p-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition group ${
-                    selectedProgram?.id === program.id ? 'bg-teal-50 dark:bg-gray-750' : ''
-                  }`}
-                  onClick={() => {
-                    setSelectedProgram(program)
-                    setSelectedProject(null)
-                    toggleProgram(program.id)
-                  }}
-                >
-                  <div className="flex items-center gap-3 flex-1">
-                    <span className={`transform transition text-gray-400 dark:text-gray-500 ${displayExpandedPrograms.has(program.id) ? 'rotate-90' : ''}`}>
-                      ▶
-                    </span>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">{program.title}</p>
-                      {program.description && <p className="text-sm text-gray-500 dark:text-gray-400">{program.description}</p>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 ml-4">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setInfoModal({ type: 'program', data: program })
-                      }}
-                      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-lg w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition"
-                      title="View program details"
-                    >
-                      ?
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setEditingProgram(program)
-                        setView('editProgram' as any)
-                      }}
-                      className="text-blue-600 hover:text-blue-800 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
-                      title="Edit program"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        const projectCount = (projects.get(program.id) || []).length
-                        if (!window.confirm(
-                          `Delete program "${program.title}"? This will delete ${projectCount} project(s) and all activities underneath.`
-                        )) return
-                        deleteExtensionProgram(program.id)
-                          .then(() => {
-                            setPrograms((prev) => prev.filter((p) => p.id !== program.id))
-                            projects.delete(program.id)
-                            if (selectedProgram?.id === program.id) {
-                              setSelectedProgram(null)
-                              setSelectedProject(null)
-                            }
-                            showSuccess('Program deleted', `"${program.title}" has been removed`)
-                          })
-                          .catch(() => {
-                            showError('Deletion failed', 'Could not delete program')
-                          })
-                      }}
-                      className="text-red-500 hover:text-red-700 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
-                      title="Delete program"
-                    >
-                      🗑️
-                    </button>
-                    <span className="text-xs bg-teal-100 text-teal-700 px-3 py-1 rounded-full whitespace-nowrap ml-2">
-                      Program
-                    </span>
-                  </div>
-                </div>
-
-                {/* Projects List (shown when program is expanded) */}
-                {displayExpandedPrograms.has(program.id) && selectedProgram?.id === program.id && (
-                  <div className="bg-gray-50 border-t border-gray-200">
-                    {programProjects.length === 0 ? (
-                      <div className="p-6 pl-12 text-gray-500 text-sm">No projects yet</div>
-                    ) : (
-                      programProjects.map((project) => (
-                        <div key={project.id} className="border-b border-gray-200 last:border-b-0">
-                          {/* Project Item */}
-                          <div
-                            className={`p-6 pl-12 cursor-pointer flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition group ${
-                              selectedProject?.id === project.id ? 'bg-blue-50 dark:bg-gray-750' : ''
-                            }`}
-                            onClick={() => {
-                              setSelectedProject(project)
-                              toggleProject(project.id, program.id)
-                            }}
-                          >
-                            <div className="flex items-center gap-3 flex-1">
-                              <span className={`transform transition text-gray-400 dark:text-gray-500 ${displayExpandedProjects.has(project.id) ? 'rotate-90' : ''}`}>
-                                ▶
-                              </span>
-                              <div className="flex-1">
-                                <p className="font-semibold text-gray-800 dark:text-gray-100">{project.title}</p>
-                                {project.description && (
-                                  <p className="text-sm text-gray-500 dark:text-gray-400">{project.description}</p>
-                                )}
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2 ml-4">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setInfoModal({ type: 'project', data: project })
-                                }}
-                                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-lg w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition"
-                                title="View project details"
-                              >
-                                ?
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setEditingProject(project)
-                                  setView('editProject' as any)
-                                }}
-                                className="text-blue-600 hover:text-blue-800 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
-                                title="Edit project"
-                              >
-                                ✏️
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  const activityCount = (activities.get(`${program.id}-${project.id}`) || []).length
-                                  if (!window.confirm(
-                                    `Delete project "${project.title}"? This will delete ${activityCount} activity(ies) underneath.`
-                                  )) return
-                                  deleteProject(program.id, project.id)
-                                    .then(() => {
-                                      setProjects((prev) => {
-                                        const newMap = new Map(prev)
-                                        const prj = newMap.get(program.id) || []
-                                        newMap.set(program.id, prj.filter((p) => p.id !== project.id))
-                                        return newMap
-                                      })
-                                      activities.delete(`${program.id}-${project.id}`)
-                                      if (selectedProject?.id === project.id) {
-                                        setSelectedProject(null)
-                                      }
-                                      showSuccess('Project deleted', `"${project.title}" has been removed`)
-                                    })
-                                    .catch(() => {
-                                      showError('Deletion failed', 'Could not delete project')
-                                    })
-                                }}
-                                className="text-red-500 hover:text-red-700 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
-                                title="Delete project"
-                              >
-                                🗑️
-                              </button>
-                              <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full whitespace-nowrap ml-2">
-                                Project
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Activities List (shown when project is expanded) */}
-                          {displayExpandedProjects.has(project.id) && (
-                            <div className="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
-                              {(() => {
-                                const key = `${program.id}-${project.id}`
-                                const projectActivities = activities.get(key) || []
-                                return projectActivities.length === 0 ? (
-                                  <div className="p-4 pl-20 text-gray-400 text-sm italic">No activities yet</div>
-                                ) : (
-                                  projectActivities.map((activity) => (
-                                    <div key={activity.id} className="p-4 pl-20 border-b border-gray-100 dark:border-gray-700 last:border-b-0 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 group">
-                                      <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{activity.title}</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">{activity.location}</p>
-                                      </div>
-                                      <div className="flex items-center gap-2 ml-4">
-                                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded whitespace-nowrap">
-                                          Activity
-                                        </span>
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation()
-                                            setInfoModal({ type: 'activity', data: activity })
-                                          }}
-                                          className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-semibold text-sm w-5 h-5 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition opacity-0 group-hover:opacity-100"
-                                          title="View activity details"
-                                        >
-                                          ?
-                                        </button>
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation()
-                                            setEditingActivity(activity)
-                                            setView('form')
-                                          }}
-                                          className="text-blue-600 hover:text-blue-800 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
-                                          title="Edit activity"
-                                        >
-                                          ✏️
-                                        </button>
-                                        <button
-                                          onClick={async (e) => {
-                                            e.stopPropagation()
-                                            if (!window.confirm('Delete this activity?')) return
-                                            try {
-                                              await deleteActivity(program.id, project.id, activity.id)
-                                              const key = `${program.id}-${project.id}`
-                                              setActivities((prev) => {
-                                                const newMap = new Map(prev)
-                                                const acts = newMap.get(key) || []
-                                                newMap.set(key, acts.filter((a) => a.id !== activity.id))
-                                                return newMap
-                                              })
-                                              showSuccess('Activity deleted', `"${activity.title}" has been removed`)
-                                            } catch (error) {
-                                              showError('Deletion failed', 'Could not delete activity')
-                                            }
-                                          }}
-                                          className="text-red-600 hover:text-red-800 text-sm w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
-                                          title="Delete activity"
-                                        >
-                                          🗑️
-                                        </button>
-                                      </div>
-                                    </div>
-                                  ))
-                                )
-                              })()}
-                            </div>
-                          )}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
       </div>
 
@@ -1583,6 +1548,30 @@ export function DataManagement() {
                     <div>
                       <p className="text-gray-500 dark:text-gray-400 font-medium">End Date</p>
                       <p className="text-gray-900 dark:text-gray-100">{new Date(infoModal.data.endDate).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                  {infoModal.data.budgetUtilization && infoModal.data.budgetUtilization > 0 && (
+                    <div>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">Budget Utilization</p>
+                      <p className="text-gray-900 dark:text-gray-100">₱{infoModal.data.budgetUtilization.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    </div>
+                  )}
+                  {infoModal.data.sourceOfFund && (
+                    <div>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">Source of Fund</p>
+                      <p className="text-gray-900 dark:text-gray-100">{infoModal.data.sourceOfFund}</p>
+                    </div>
+                  )}
+                  {infoModal.data.status && (
+                    <div>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">Status</p>
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                        infoModal.data.status === 'Completed' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                          : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                      }`}>
+                        {infoModal.data.status}
+                      </span>
                     </div>
                   )}
                 </div>

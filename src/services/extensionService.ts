@@ -184,11 +184,18 @@ export const createProject = async (
         endDate: projectData.endDate,
         extensionAgenda: projectData.extensionAgenda || '',
         typeOfCommunityService: projectData.typeOfCommunityService || '',
+        sdgInvolved: projectData.sdgInvolved || [],
         createdBy: projectData.createdBy,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       }
     )
+    
+    // Aggregate SDGs from projects and activities to program
+    if (projectData.sdgInvolved && projectData.sdgInvolved.length > 0) {
+      await aggregateProgramSDGs(programId)
+    }
+    
     return docRef.id
   } catch (error) {
     console.error('Error creating project:', error)
@@ -275,6 +282,11 @@ export const updateProject = async (
       ...projectData,
       updatedAt: Timestamp.now(),
     })
+    
+    // Aggregate SDGs from all projects and activities to program
+    if (projectData.sdgInvolved !== undefined || Object.keys(projectData).includes('sdgInvolved')) {
+      await aggregateProgramSDGs(programId)
+    }
   } catch (error) {
     console.error('Error updating project:', error)
     throw error
@@ -288,6 +300,9 @@ export const deleteProject = async (
   try {
     const docRef = doc(db, 'extensionPrograms', programId, 'projects', projectId)
     await deleteDoc(docRef)
+    
+    // Aggregate SDGs from remaining projects and activities to program
+    await aggregateProgramSDGs(programId)
   } catch (error) {
     console.error('Error deleting project:', error)
     throw error
@@ -295,6 +310,49 @@ export const deleteProject = async (
 }
 
 // ===== ACTIVITIES =====
+
+// Helper function to aggregate SDGs from all activities and projects in a program
+const aggregateProgramSDGs = async (programId: string): Promise<void> => {
+  try {
+    const projectsSnapshot = await getDocs(
+      collection(db, 'extensionPrograms', programId, 'projects')
+    )
+    
+    const aggregatedSDGs = new Set<string>()
+    
+    // Collect SDGs from projects and all activities across all projects
+    for (const projectDoc of projectsSnapshot.docs) {
+      const projectData = projectDoc.data()
+      
+      // Add project's own SDGs if they exist
+      if (projectData.sdgInvolved && Array.isArray(projectData.sdgInvolved)) {
+        projectData.sdgInvolved.forEach((sdg: string) => aggregatedSDGs.add(sdg))
+      }
+      
+      // Add SDGs from all activities in this project
+      const activitiesSnapshot = await getDocs(
+        collection(db, 'extensionPrograms', programId, 'projects', projectDoc.id, 'activities')
+      )
+      
+      for (const activityDoc of activitiesSnapshot.docs) {
+        const activityData = activityDoc.data()
+        if (activityData.sdgInvolved && Array.isArray(activityData.sdgInvolved)) {
+          activityData.sdgInvolved.forEach((sdg: string) => aggregatedSDGs.add(sdg))
+        }
+      }
+    }
+    
+    // Update program with aggregated SDGs
+    const programRef = doc(db, 'extensionPrograms', programId)
+    await updateDoc(programRef, {
+      sdgInvolved: Array.from(aggregatedSDGs),
+      updatedAt: Timestamp.now(),
+    })
+  } catch (error) {
+    console.error('Error aggregating program SDGs:', error)
+    // Don't throw - we don't want SDG aggregation to break the main operation
+  }
+}
 
 export const createActivity = async (
   programId: string,
@@ -310,6 +368,10 @@ export const createActivity = async (
         updatedAt: Timestamp.now(),
       }
     )
+    
+    // Aggregate SDGs from all activities to program
+    await aggregateProgramSDGs(programId)
+    
     return docRef.id
   } catch (error) {
     console.error('Error creating activity:', error)
@@ -416,6 +478,9 @@ export const updateActivity = async (
       ...activityData,
       updatedAt: Timestamp.now(),
     })
+    
+    // Aggregate SDGs from all activities to program
+    await aggregateProgramSDGs(programId)
   } catch (error) {
     console.error('Error updating activity:', error)
     throw error
@@ -438,6 +503,9 @@ export const deleteActivity = async (
       activityId
     )
     await deleteDoc(docRef)
+    
+    // Aggregate SDGs from remaining activities to program
+    await aggregateProgramSDGs(programId)
   } catch (error) {
     console.error('Error deleting activity:', error)
     throw error

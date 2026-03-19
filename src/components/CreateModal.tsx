@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExtensionProgram, Project, SDG_LIST, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE, IMPLEMENTING_COLLEGES, TYPE_OF_BENEFICIARIES } from '../types'
+import { ExtensionProgram, Project, SDG_LIST, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE, IMPLEMENTING_COLLEGES, TYPE_OF_BENEFICIARIES, PROGRAM_STATUS } from '../types'
 import '../styles/modal.css'
 
 interface CreateModalProps {
@@ -30,6 +30,9 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
     implementingCollege: '',
     extensionAgenda: '',
     typeOfCommunityService: '',
+    status: '' as string,
+    budgetUtilization: 0,
+    sourceOfFund: '',
     sdgInvolved: [] as string[],
     typeOfBeneficiaries: '' as string,
     beneficiaries: {
@@ -48,6 +51,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
     endDate: '',
     extensionAgenda: '',
     typeOfCommunityService: '',
+    sdgInvolved: [] as string[],
   })
 
   // Activity form state
@@ -85,6 +89,15 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
     }))
   }
 
+  const handleProjectSDGToggle = (sdgId: string) => {
+    setProjectForm((prev) => ({
+      ...prev,
+      sdgInvolved: prev.sdgInvolved.includes(sdgId)
+        ? prev.sdgInvolved.filter((id) => id !== sdgId)
+        : [...prev.sdgInvolved, sdgId],
+    }))
+  }
+
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -100,6 +113,9 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
           implementingCollege: '',
           extensionAgenda: '',
           typeOfCommunityService: '',
+          status: '',
+          budgetUtilization: 0,
+          sourceOfFund: '',
           sdgInvolved: [],
           typeOfBeneficiaries: '',
           beneficiaries: {
@@ -122,6 +138,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
           endDate: '',
           extensionAgenda: '',
           typeOfCommunityService: '',
+          sdgInvolved: [],
         })
         setSelectedParentProgram('')
       } else if (creationType === 'activity') {
@@ -320,6 +337,42 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
                     {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
                       <option key={type} value={type}>
                         {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Budget Utilization (PHP)</label>
+                  <input
+                    type="number"
+                    value={programForm.budgetUtilization}
+                    onChange={(e) => setProgramForm({ ...programForm, budgetUtilization: parseFloat(e.target.value) || 0 })}
+                    className="w-full p-2 border rounded"
+                    placeholder="0"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Source of Fund</label>
+                  <input
+                    type="text"
+                    value={programForm.sourceOfFund}
+                    onChange={(e) => setProgramForm({ ...programForm, sourceOfFund: e.target.value })}
+                    className="w-full p-2 border rounded"
+                    placeholder="e.g., Government, Private, NGO"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Status</label>
+                  <select
+                    value={programForm.status}
+                    onChange={(e) => setProgramForm({ ...programForm, status: e.target.value })}
+                  >
+                    <option value="">-- Select Status --</option>
+                    {PROGRAM_STATUS.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
                       </option>
                     ))}
                   </select>
@@ -561,6 +614,22 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="form-group">
+              <label>Sustainable Development Goals (SDGs)</label>
+              <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border rounded bg-gray-50">
+                {SDG_LIST.map((sdg) => (
+                  <label key={sdg.id} className="flex items-center gap-2 cursor-pointer p-1 hover:bg-white rounded">
+                    <input
+                      type="checkbox"
+                      checked={projectForm.sdgInvolved.includes(sdg.id)}
+                      onChange={() => handleProjectSDGToggle(sdg.id)}
+                      className="w-4 h-4 rounded"
+                    />
+                    <span className="text-sm">{sdg.name}</span>
+                  </label>
+                ))}
+              </div>
             </div>
             <div className="modal-actions">
               <button className="btn-cancel" onClick={() => setStep('select')}>Back</button>

@@ -218,18 +218,33 @@ export function Dashboard() {
           }}
         >
           <div style={{ marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '2px solid #f0f0f0' }}>
-            <h3
-              style={{
-                color: '#00332B',
-                fontSize: '1.1rem',
-                fontWeight: 700,
-                margin: '0 0 0.2rem 0',
-              }}
-            >
-              {selectedProgram.title}
-              {selectedActivity && ` > ${selectedProject?.title} > ${selectedActivity.title}`}
-              {!selectedActivity && selectedProject && ` > ${selectedProject.title}`}
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+              <h3
+                style={{
+                  color: '#00332B',
+                  fontSize: '1.1rem',
+                  fontWeight: 700,
+                  margin: 0,
+                }}
+              >
+                {selectedProgram.title}
+                {selectedActivity && ` > ${selectedProject?.title} > ${selectedActivity.title}`}
+                {!selectedActivity && selectedProject && ` > ${selectedProject.title}`}
+              </h3>
+              {selectedProgram.status && !selectedActivity && !selectedProject && (
+                <span style={{
+                  display: 'inline-block',
+                  padding: '0.25rem 0.6rem',
+                  borderRadius: '9999px',
+                  fontSize: '0.7rem',
+                  fontWeight: 600,
+                  backgroundColor: selectedProgram.status === 'Completed' ? '#dcfce7' : '#dbeafe',
+                  color: selectedProgram.status === 'Completed' ? '#166534' : '#1e40af'
+                }}>
+                  {selectedProgram.status}
+                </span>
+              )}
+            </div>
             {selectedProgram.description && !selectedProject && (
               <p style={{ color: '#666', fontSize: '0.8rem', margin: 0 }}>
                 {selectedProgram.description}
@@ -339,6 +354,33 @@ export function Dashboard() {
               </div>
             </div>
           </div>
+
+          {(selectedProgram.budgetUtilization || selectedProgram.sourceOfFund) && (
+            <div style={{ background: '#f8fafb', padding: '1rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid #e0e0e0' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                {selectedProgram.budgetUtilization !== undefined && selectedProgram.budgetUtilization > 0 && (
+                  <div>
+                    <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: 600, textTransform: 'uppercase', marginBottom: '0.2rem' }}>
+                      Budget Utilization
+                    </div>
+                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#128DA1' }}>
+                      ₱{selectedProgram.budgetUtilization.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                  </div>
+                )}
+                {selectedProgram.sourceOfFund && (
+                  <div>
+                    <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: 600, textTransform: 'uppercase', marginBottom: '0.2rem' }}>
+                      Source of Fund
+                    </div>
+                    <div style={{ fontSize: '0.9rem', color: '#333', fontWeight: 500 }}>
+                      {selectedProgram.sourceOfFund}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {displayedStats?.sdgsInvolved && displayedStats.sdgsInvolved.length > 0 && (
             <div style={{ marginBottom: '1rem', paddingTop: '0.75rem', borderTop: '1px solid #f0f0f0' }}>

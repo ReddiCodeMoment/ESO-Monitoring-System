@@ -37,6 +37,9 @@ export const TYPE_OF_COMMUNITY_SERVICE = [
   'Others'
 ]
 
+// Program Status
+export const PROGRAM_STATUS = ['On Going', 'Completed']
+
 export interface ExtensionProgram {
   id: string
   title: string
@@ -47,8 +50,11 @@ export interface ExtensionProgram {
   implementingCollege: string
   extensionAgenda: string
   typeOfCommunityService: string
+  status?: 'On Going' | 'Completed'
   sdgInvolved?: string[]
   typeOfBeneficiaries?: string
+  budgetUtilization?: number
+  sourceOfFund?: string
   beneficiaries?: {
     male?: number
     female?: number
@@ -70,6 +76,7 @@ export interface Project {
   endDate: string
   extensionAgenda: string
   typeOfCommunityService: string
+  sdgInvolved?: string[]
   activities?: Activity[]
   createdAt: string
   updatedAt: string
@@ -153,6 +160,13 @@ export const FUND_SOURCES = [
   'Donation from Private Sector',
   'International Funding',
   'Student Fees',
+]
+
+export const PROGRAM_FUND_SOURCES = [
+  'Institutional, MDS Fund',
+  'Institutional, STF Fund',
+  'External Fund',
+  'Others',
 ]
 
 export const TYPE_OF_BENEFICIARIES = [
