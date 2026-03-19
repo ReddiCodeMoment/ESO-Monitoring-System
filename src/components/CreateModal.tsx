@@ -18,6 +18,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
   const [loading, setLoading] = useState(false)
   const [selectedParentProgram, setSelectedParentProgram] = useState<string>('')
   const [selectedParentProject, setSelectedParentProject] = useState<string>('')
+  const [programPage, setProgramPage] = useState(1)
 
   // Program form state
   const [programForm, setProgramForm] = useState({
@@ -62,6 +63,17 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
   const handleTypeSelect = (type: 'program' | 'project' | 'activity') => {
     setCreationType(type)
     setStep('form')
+    if (type === 'program') {
+      setProgramPage(1)
+    }
+  }
+
+  const handleProgramPageNext = () => {
+    setProgramPage((prev) => Math.min(prev + 1, 3))
+  }
+
+  const handleProgramPagePrev = () => {
+    setProgramPage((prev) => Math.max(prev - 1, 1))
   }
 
   const handleSDGToggle = (sdgId: string) => {
@@ -105,6 +117,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
             unspecified: false,
           },
         })
+        setProgramPage(1)
       } else if (creationType === 'project') {
         await onCreateProject({
           ...projectForm,
@@ -147,6 +160,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
   const handleClose = () => {
     setStep('select')
     setCreationType(null)
+    setProgramPage(1)
     onClose()
   }
 
@@ -203,221 +217,280 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
         ) : creationType === 'program' ? (
           <div className="create-form">
             <h2>Create Program</h2>
-            <div className="form-group">
-              <label>Title *</label>
-              <input
-                type="text"
-                value={programForm.title}
-                onChange={(e) => setProgramForm({ ...programForm, title: e.target.value })}
-                placeholder="Program title"
-              />
-            </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea
-                value={programForm.description}
-                onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
-                placeholder="Program description"
-                rows={3}
-              />
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Start Date</label>
-                <input
-                  type="date"
-                  value={programForm.startDate}
-                  onChange={(e) => setProgramForm({ ...programForm, startDate: e.target.value })}
-                />
+            
+            {/* Progress Bar */}
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2 text-sm">
+                <span className="font-medium">Step {programPage} of 3</span>
+                <span className="text-gray-600">
+                  {programPage === 1 && 'Basic Information'}
+                  {programPage === 2 && 'Configuration'}
+                  {programPage === 3 && 'Impact & Beneficiaries'}
+                </span>
               </div>
-              <div className="form-group">
-                <label>End Date</label>
-                <input
-                  type="date"
-                  value={programForm.endDate}
-                  onChange={(e) => setProgramForm({ ...programForm, endDate: e.target.value })}
-                />
-              </div>
-            </div>
-            <div className="form-group">
-              <label>Implementing College</label>
-              <select
-                value={programForm.implementingCollege}
-                onChange={(e) => setProgramForm({ ...programForm, implementingCollege: e.target.value })}
-              >
-                <option value="">-- Select College --</option>
-                {IMPLEMENTING_COLLEGES.map((college) => (
-                  <option key={college} value={college}>
-                    {college}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Extension Agenda</label>
-              <select
-                value={programForm.extensionAgenda}
-                onChange={(e) => setProgramForm({ ...programForm, extensionAgenda: e.target.value })}
-              >
-                <option value="">-- Select Agenda --</option>
-                {EXTENSION_AGENDAS.map((agenda) => (
-                  <option key={agenda} value={agenda}>
-                    {agenda}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Type of Community Service</label>
-              <select
-                value={programForm.typeOfCommunityService}
-                onChange={(e) => setProgramForm({ ...programForm, typeOfCommunityService: e.target.value })}
-              >
-                <option value="">-- Select Type --</option>
-                {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* SDG Checklist */}
-            <div className="form-group">
-              <label>Sustainable Development Goals (SDGs)</label>
-              <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto p-2 border rounded bg-gray-50">
-                {SDG_LIST.map((sdg) => (
-                  <label key={sdg.id} className="flex items-center gap-2 cursor-pointer p-1 hover:bg-white rounded">
-                    <input
-                      type="checkbox"
-                      checked={programForm.sdgInvolved.includes(sdg.id)}
-                      onChange={() => handleSDGToggle(sdg.id)}
-                      className="w-4 h-4 rounded"
-                    />
-                    <span className="text-sm">{sdg.name}</span>
-                  </label>
-                ))}
+              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-teal-500 h-full transition-all duration-300"
+                  style={{ width: `${(programPage / 3) * 100}%` }}
+                ></div>
               </div>
             </div>
 
-            {/* Beneficiaries Section */}
-            <div className="form-group">
-              <label>Beneficiaries</label>
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 cursor-pointer">
+            {/* Page 1: Basic Information */}
+            {programPage === 1 && (
+              <div className="space-y-4">
+                <div className="form-group">
+                  <label>Title *</label>
                   <input
-                    type="checkbox"
-                    checked={programForm.beneficiaries.unspecified}
-                    onChange={(e) =>
-                      setProgramForm({
-                        ...programForm,
-                        beneficiaries: {
-                          ...programForm.beneficiaries,
-                          unspecified: e.target.checked,
-                        },
-                      })
-                    }
-                    className="w-4 h-4"
+                    type="text"
+                    value={programForm.title}
+                    onChange={(e) => setProgramForm({ ...programForm, title: e.target.value })}
+                    placeholder="Program title"
                   />
-                  <span className="text-sm">Not specified (just total count)</span>
-                </label>
-                {!programForm.beneficiaries.unspecified && (
-                  <div className="grid grid-cols-3 gap-2">
-                    <div>
-                      <label className="text-xs font-medium text-gray-600">Male</label>
-                      <input
-                        type="number"
-                        min="0"
-                        value={programForm.beneficiaries.male}
-                        onChange={(e) =>
-                          setProgramForm({
-                            ...programForm,
-                            beneficiaries: {
-                              ...programForm.beneficiaries,
-                              male: parseInt(e.target.value) || 0,
-                            },
-                          })
-                        }
-                        className="w-full px-2 py-1 border rounded text-sm"
-                        placeholder="0"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-gray-600">Female</label>
-                      <input
-                        type="number"
-                        min="0"
-                        value={programForm.beneficiaries.female}
-                        onChange={(e) =>
-                          setProgramForm({
-                            ...programForm,
-                            beneficiaries: {
-                              ...programForm.beneficiaries,
-                              female: parseInt(e.target.value) || 0,
-                            },
-                          })
-                        }
-                        className="w-full px-2 py-1 border rounded text-sm"
-                        placeholder="0"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-gray-600">Total</label>
-                      <div className="w-full px-2 py-1 border rounded bg-gray-100 text-sm">
-                        {programForm.beneficiaries.male + programForm.beneficiaries.female}
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {programForm.beneficiaries.unspecified && (
-                  <div>
-                    <label className="text-xs font-medium text-gray-600">Total Beneficiaries</label>
+                </div>
+                <div className="form-group">
+                  <label>Description</label>
+                  <textarea
+                    value={programForm.description}
+                    onChange={(e) => setProgramForm({ ...programForm, description: e.target.value })}
+                    placeholder="Program description"
+                    rows={3}
+                  />
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Start Date</label>
                     <input
-                      type="number"
-                      min="0"
-                      value={programForm.beneficiaries.total || 0}
-                      onChange={(e) =>
-                        setProgramForm({
-                          ...programForm,
-                          beneficiaries: {
-                            ...programForm.beneficiaries,
-                            total: parseInt(e.target.value) || 0,
-                          },
-                        })
-                      }
-                      className="w-full px-2 py-1 border rounded text-sm"
-                      placeholder="0"
+                      type="date"
+                      value={programForm.startDate}
+                      onChange={(e) => setProgramForm({ ...programForm, startDate: e.target.value })}
                     />
                   </div>
-                )}
-              </div>
-            </div>
-
-            {/* Beneficiary Type Selection */}
-            <div className="form-group">
-              <label>Type of Beneficiaries</label>
-              <div className="max-h-64 overflow-y-auto p-2 border rounded bg-gray-50">
-                <div className="grid grid-cols-2 gap-2">
-                  {TYPE_OF_BENEFICIARIES.map((beneficiaryType) => (
-                    <label key={beneficiaryType} className="flex items-center gap-2 cursor-pointer p-1 hover:bg-white rounded">
-                      <input
-                        type="checkbox"
-                        checked={programForm.typeOfBeneficiaries.includes(beneficiaryType)}
-                        onChange={() => handleBeneficiaryTypeToggle(beneficiaryType)}
-                        className="w-4 h-4 rounded"
-                      />
-                      <span className="text-sm">{beneficiaryType}</span>
-                    </label>
-                  ))}
+                  <div className="form-group">
+                    <label>End Date</label>
+                    <input
+                      type="date"
+                      value={programForm.endDate}
+                      onChange={(e) => setProgramForm({ ...programForm, endDate: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Program Color</label>
+                  <input
+                    type="color"
+                    value={programForm.color}
+                    onChange={(e) => setProgramForm({ ...programForm, color: e.target.value })}
+                    className="w-full h-10 border rounded cursor-pointer"
+                  />
                 </div>
               </div>
-            </div>
+            )}
 
+            {/* Page 2: Configuration */}
+            {programPage === 2 && (
+              <div className="space-y-4">
+                <div className="form-group">
+                  <label>Implementing College</label>
+                  <select
+                    value={programForm.implementingCollege}
+                    onChange={(e) => setProgramForm({ ...programForm, implementingCollege: e.target.value })}
+                  >
+                    <option value="">-- Select College --</option>
+                    {IMPLEMENTING_COLLEGES.map((college) => (
+                      <option key={college} value={college}>
+                        {college}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Extension Agenda</label>
+                  <select
+                    value={programForm.extensionAgenda}
+                    onChange={(e) => setProgramForm({ ...programForm, extensionAgenda: e.target.value })}
+                  >
+                    <option value="">-- Select Agenda --</option>
+                    {EXTENSION_AGENDAS.map((agenda) => (
+                      <option key={agenda} value={agenda}>
+                        {agenda}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Type of Community Service</label>
+                  <select
+                    value={programForm.typeOfCommunityService}
+                    onChange={(e) => setProgramForm({ ...programForm, typeOfCommunityService: e.target.value })}
+                  >
+                    <option value="">-- Select Type --</option>
+                    {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {/* Page 3: Impact & Beneficiaries */}
+            {programPage === 3 && (
+              <div className="space-y-4">
+                {/* SDG Checklist */}
+                <div className="form-group">
+                  <label>Sustainable Development Goals (SDGs)</label>
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border rounded bg-gray-50">
+                    {SDG_LIST.map((sdg) => (
+                      <label key={sdg.id} className="flex items-center gap-2 cursor-pointer p-1 hover:bg-white rounded">
+                        <input
+                          type="checkbox"
+                          checked={programForm.sdgInvolved.includes(sdg.id)}
+                          onChange={() => handleSDGToggle(sdg.id)}
+                          className="w-4 h-4 rounded"
+                        />
+                        <span className="text-sm">{sdg.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Beneficiaries Section */}
+                <div className="form-group">
+                  <label>Beneficiaries</label>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={programForm.beneficiaries.unspecified}
+                        onChange={(e) =>
+                          setProgramForm({
+                            ...programForm,
+                            beneficiaries: {
+                              ...programForm.beneficiaries,
+                              unspecified: e.target.checked,
+                            },
+                          })
+                        }
+                        className="w-4 h-4"
+                      />
+                      <span className="text-sm">Not specified (just total count)</span>
+                    </label>
+                    {!programForm.beneficiaries.unspecified && (
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="text-xs font-medium text-gray-600">Male</label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={programForm.beneficiaries.male}
+                            onChange={(e) =>
+                              setProgramForm({
+                                ...programForm,
+                                beneficiaries: {
+                                  ...programForm.beneficiaries,
+                                  male: parseInt(e.target.value) || 0,
+                                },
+                              })
+                            }
+                            className="w-full px-2 py-1 border rounded text-sm"
+                            placeholder="0"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-600">Female</label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={programForm.beneficiaries.female}
+                            onChange={(e) =>
+                              setProgramForm({
+                                ...programForm,
+                                beneficiaries: {
+                                  ...programForm.beneficiaries,
+                                  female: parseInt(e.target.value) || 0,
+                                },
+                              })
+                            }
+                            className="w-full px-2 py-1 border rounded text-sm"
+                            placeholder="0"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-gray-600">Total</label>
+                          <div className="w-full px-2 py-1 border rounded bg-gray-100 text-sm">
+                            {programForm.beneficiaries.male + programForm.beneficiaries.female}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {programForm.beneficiaries.unspecified && (
+                      <div>
+                        <label className="text-xs font-medium text-gray-600">Total Beneficiaries</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={programForm.beneficiaries.total || 0}
+                          onChange={(e) =>
+                            setProgramForm({
+                              ...programForm,
+                              beneficiaries: {
+                                ...programForm.beneficiaries,
+                                total: parseInt(e.target.value) || 0,
+                              },
+                            })
+                          }
+                          className="w-full px-2 py-1 border rounded text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Beneficiary Type Selection */}
+                <div className="form-group">
+                  <label>Type of Beneficiaries</label>
+                  <div className="max-h-48 overflow-y-auto p-2 border rounded bg-gray-50">
+                    <div className="grid grid-cols-2 gap-2">
+                      {TYPE_OF_BENEFICIARIES.map((beneficiaryType) => (
+                        <label key={beneficiaryType} className="flex items-center gap-2 cursor-pointer p-1 hover:bg-white rounded">
+                          <input
+                            type="checkbox"
+                            checked={programForm.typeOfBeneficiaries.includes(beneficiaryType)}
+                            onChange={() => handleBeneficiaryTypeToggle(beneficiaryType)}
+                            className="w-4 h-4 rounded"
+                          />
+                          <span className="text-sm">{beneficiaryType}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Navigation */}
             <div className="modal-actions">
-              <button className="btn-cancel" onClick={() => setStep('select')}>Back</button>
-              <button className="btn-confirm" onClick={handleSubmit} disabled={loading || !programForm.title}>
-                {loading ? 'Creating...' : 'Create Program'}
+              <button className="btn-cancel" onClick={() => setStep('select')}>
+                Cancel
               </button>
+              {programPage > 1 && (
+                <button className="btn-cancel" onClick={handleProgramPagePrev}>
+                  Previous
+                </button>
+              )}
+              {programPage < 3 && (
+                <button className="btn-confirm" onClick={handleProgramPageNext}>
+                  Next
+                </button>
+              )}
+              {programPage === 3 && (
+                <button className="btn-confirm" onClick={handleSubmit} disabled={loading || !programForm.title}>
+                  {loading ? 'Creating...' : 'Create Program'}
+                </button>
+              )}
             </div>
           </div>
         ) : creationType === 'project' ? (
