@@ -366,7 +366,7 @@ export function DataManagement() {
       if (data.sdgInvolved && data.sdgInvolved.length > 0) {
         createData.sdgInvolved = data.sdgInvolved
       }
-      if (data.typeOfBeneficiaries && data.typeOfBeneficiaries.length > 0) {
+      if (data.typeOfBeneficiaries && data.typeOfBeneficiaries.trim()) {
         createData.typeOfBeneficiaries = data.typeOfBeneficiaries
       }
       if (data.beneficiaries) {

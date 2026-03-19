@@ -31,7 +31,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
     extensionAgenda: '',
     typeOfCommunityService: '',
     sdgInvolved: [] as string[],
-    typeOfBeneficiaries: [] as string[],
+    typeOfBeneficiaries: '' as string,
     beneficiaries: {
       male: 0,
       female: 0,
@@ -85,14 +85,6 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
     }))
   }
 
-  const handleBeneficiaryTypeToggle = (beneficiaryType: string) => {
-    setProgramForm((prev) => ({
-      ...prev,
-      typeOfBeneficiaries: prev.typeOfBeneficiaries.includes(beneficiaryType)
-        ? prev.typeOfBeneficiaries.filter((type) => type !== beneficiaryType)
-        : [...prev.typeOfBeneficiaries, beneficiaryType],
-    }))
-  }
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -109,7 +101,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
           extensionAgenda: '',
           typeOfCommunityService: '',
           sdgInvolved: [],
-          typeOfBeneficiaries: [],
+          typeOfBeneficiaries: '',
           beneficiaries: {
             male: 0,
             female: 0,
@@ -452,21 +444,17 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
                 {/* Beneficiary Type Selection */}
                 <div className="form-group">
                   <label>Type of Beneficiaries</label>
-                  <div className="max-h-48 overflow-y-auto p-2 border rounded bg-gray-50">
-                    <div className="grid grid-cols-2 gap-2">
-                      {TYPE_OF_BENEFICIARIES.map((beneficiaryType) => (
-                        <label key={beneficiaryType} className="flex items-center gap-2 cursor-pointer p-1 hover:bg-white rounded">
-                          <input
-                            type="checkbox"
-                            checked={programForm.typeOfBeneficiaries.includes(beneficiaryType)}
-                            onChange={() => handleBeneficiaryTypeToggle(beneficiaryType)}
-                            className="w-4 h-4 rounded"
-                          />
-                          <span className="text-sm">{beneficiaryType}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                  <select
+                    value={programForm.typeOfBeneficiaries}
+                    onChange={(e) => setProgramForm({ ...programForm, typeOfBeneficiaries: e.target.value })}
+                  >
+                    <option value="">-- Select Beneficiary Type --</option>
+                    {TYPE_OF_BENEFICIARIES.map((beneficiaryType) => (
+                      <option key={beneficiaryType} value={beneficiaryType}>
+                        {beneficiaryType}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             )}

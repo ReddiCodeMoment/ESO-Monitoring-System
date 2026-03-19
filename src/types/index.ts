@@ -48,7 +48,7 @@ export interface ExtensionProgram {
   extensionAgenda: string
   typeOfCommunityService: string
   sdgInvolved?: string[]
-  typeOfBeneficiaries?: string[]
+  typeOfBeneficiaries?: string
   beneficiaries?: {
     male?: number
     female?: number
