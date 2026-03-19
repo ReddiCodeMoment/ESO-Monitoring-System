@@ -7,6 +7,7 @@ import {
   FUND_SOURCES,
   EXTENSION_AGENDAS,
   TYPE_OF_COMMUNITY_SERVICE,
+  PROGRAM_STATUS,
 } from '../types'
 
 interface ActivityFormProps {
@@ -41,6 +42,7 @@ export function ActivityForm({
     totalCost: '',
     sourceOfFund: '',
     typeOfParticipant: [],
+    status: '' as string,
     beneficiaries: {
       male: '',
       female: '',
@@ -75,6 +77,7 @@ export function ActivityForm({
         totalCost: initialData.totalCost.toString(),
         sourceOfFund: initialData.sourceOfFund,
         typeOfParticipant: initialData.typeOfParticipant,
+        status: initialData.status || '',
         beneficiaries: {
           male: initialData.beneficiaries.male.toString(),
           female: initialData.beneficiaries.female.toString(),
@@ -367,6 +370,25 @@ export function ActivityForm({
                 {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
                   <option key={type} value={type}>
                     {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Status
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value="">Select a status...</option>
+                {PROGRAM_STATUS.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
                   </option>
                 ))}
               </select>

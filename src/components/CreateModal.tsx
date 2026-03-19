@@ -51,6 +51,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
     endDate: '',
     extensionAgenda: '',
     typeOfCommunityService: '',
+    status: '' as string,
     sdgInvolved: [] as string[],
   })
 
@@ -62,6 +63,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
     endDate: '',
     extensionAgenda: '',
     typeOfCommunityService: '',
+    status: '' as string,
   })
 
   const handleTypeSelect = (type: 'program' | 'project' | 'activity') => {
@@ -138,6 +140,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
           endDate: '',
           extensionAgenda: '',
           typeOfCommunityService: '',
+          status: '',
           sdgInvolved: [],
         })
         setSelectedParentProgram('')
@@ -154,6 +157,7 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
           endDate: '',
           extensionAgenda: '',
           typeOfCommunityService: '',
+          status: '',
         })
         setSelectedParentProgram('')
         setSelectedParentProject('')
@@ -616,6 +620,20 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
               </select>
             </div>
             <div className="form-group">
+              <label>Status</label>
+              <select
+                value={projectForm.status}
+                onChange={(e) => setProjectForm({ ...projectForm, status: e.target.value })}
+              >
+                <option value="">-- Select Status --</option>
+                {PROGRAM_STATUS.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
               <label>Sustainable Development Goals (SDGs)</label>
               <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border rounded bg-gray-50">
                 {SDG_LIST.map((sdg) => (
@@ -733,6 +751,20 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
                 {TYPE_OF_COMMUNITY_SERVICE.map((type) => (
                   <option key={type} value={type}>
                     {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Status</label>
+              <select
+                value={activityForm.status}
+                onChange={(e) => setActivityForm({ ...activityForm, status: e.target.value })}
+              >
+                <option value="">-- Select Status --</option>
+                {PROGRAM_STATUS.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
                   </option>
                 ))}
               </select>

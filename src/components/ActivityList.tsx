@@ -130,16 +130,14 @@ export function ActivityList({ programId, projectId, onEdit, onRefresh }: Activi
                 <td className="px-6 py-4">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      activity.status === 'completed'
+                      activity.status === 'Completed'
                         ? 'bg-green-100 text-green-800'
-                        : activity.status === 'approved'
-                        ? 'bg-teal-100 text-teal-800'
-                        : activity.status === 'submitted'
-                        ? 'bg-yellow-100 text-yellow-800'
+                        : activity.status === 'On Going'
+                        ? 'bg-blue-100 text-blue-800'
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    {activity.status}
+                    {activity.status || 'No Status'}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-center">

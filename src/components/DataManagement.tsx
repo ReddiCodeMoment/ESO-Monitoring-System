@@ -323,7 +323,7 @@ export function DataManagement() {
             total: parseInt(activityData.beneficiaries.total),
           },
           createdBy: userEmail || 'unknown',
-          status: 'draft',
+          status: activityData.status as 'On Going' | 'Completed' | undefined,
         })
         showSuccess('Activity created', `"${activityData.title}" has been added`)
       }
@@ -463,7 +463,7 @@ export function DataManagement() {
         typeOfParticipant: [],
         beneficiaries: { male: 0, female: 0, total: 0 },
         createdBy: userEmail || 'unknown',
-        status: 'draft',
+        status: undefined,
       })
       showSuccess('Activity created', `"${data.title}" has been added`)
       setIsCreateModalOpen(false)
@@ -1073,6 +1073,21 @@ export function DataManagement() {
                 ))}
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+              <select
+                value={editingProject.status || ''}
+                onChange={(e) => setEditingProject({ ...editingProject, status: e.target.value as 'On Going' | 'Completed' | undefined })}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">-- Select Status --</option>
+                {PROGRAM_STATUS.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
               </div>
               <div className="flex gap-3 pt-4">
                 <button
@@ -1454,7 +1469,18 @@ export function DataManagement() {
                           }`}
                         >
                           <div className="flex items-center justify-between mb-2">
-                            <p className="font-semibold text-gray-900 dark:text-gray-100">{project.title}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-semibold text-gray-900 dark:text-gray-100">{project.title}</p>
+                              {project.status && (
+                                <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                                  project.status === 'Completed'
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                }`}>
+                                  {project.status}
+                                </span>
+                              )}
+                            </div>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -1483,13 +1509,24 @@ export function DataManagement() {
                                   {(activities.get(`${selectedProgram.id}-${project.id}`) || []).map((activity) => (
                                     <div key={activity.id} className="bg-white dark:bg-gray-800 p-2 rounded text-xs border border-gray-200 dark:border-gray-600">
                                       <div className="flex items-center justify-between gap-2">
-                                        <span className="font-medium text-gray-900 dark:text-gray-100 truncate">{activity.title}</span>
+                                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                                          <span className="font-medium text-gray-900 dark:text-gray-100 truncate">{activity.title}</span>
+                                          {activity.status && (
+                                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap ${
+                                              activity.status === 'Completed'
+                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                            }`}>
+                                              {activity.status}
+                                            </span>
+                                          )}
+                                        </div>
                                         <button
                                           onClick={(e) => {
                                             e.stopPropagation()
                                             setInfoModal({ type: 'activity', data: activity })
                                           }}
-                                          className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                                          className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 flex-shrink-0"
                                         >
                                           ℹ️
                                         </button>

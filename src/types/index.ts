@@ -76,6 +76,7 @@ export interface Project {
   endDate: string
   extensionAgenda: string
   typeOfCommunityService: string
+  status?: 'On Going' | 'Completed'
   sdgInvolved?: string[]
   activities?: Activity[]
   createdAt: string
@@ -107,7 +108,7 @@ export interface Activity {
     female: number
     total: number
   }
-  status?: 'draft' | 'submitted' | 'approved' | 'completed'
+  status?: 'On Going' | 'Completed'
   createdAt: string
   updatedAt: string
   createdBy: string
@@ -212,6 +213,7 @@ export interface ActivityFormData {
   totalCost: string
   sourceOfFund: string
   typeOfParticipant: string[]
+  status?: string
   beneficiaries: {
     male: string
     female: string
