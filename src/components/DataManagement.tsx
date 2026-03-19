@@ -620,19 +620,17 @@ export function DataManagement() {
 
       {/* Main Content Area - dimmed when form modal is open */}
       <div className="space-y-8" style={{ opacity: view === 'form' ? 0.5 : 1, pointerEvents: view === 'form' ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
-      {/* Create Button */}
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-3 border border-gray-200 dark:border-gray-700">
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="px-4 py-2 text-sm bg-teal-500 text-white rounded hover:bg-teal-600 transition font-semibold"
-        >
-          + Create
-        </button>
-      </div>
-
       {/* Filters Section */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">Filters</h4>
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Filters</h4>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="px-3 py-1 text-xs bg-teal-500 text-white rounded hover:bg-teal-600 transition font-semibold whitespace-nowrap"
+          >
+            + Create
+          </button>
+        </div>
         <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
           <div className="flex items-end gap-4 flex-wrap">
             <div className="flex-1 min-w-[200px]">
