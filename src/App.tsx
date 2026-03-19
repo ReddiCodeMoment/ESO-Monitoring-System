@@ -28,14 +28,14 @@ function AuthenticatedApp() {
   return (
     <div className="app-container">
       <Header />
-      <main className="app-main">
-        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <div className="app-main">
         <div className="app-content">
           {activeTab === 'dashboard' && <Dashboard />}
           {activeTab === 'data' && <DataManagement />}
           {activeTab === 'settings' && <Settings />}
         </div>
-      </main>
+      </div>
     </div>
   )
 }
