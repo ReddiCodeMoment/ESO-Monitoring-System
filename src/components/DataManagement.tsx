@@ -244,12 +244,31 @@ export function DataManagement() {
     }
 
     try {
-      await updateProject(selectedProgram.id, editingProject.id, {
+      const updateData: any = {
         title: editingProject.title,
         description: editingProject.description,
         startDate: editingProject.startDate,
         endDate: editingProject.endDate,
-      })
+      }
+      
+      // Add optional fields if they have values
+      if (editingProject.location) {
+        updateData.location = editingProject.location
+      }
+      if (editingProject.extensionAgenda) {
+        updateData.extensionAgenda = editingProject.extensionAgenda
+      }
+      if (editingProject.typeOfCommunityService) {
+        updateData.typeOfCommunityService = editingProject.typeOfCommunityService
+      }
+      if (editingProject.status) {
+        updateData.status = editingProject.status
+      }
+      if (editingProject.sdgInvolved && editingProject.sdgInvolved.length > 0) {
+        updateData.sdgInvolved = editingProject.sdgInvolved
+      }
+      
+      await updateProject(selectedProgram.id, editingProject.id, updateData)
       showSuccess('Project updated', `"${editingProject.title}" has been saved`)
       setEditingProject(null)
       setView('list')
@@ -1123,6 +1142,32 @@ export function DataManagement() {
                 ))}
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Sustainable Development Goals (SDGs)</label>
+              <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border rounded bg-gray-50 dark:bg-gray-700">
+                {SDG_LIST.map((sdg) => (
+                  <label key={sdg.id} className="flex items-center gap-2 cursor-pointer p-1 hover:bg-white dark:hover:bg-gray-600 rounded">
+                    <input
+                      type="checkbox"
+                      checked={(editingProject?.sdgInvolved || []).includes(sdg.id)}
+                      onChange={() => {
+                        if (editingProject) {
+                          const currentSdgs = editingProject.sdgInvolved || []
+                          setEditingProject({
+                            ...editingProject,
+                            sdgInvolved: currentSdgs.includes(sdg.id)
+                              ? currentSdgs.filter((id) => id !== sdg.id)
+                              : [...currentSdgs, sdg.id],
+                          })
+                        }
+                      }}
+                      className="w-4 h-4 rounded"
+                    />
+                    <span className="text-sm text-gray-900 dark:text-gray-100">{sdg.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
               </div>
               <div className="flex gap-3 pt-4">
                 <button
@@ -1516,15 +1561,29 @@ export function DataManagement() {
                                 </span>
                               )}
                             </div>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setInfoModal({ type: 'project', data: project })
-                              }}
-                              className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                            >
-                              ℹ️
-                            </button>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setEditingProject(project)
+                                  setView('editProject')
+                                }}
+                                className="p-1.5 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900 rounded-lg transition"
+                                title="Edit project"
+                              >
+                                ✏️
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setInfoModal({ type: 'project', data: project })
+                                }}
+                                className="p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition"
+                                title="View details"
+                              >
+                                ℹ️
+                              </button>
+                            </div>
                           </div>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{project.description || 'No description'}</p>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -1556,15 +1615,30 @@ export function DataManagement() {
                                             </span>
                                           )}
                                         </div>
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation()
-                                            setInfoModal({ type: 'activity', data: activity })
-                                          }}
-                                          className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 flex-shrink-0"
-                                        >
-                                          ℹ️
-                                        </button>
+                                        <div className="flex gap-1 flex-shrink-0">
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation()
+                                              setEditingActivity(activity)
+                                              setSelectedProject(project)
+                                              setView('form')
+                                            }}
+                                            className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400"
+                                            title="Edit activity"
+                                          >
+                                            ✏️
+                                          </button>
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation()
+                                              setInfoModal({ type: 'activity', data: activity })
+                                            }}
+                                            className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                                            title="View details"
+                                          >
+                                            ℹ️
+                                          </button>
+                                        </div>
                                       </div>
                                       <p className="text-gray-500 dark:text-gray-400 mt-1">{activity.location}</p>
                                     </div>
