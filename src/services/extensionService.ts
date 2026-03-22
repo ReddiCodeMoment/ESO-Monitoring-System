@@ -14,6 +14,17 @@ import {
 import { db } from '../firebase.config'
 import { ExtensionProgram, Project, Activity } from '../types'
 
+// Utility function to clean undefined values from objects
+const cleanUndefined = (obj: any): any => {
+  const cleaned: any = {}
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined && value !== null) {
+      cleaned[key] = value
+    }
+  }
+  return cleaned
+}
+
 // ===== EXTENSION PROGRAMS =====
 
 export const createExtensionProgram = async (
@@ -32,7 +43,7 @@ export const createExtensionProgram = async (
       typeOfCommunityService: programData.typeOfCommunityService || '',
       budgetUtilization: programData.budgetUtilization || 0,
       sourceOfFund: programData.sourceOfFund || '',
-      status: programData.status || '',
+      status: programData.status || 'On Going',
       sdgInvolved: programData.sdgInvolved || [],
       typeOfBeneficiaries: programData.typeOfBeneficiaries || '',
       beneficiaries: programData.beneficiaries || { male: 0, female: 0, total: 0, unspecified: false },
@@ -154,9 +165,10 @@ export const updateExtensionProgram = async (
   programData: Partial<Omit<ExtensionProgram, 'id' | 'createdAt' | 'projects'>>
 ): Promise<void> => {
   try {
+    const cleanedData = cleanUndefined(programData)
     const docRef = doc(db, 'extensionPrograms', programId)
     await updateDoc(docRef, {
-      ...programData,
+      ...cleanedData,
       updatedAt: Timestamp.now(),
     })
   } catch (error) {
@@ -192,7 +204,7 @@ export const createProject = async (
         endDate: projectData.endDate,
         extensionAgenda: projectData.extensionAgenda || '',
         typeOfCommunityService: projectData.typeOfCommunityService || '',
-        status: projectData.status || '',
+        status: projectData.status || 'On Going', // Default to 'On Going'
         sdgInvolved: projectData.sdgInvolved || [],
         createdBy: projectData.createdBy,
         createdAt: Timestamp.now(),
@@ -286,9 +298,10 @@ export const updateProject = async (
   projectData: Partial<Omit<Project, 'id' | 'createdAt' | 'activities'>>
 ): Promise<void> => {
   try {
+    const cleanedData = cleanUndefined(projectData)
     const docRef = doc(db, 'extensionPrograms', programId, 'projects', projectId)
     await updateDoc(docRef, {
-      ...projectData,
+      ...cleanedData,
       updatedAt: Timestamp.now(),
     })
     
@@ -369,10 +382,15 @@ export const createActivity = async (
   activityData: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<string> => {
   try {
+    const cleanedData = cleanUndefined({
+      ...activityData,
+      status: activityData.status || 'On Going', // Default to 'On Going'
+    })
+    
     const docRef = await addDoc(
       collection(db, 'extensionPrograms', programId, 'projects', projectId, 'activities'),
       {
-        ...activityData,
+        ...cleanedData,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       }
@@ -474,6 +492,7 @@ export const updateActivity = async (
   activityData: Partial<Omit<Activity, 'id' | 'createdAt'>>
 ): Promise<void> => {
   try {
+    const cleanedData = cleanUndefined(activityData)
     const docRef = doc(
       db,
       'extensionPrograms',
@@ -484,7 +503,7 @@ export const updateActivity = async (
       activityId
     )
     await updateDoc(docRef, {
-      ...activityData,
+      ...cleanedData,
       updatedAt: Timestamp.now(),
     })
     
