@@ -1,6 +1,6 @@
 import '../styles/layout.css'
 
-type Tab = 'dashboard' | 'data' | 'settings'
+type Tab = 'dashboard' | 'data' | 'analytics' | 'settings'
 
 interface SidebarProps {
   activeTab: Tab
@@ -10,6 +10,7 @@ interface SidebarProps {
 const tabs = [
   { id: 'dashboard' as const, label: 'Dashboard', icon: '📊' },
   { id: 'data' as const, label: 'Data', icon: '📋' },
+  { id: 'analytics' as const, label: 'Analytics', icon: '📈' },
   { id: 'settings' as const, label: 'Settings', icon: '⚙️' },
 ]
 

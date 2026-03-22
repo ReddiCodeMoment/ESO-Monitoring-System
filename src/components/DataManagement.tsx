@@ -16,7 +16,7 @@ import { useNotification } from '../context/NotificationContext'
 import { ActivityForm } from './ActivityForm'
 import { CreateModal } from './CreateModal'
 
-export function DataManagement() {
+export function DataManagement({ onDataUpdate }: { onDataUpdate?: (programs: ExtensionProgram[], projects: Project[], activities: Activity[]) => void } = {}) {
   const { userEmail } = useAuth()
   const { showError, showSuccess } = useNotification()
   
@@ -50,6 +50,15 @@ export function DataManagement() {
   useEffect(() => {
     loadPrograms()
   }, [])
+
+  // Call onDataUpdate callback when data changes
+  useEffect(() => {
+    if (onDataUpdate) {
+      const allProjects = Array.from(projects.values()).flat()
+      const allActivities = Array.from(activities.values()).flat()
+      onDataUpdate(programs, allProjects, allActivities)
+    }
+  }, [programs, projects, activities, onDataUpdate])
 
   const loadPrograms = async () => {
     try {
