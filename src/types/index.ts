@@ -86,6 +86,14 @@ export interface Project {
   createdBy: string
 }
 
+export interface Comment {
+  id: string
+  text: string
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface Activity {
   id: string
   title: string
@@ -111,6 +119,7 @@ export interface Activity {
     total: number
   }
   status?: 'On Going' | 'Completed'
+  comments?: Comment[]
   createdAt: string
   updatedAt: string
   createdBy: string

@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+export { useKeyboardShortcuts, SHORTCUTS } from './useKeyboardShortcuts'
 
 export function useSelection<T extends { id: number }>(items: T[]) {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
