@@ -1436,13 +1436,20 @@ export function DataManagement() {
                         : 'bg-gray-50 dark:bg-gray-700 border-l-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
                     }`}
                     style={{
-                      borderLeftColor: selectedProgram?.id === program.id ? (program.color || '#14b8a6') : '#d1d5db'
+                      borderLeftColor: program.color || '#14b8a6'
                     }}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 dark:text-gray-100 truncate text-sm">{program.title}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: program.color || '#14b8a6' }}
+                            title={`Color: ${program.color || '#14b8a6'}`}
+                          />
+                          <p className="font-semibold text-gray-900 dark:text-gray-100 truncate text-sm">{program.title}</p>
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-5">
                           {new Date(program.startDate).getFullYear()} - {new Date(program.endDate).getFullYear()}
                         </p>
                       </div>
