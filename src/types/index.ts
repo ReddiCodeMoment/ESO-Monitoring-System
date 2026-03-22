@@ -118,14 +118,13 @@ export interface Activity {
 
 // Reusable Constants
 export const IMPLEMENTING_COLLEGES = [
-  'College of Agriculture',
+  'College of Accountancy, Business, Economics, and International Hospitality Management',
   'College of Arts and Sciences',
-  'College of Business and Accountancy',
-  'College of Education',
-  'College of Engineering',
+  'College of Criminal Justice Education',
   'College of Health Sciences',
-  'College of Law',
   'College of Medicine',
+  'College of Teacher Education',
+  'College of Law',
 ]
 
 export const SDG_LIST = [
