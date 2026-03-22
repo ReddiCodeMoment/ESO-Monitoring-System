@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExtensionProgram, Project, SDG_LIST, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE, IMPLEMENTING_COLLEGES, TYPE_OF_BENEFICIARIES, PROGRAM_STATUS } from '../types'
+import { ExtensionProgram, Project, SDG_LIST, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE, IMPLEMENTING_COLLEGES, TYPE_OF_BENEFICIARIES, PROGRAM_STATUS, PROGRAM_FUND_SOURCES } from '../types'
 import '../styles/modal.css'
 
 interface CreateModalProps {
@@ -372,13 +372,17 @@ export function CreateModal({ isOpen, programs, projects, onClose, onCreateProgr
                 </div>
                 <div className="form-group">
                   <label>Source of Fund</label>
-                  <input
-                    type="text"
+                  <select
                     value={programForm.sourceOfFund}
                     onChange={(e) => setProgramForm({ ...programForm, sourceOfFund: e.target.value })}
-                    className="w-full p-2 border rounded"
-                    placeholder="e.g., Government, Private, NGO"
-                  />
+                  >
+                    <option value="">-- Select Source of Fund --</option>
+                    {PROGRAM_FUND_SOURCES.map((source) => (
+                      <option key={source} value={source}>
+                        {source}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-group">
                   <label>Status</label>

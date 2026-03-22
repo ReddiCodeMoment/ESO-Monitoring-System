@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ExtensionProgram, Project, Activity, SDG_LIST, IMPLEMENTING_COLLEGES, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE, PROGRAM_STATUS } from '../types'
+import { ExtensionProgram, Project, Activity, SDG_LIST, IMPLEMENTING_COLLEGES, EXTENSION_AGENDAS, TYPE_OF_COMMUNITY_SERVICE, PROGRAM_STATUS, PROGRAM_FUND_SOURCES } from '../types'
 import { 
   getExtensionPrograms, 
   createActivity, 
@@ -845,13 +845,18 @@ export function DataManagement() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Source of Fund</label>
-              <input
-                type="text"
+              <select
                 value={editingProgram.sourceOfFund || ''}
                 onChange={(e) => setEditingProgram({ ...editingProgram, sourceOfFund: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                placeholder="e.g., Government, Private, NGO"
-              />
+              >
+                <option value="">-- Select Source of Fund --</option>
+                {PROGRAM_FUND_SOURCES.map((source) => (
+                  <option key={source} value={source}>
+                    {source}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
