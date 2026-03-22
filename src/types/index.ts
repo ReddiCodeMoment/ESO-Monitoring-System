@@ -157,12 +157,10 @@ export const SDG_LIST = [
 ]
 
 export const PARTNER_TYPES = [
-  'Government Agency',
-  'Non-Governmental Organization (NGO)',
-  'Private Sector',
-  'Academic Institution',
-  'Community Organization',
-  'International Organization',
+  'Local',
+  'Regional',
+  'National',
+  'International',
 ]
 
 export const FUND_SOURCES = [
